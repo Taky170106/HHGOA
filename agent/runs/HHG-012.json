@@ -1,0 +1,992 @@
+{
+  "case_id": "HHG-012",
+  "case": {
+    "case_id": "HHG-012",
+    "opened_at": "2016-12-18 05:00:31",
+    "trigger_type": "risk_score",
+    "trigger_text": "Real-time model scored transaction 3553342 ($30.91, in billing region 494.0) at 0.55. Review and decide.",
+    "flagged_txn_id": "3553342",
+    "card_id": "C05876-K2",
+    "customer_id": "C05876",
+    "risk_score": "0.55"
+  },
+  "graph_evidence": {
+    "queries": {
+      "benchmark_case_context": {
+        "http_status": 200,
+        "latency_ms": 429.0,
+        "counts": {
+          "B": 1,
+          "Flagged": 1,
+          "FlaggedCards": 1,
+          "FlaggedCustomer": 1,
+          "CardHistory": 991,
+          "Devices": 0,
+          "Regions": 1,
+          "PEmails": 1,
+          "REmails": 0,
+          "RelatedViaDevice": 0,
+          "RelatedViaRegion": 14,
+          "RelatedViaCard": 2,
+          "NextTx": 1,
+          "PrevTx": 1
+        }
+      },
+      "get_transaction": {
+        "http_status": 200,
+        "latency_ms": 179.2,
+        "counts": {
+          "T": 1,
+          "CardOwners": 1,
+          "Customers": 1,
+          "Devices": 0,
+          "Regions": 1,
+          "PEmails": 1,
+          "REmails": 0,
+          "NextTxns": 1,
+          "PrevTxns": 1
+        }
+      },
+      "find_related_cases": {
+        "http_status": 200,
+        "latency_ms": 17.0,
+        "counts": {}
+      }
+    },
+    "flagged_txn_id": "3553342",
+    "card_id": "C05876-K2",
+    "customer_id": "C05876",
+    "amount_usd": 30.91,
+    "channel": "in_person",
+    "region": "494.0",
+    "graph_counts": {
+      "queries_ok": 3,
+      "queries_total": 3
+    }
+  },
+  "relationships": {
+    "flagged_txn_id": "3553342",
+    "card_id": "C05876-K2",
+    "related_txn_ids": [
+      "3553342"
+    ],
+    "device_profile_id": null,
+    "linked_cards": [],
+    "closed_case_links": [
+      "CC-2370"
+    ],
+    "device_edge": "absent (no FROM_DEVICE edge returned)",
+    "queries": {
+      "find_related_transactions": {
+        "status": "success",
+        "latency_ms": 56.9,
+        "returned_count": null,
+        "source_kind": "tigergraph_live"
+      },
+      "find_device_connections": {
+        "status": "error",
+        "latency_ms": 52.8,
+        "returned_count": null,
+        "source_kind": "tigergraph_live"
+      }
+    },
+    "prior_fraud_cases": [
+      "CC-2370"
+    ],
+    "device_linked_fraud_cases": []
+  },
+  "risk": {
+    "model_probability": 0.762,
+    "calibrated_pre": 0.2953,
+    "pattern": "none",
+    "pattern_description": "",
+    "anomaly_count": 2,
+    "corroborated": 0,
+    "exculpatory_count": 7,
+    "graph_signal": 0.5,
+    "risk_input": 0.55,
+    "active_signals": [
+      "burst",
+      "card_prior_fraud"
+    ]
+  },
+  "xai": {
+    "txn_id": "3553342",
+    "model_explanation": {
+      "method": "TreeExplainer SHAP",
+      "model": "models/fraud_model.pkl",
+      "top_contributions": [
+        {
+          "feature": "device_distinct_cards",
+          "value": 0.0,
+          "shap_value": 0.08432
+        },
+        {
+          "feature": "device_shared_txn_degree",
+          "value": 0.0,
+          "shap_value": 0.07463
+        },
+        {
+          "feature": "dt_seconds",
+          "value": 14616031.0,
+          "shap_value": 0.06714
+        },
+        {
+          "feature": "card_historical_cases",
+          "value": 0.0,
+          "shap_value": -0.06666
+        },
+        {
+          "feature": "device_has_edge",
+          "value": 0.0,
+          "shap_value": 0.0549
+        },
+        {
+          "feature": "amount",
+          "value": 30.91,
+          "shap_value": 0.04218
+        }
+      ],
+      "note": "model explanation — NOT graph evidence"
+    },
+    "graph_evidence": {
+      "corroborating_signals": 0,
+      "contradicting_signals": 7,
+      "total_anomalies": 2,
+      "graph_items": 0,
+      "historical_case_links": 1,
+      "note": "graph evidence — independent of the model"
+    },
+    "separation_rule": "a SHAP value never counts as a graph fact, and a graph fact never counts as a model contribution"
+  },
+  "summary": {
+    "narrative": "Case HHG-012 covers a in_person $30.91 transaction 3553342 on card C05876-K2 raised by a risk_score trigger. Graph investigation found 2 corroborating signal(s) - 48h burst, prior fraud on this card. Pattern assessed as none; fraud probability 0.30 before additional evidence and 0.05 after, giving a verdict of legitimate. No corroborating graph signal supports a fraud finding, so the alert is closed as legitimate under R3 with no block and no report.",
+    "plain_language": "Case HHG-012 involves an in-person transaction (3553342) of 30.91 USD. The model score is 0.7620 with a p-value of 0.0453 and 6 graph facts, resulting in a legitimate verdict and the action to link the historical case for analyst review.",
+    "llm": {
+      "status": "ok",
+      "provider": "google",
+      "model": "gemma-4-26b-a4b-it",
+      "tokens_in": 79,
+      "tokens_out": 78,
+      "tokens": 157,
+      "latency_ms": 31831.6,
+      "error": null
+    },
+    "next_best_action": "LINK_HISTORICAL_CASE_FOR_ANALYST_REVIEW",
+    "recommendation_reason": "1 historical ClosedCase record(s) link to this entity",
+    "verdict": "legitimate",
+    "uncertainty": "SUFFICIENT"
+  },
+  "decision": {
+    "verdict": "legitimate",
+    "status": "closed_legitimate",
+    "p0": 0.2953,
+    "p1": 0.0453,
+    "pattern": "none",
+    "graph_items": 6,
+    "thin": false,
+    "settled": false,
+    "stop_reason": "Section 6: the assumed customer_validation response settled the verdict (probability 0.30 -> 0.05). The remaining graph evidence is recorded; further steps would not change the actions below.",
+    "requests": [
+      {
+        "type": "customer_validation",
+        "asked_after_step": 4,
+        "assumed_response": "Customer confirms they made the $30.91 transaction 3553342 and recognises the purchase"
+      }
+    ],
+    "exposure_usd": 0.0,
+    "affected_txn_ids": [],
+    "initial_actions": [
+      {
+        "action": "VERIFY_WITH_CUSTOMER",
+        "route": "auto",
+        "reason": "R1: probability 0.30 on the available signal(s) is below 0.70, confirm with the cardholder before any blocking action"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "Section 3a: evidence was requested, so an internal case is opened to hold it"
+      },
+      {
+        "action": "MONITOR_CARD",
+        "route": "auto",
+        "reason": "R4: no reply yet, so the card stays active under monitoring while the validation reply is pending"
+      }
+    ],
+    "final_actions": [
+      {
+        "action": "CLOSE_NO_FRAUD",
+        "route": "auto",
+        "reason": "R3: verification confirms the transaction; close the alert as legitimate"
+      },
+      {
+        "action": "MONITOR_CARD",
+        "route": "auto",
+        "reason": "R4: the residual anomaly warrants 72h of raised monitoring sensitivity after the close"
+      },
+      {
+        "action": "GENERATE_REPORT",
+        "route": "auto",
+        "reason": "Section 3a: internal write-up of the investigation for the record, with no case escalation required"
+      }
+    ]
+  },
+  "facts": {
+    "case_id": "HHG-012",
+    "trigger_type": "risk_score",
+    "trigger_text": "Real-time model scored transaction 3553342 ($30.91, in billing region 494.0) at 0.55. Review and decide.",
+    "opened_at": "2016-12-18 05:00:31",
+    "card_id": "C05876-K2",
+    "customer_id": "C05876",
+    "flagged_txn_id": "3553342",
+    "risk_input": 0.55,
+    "flagged": {
+      "txn_id": "3553342",
+      "customer_id": "C05876",
+      "card_id": "C05876-K2",
+      "card1_num": "12947",
+      "ts": "2016-12-18 04:00:31",
+      "dt_seconds": "14616031",
+      "amount": "30.91",
+      "product_cd": "W",
+      "channel": "in_person",
+      "risk_score": "0.55",
+      "addr1": "494.0",
+      "addr2": "87.0",
+      "dist1": null,
+      "dist2": null,
+      "p_emaildomain": "gmail.com",
+      "r_emaildomain": null
+    },
+    "flagged_amount": 30.91,
+    "flagged_ts": 1482033.631,
+    "flagged_channel": "in_person",
+    "flagged_product": "W",
+    "card_txn_count": 991,
+    "card_prior_count": 913,
+    "card_median_amount": 49.08,
+    "card_prior_products": [
+      "H",
+      "R",
+      "S",
+      "W"
+    ],
+    "card_prior_regions": [
+      "110.0",
+      "122.0",
+      "123.0",
+      "126.0",
+      "143.0",
+      "177.0",
+      "181.0",
+      "184.0",
+      "191.0",
+      "194.0",
+      "203.0",
+      "204.0",
+      "205.0",
+      "220.0",
+      "225.0",
+      "226.0",
+      "231.0",
+      "251.0",
+      "264.0",
+      "269.0",
+      "272.0",
+      "299.0",
+      "308.0",
+      "310.0",
+      "315.0",
+      "324.0",
+      "325.0",
+      "327.0",
+      "330.0",
+      "337.0",
+      "420.0",
+      "429.0",
+      "433.0",
+      "436.0",
+      "441.0",
+      "444.0",
+      "472.0",
+      "476.0",
+      "485.0",
+      "494.0",
+      "498.0",
+      "512.0"
+    ],
+    "card_prior_domains": [
+      "anonymous.com",
+      "aol.com",
+      "att.net",
+      "comcast.net",
+      "cox.net",
+      "gmail.com",
+      "hotmail.com",
+      "icloud.com",
+      "live.com",
+      "me.com",
+      "outlook.com",
+      "rocketmail.com",
+      "sbcglobal.net",
+      "yahoo.com",
+      "ymail.com"
+    ],
+    "card_prior_channels": [
+      "in_person",
+      "online"
+    ],
+    "card_prev_channel": "in_person",
+    "card_prev_ts": 1482030.46,
+    "card_prev_txn": "3553253",
+    "small_auths_1h": [],
+    "small_auth_amounts": [],
+    "online_48h_before": [
+      "3002601",
+      "3002670",
+      "3002741",
+      "3005260",
+      "3017897",
+      "3022704",
+      "3022777",
+      "3037967",
+      "3060999",
+      "3081282",
+      "3082562",
+      "3082675",
+      "3082697",
+      "3088141",
+      "3091220",
+      "3094088",
+      "3099727",
+      "3100802",
+      "3105353",
+      "3106804",
+      "3109064",
+      "3110537",
+      "3115215",
+      "3119827",
+      "3119839",
+      "3120270",
+      "3129095",
+      "3144649",
+      "3145207",
+      "3188990",
+      "3189081",
+      "3203155",
+      "3247180",
+      "3256374",
+      "3256386",
+      "3263096",
+      "3266422",
+      "3266519",
+      "3266547",
+      "3266602",
+      "3266609",
+      "3266611",
+      "3266617",
+      "3266624",
+      "3266634",
+      "3275524",
+      "3283037",
+      "3297415",
+      "3324666",
+      "3329150",
+      "3341051",
+      "3368083",
+      "3389523",
+      "3397708",
+      "3420051",
+      "3430433",
+      "3472559",
+      "3474794",
+      "3516576",
+      "3543950",
+      "3545223"
+    ],
+    "online_48h_after": [],
+    "recurring_matches": [
+      "3144193",
+      "3145212",
+      "3164686",
+      "3167671",
+      "3214695",
+      "3247155",
+      "3276082",
+      "3279252",
+      "3285313",
+      "3288386",
+      "3304270",
+      "3317497",
+      "3317513",
+      "3380318",
+      "3427852",
+      "3442424",
+      "3442469",
+      "3456319",
+      "3460056",
+      "3477559",
+      "3483535",
+      "3486224",
+      "3535369",
+      "3544512",
+      "3549583"
+    ],
+    "recurring_last_ts": 1481926.622,
+    "device_id": null,
+    "device": null,
+    "device_str": "",
+    "shared_cards": [],
+    "shared_customers": [],
+    "device_txns": [],
+    "device_stats": null,
+    "region": {
+      "region_code": "494.0",
+      "is_home_country": true,
+      "channel": "in_person",
+      "is_home_region": true,
+      "country_code": "87.0"
+    },
+    "prior_region_known": true,
+    "p_domain": "gmail.com",
+    "r_domain": "",
+    "p_domain_new": false,
+    "prev_txn": "3553253",
+    "next_txn": "3554541",
+    "prior_cases_on_card": [
+      "CC-0003",
+      "CC-2370"
+    ],
+    "prior_cases_on_card_txns": [
+      "CC-0003",
+      "CC-2370"
+    ],
+    "prior_cases_on_customer": [
+      "CC-0003",
+      "CC-2370"
+    ],
+    "connected_cases": [],
+    "prior_fraud_cases": [
+      "CC-2370"
+    ],
+    "prior_cleared_cases": [
+      "CC-0003"
+    ],
+    "device_linked_fraud_cases": [],
+    "similar_candidates": [
+      "CC-2370"
+    ],
+    "tg": {
+      "benchmark_case_context": {
+        "status": 200,
+        "ms": 429.0,
+        "counts": {
+          "B": 1,
+          "Flagged": 1,
+          "FlaggedCards": 1,
+          "FlaggedCustomer": 1,
+          "CardHistory": 991,
+          "Devices": 0,
+          "Regions": 1,
+          "PEmails": 1,
+          "REmails": 0,
+          "RelatedViaDevice": 0,
+          "RelatedViaRegion": 14,
+          "RelatedViaCard": 2,
+          "NextTx": 1,
+          "PrevTx": 1
+        },
+        "flagged": [
+          "3553342"
+        ],
+        "card_history": 991,
+        "related_via_device": 0,
+        "related_via_region": 14,
+        "related_via_card": 2,
+        "next": [
+          "3554541"
+        ],
+        "prev": [
+          "3553253"
+        ]
+      },
+      "get_transaction": {
+        "status": 200,
+        "ms": 179.2,
+        "counts": {
+          "T": 1,
+          "CardOwners": 1,
+          "Customers": 1,
+          "Devices": 0,
+          "Regions": 1,
+          "PEmails": 1,
+          "REmails": 0,
+          "NextTxns": 1,
+          "PrevTxns": 1
+        },
+        "cards": [
+          "C05876-K2"
+        ],
+        "customers": [
+          "C05876"
+        ],
+        "devices": [],
+        "regions": [
+          "494.0"
+        ],
+        "next": [
+          "3554541"
+        ],
+        "prev": [
+          "3553253"
+        ]
+      },
+      "find_related_cases": {
+        "status": 200,
+        "ms": 17.0,
+        "cases": [
+          "CC-0003",
+          "CC-2370"
+        ]
+      }
+    },
+    "model": {
+      "probability": 0.762,
+      "per_txn": {
+        "3553342": 0.7619773542872781
+      }
+    },
+    "shap": {
+      "3553342": [
+        {
+          "feature": "device_distinct_cards",
+          "value": 0.0,
+          "shap_value": 0.08432
+        },
+        {
+          "feature": "device_shared_txn_degree",
+          "value": 0.0,
+          "shap_value": 0.07463
+        },
+        {
+          "feature": "dt_seconds",
+          "value": 14616031.0,
+          "shap_value": 0.06714
+        },
+        {
+          "feature": "card_historical_cases",
+          "value": 0.0,
+          "shap_value": -0.06666
+        },
+        {
+          "feature": "device_has_edge",
+          "value": 0.0,
+          "shap_value": 0.0549
+        },
+        {
+          "feature": "amount",
+          "value": 30.91,
+          "shap_value": 0.04218
+        }
+      ]
+    }
+  },
+  "analysis": {
+    "signals": {
+      "card_testing": false,
+      "out_of_region": false,
+      "new_device": false,
+      "proxy": false,
+      "match_anomaly": false,
+      "amount_outlier": false,
+      "new_product": false,
+      "burst": true,
+      "device_ring": false,
+      "device_prior_fraud": false,
+      "card_prior_fraud": true,
+      "domain_new": false,
+      "channel_change": false,
+      "recurring": true,
+      "device_on_file": false,
+      "home_region": true,
+      "amount_normal": true,
+      "product_known": true,
+      "prior_cleared": true,
+      "stable_history": true,
+      "prior_region_known": true,
+      "prior_count": 913,
+      "prior_median": 49.08
+    },
+    "online": false,
+    "card_testing": false,
+    "new_device": false,
+    "proxy": false,
+    "match_anomaly": false,
+    "not_home_country": false,
+    "not_home_region": false,
+    "out_of_region": false,
+    "amount_outlier": false,
+    "new_product": false,
+    "burst": true,
+    "ring": false,
+    "device_prior_fraud": false,
+    "card_prior_fraud": true,
+    "domain_new": false,
+    "channel_change": false,
+    "recurring": true,
+    "denied": false,
+    "anomaly_count": 2,
+    "corroborated": 0,
+    "exculpatory_count": 7,
+    "graph_signal": 0.5,
+    "pattern": "none",
+    "pattern_desc": "",
+    "evidence_log_odds": 2.1494,
+    "ml_probability": 0.762,
+    "p_initial": 0.2953,
+    "risk_input": 0.55
+  },
+  "evidence": [
+    {
+      "evidence_id": "EV-01",
+      "claim": "Case HHG-012 opened 2016-12-18 05:00:31 from risk_score trigger: Real-time model scored transaction 3553342 ($30.91, in billing region 494.0) at 0.55. Review and decide.",
+      "source": "document",
+      "ref": "case_pack.csv#HHG-012",
+      "entity_ids": [
+        "HHG-012",
+        "3553342"
+      ],
+      "evidence_class": "direct"
+    },
+    {
+      "evidence_id": "EV-02",
+      "claim": "Transaction 3553342 of $30.91 on card C05876-K2 is a in_person transaction in billing region 494.0 (region home).",
+      "source": "graph",
+      "ref": "query:get_transaction(txn_id=3553342)",
+      "entity_ids": [
+        "3553342",
+        "C05876-K2"
+      ],
+      "evidence_class": "derived_graph"
+    },
+    {
+      "evidence_id": "EV-03",
+      "claim": "Transaction 3553342 carries no FROM_DEVICE edge: the graph holds no device evidence for this alert.",
+      "source": "graph",
+      "ref": "query:get_transaction(txn_id=3553342)",
+      "entity_ids": [
+        "3553342"
+      ],
+      "evidence_class": "derived_graph"
+    },
+    {
+      "evidence_id": "EV-04",
+      "claim": "Card C05876-K2 shows 61 online authorisation(s) in the 48 hours before 3553342.",
+      "source": "graph",
+      "ref": "query:get_card_history(card_id=C05876-K2)",
+      "entity_ids": [
+        "3002601",
+        "3002670",
+        "3002741",
+        "3005260",
+        "3017897",
+        "3022704"
+      ],
+      "evidence_class": "derived_graph"
+    },
+    {
+      "evidence_id": "EV-05",
+      "claim": "Card C05876-K2 already appears in confirmed-fraud closed case(s) CC-2370.",
+      "source": "graph",
+      "ref": "query:find_related_cases(card_id=C05876-K2)",
+      "entity_ids": [
+        "CC-2370",
+        "C05876-K2"
+      ],
+      "evidence_class": "derived_graph"
+    },
+    {
+      "evidence_id": "EV-06",
+      "claim": "Card C05876-K2 has 25 earlier transaction(s) with the same amount ($30.91), channel and product code - a repeating charge rather than an anomalous purchase.",
+      "source": "graph",
+      "ref": "query:get_card_history(card_id=C05876-K2)",
+      "entity_ids": [
+        "3144193",
+        "3145212",
+        "3164686",
+        "3167671",
+        "3214695",
+        "3553342"
+      ],
+      "evidence_class": "derived_graph"
+    },
+    {
+      "evidence_id": "EV-07",
+      "claim": "Retrieved prior case memory CC-2370 for pattern similarity.",
+      "source": "graph",
+      "ref": "query:find_related_cases(card_id=C05876-K2)",
+      "entity_ids": [
+        "CC-2370"
+      ],
+      "evidence_class": "derived_graph"
+    },
+    {
+      "evidence_id": "EV-08",
+      "claim": "Model score for transaction 3553342 is 0.7620 (32 features); largest SHAP contributions: device_distinct_cards (+0.0843), device_shared_txn_degree (+0.0746), dt_seconds (+0.0671).",
+      "source": "external",
+      "ref": "model:models/fraud_model.pkl + xai/shap_local_benchmark_cases.json",
+      "entity_ids": [
+        "3553342"
+      ],
+      "evidence_class": "model_analytical"
+    },
+    {
+      "evidence_id": "EV-09",
+      "claim": "The bank's input risk_score runs opposite to confirmed outcome in this graph: the 4665 confirmed-fraud alerts carry a median score of 0.47 against 0.88 for the 900 cleared alerts, and only 64.7% of alerts scoring 0.90 or above were confirmed fraud. Case HHG-012 carries a score of 0.55, which the history says is a reason to look, not a verdict.",
+      "source": "document",
+      "ref": "DATASET/closed_cases_history.csv (outcome) x data/vertices/transaction.csv (risk_score)",
+      "entity_ids": [
+        "3553342"
+      ],
+      "evidence_class": "model_analytical"
+    }
+  ],
+  "counterfactual": {
+    "status": "OK",
+    "primary_txn": "3553342",
+    "baseline_probability": 0.762,
+    "threshold_verdict": "fraud",
+    "recorded_model_probability": null,
+    "matches_recorded_model": null,
+    "model_scenarios": [
+      {
+        "id": "graph_structure_removed",
+        "probability": 0.7949,
+        "delta": 0.033,
+        "verdict": "fraud"
+      },
+      {
+        "id": "historical_linkage_removed",
+        "probability": 0.7362,
+        "delta": -0.0258,
+        "verdict": "fraud"
+      },
+      {
+        "id": "device_linkage_removed",
+        "probability": 0.762,
+        "delta": 0.0,
+        "verdict": "fraud"
+      },
+      {
+        "id": "burst_removed",
+        "probability": 0.8528,
+        "delta": 0.0909,
+        "verdict": "fraud"
+      },
+      {
+        "id": "region_signal_removed",
+        "probability": 0.7748,
+        "delta": 0.0128,
+        "verdict": "fraud"
+      }
+    ],
+    "feature_counterfactuals": [
+      {
+        "feature": "device_distinct_cards",
+        "value": null
+      },
+      {
+        "feature": "device_shared_txn_degree",
+        "value": null
+      },
+      {
+        "feature": "dt_seconds",
+        "value": null
+      },
+      {
+        "feature": "card_historical_cases",
+        "value": null
+      },
+      {
+        "feature": "device_has_edge",
+        "value": null
+      },
+      {
+        "feature": "amount",
+        "value": null
+      }
+    ],
+    "n_model_scenarios": 5,
+    "note": "agent supplies only transaction ids from its own graph investigation; it never reads the case file"
+  },
+  "policy": {
+    "facts": {
+      "risk_probability": 0.0453,
+      "graph_evidence_count": 6,
+      "historical_case_count": 1,
+      "uncertainty": "SUFFICIENT"
+    },
+    "action": "LINK_HISTORICAL_CASE_FOR_ANALYST_REVIEW",
+    "reason": "1 historical ClosedCase record(s) link to this entity",
+    "evaluated": [
+      {
+        "action": "CLOSE_NO_FURTHER_ACTION",
+        "allowed": false,
+        "reason": "policy_denied: historical case linkage exists"
+      },
+      {
+        "action": "LINK_HISTORICAL_CASE_FOR_ANALYST_REVIEW",
+        "allowed": true,
+        "reason": "1 historical ClosedCase record(s) link to this entity"
+      }
+    ],
+    "policy_module": "policies/rules.py (allowlist + evidence gates)",
+    "forbidden_probe": {
+      "BLOCK_CARD": {
+        "allowed": false,
+        "reason": "policy_denied: 'BLOCK_CARD' is not an allowed recommendation"
+      },
+      "DELETE_VERTEX": {
+        "allowed": false,
+        "reason": "policy_denied: 'DELETE_VERTEX' is not an allowed recommendation"
+      },
+      "WRITE_TO_GRAPH": {
+        "allowed": false,
+        "reason": "policy_denied: 'WRITE_TO_GRAPH' is not an allowed recommendation"
+      },
+      "RUN_GSQL_WRITE": {
+        "allowed": false,
+        "reason": "policy_denied: 'RUN_GSQL_WRITE' is not an allowed recommendation"
+      }
+    },
+    "counterfactual_gate": {
+      "at_high_risk": true,
+      "at_low_risk": true
+    }
+  },
+  "round": 0,
+  "tool_calls": 5,
+  "tokens": 157,
+  "status": "COMPLETE",
+  "uncertainty": "SUFFICIENT",
+  "errors": [],
+  "trace": [
+    {
+      "node": "triage",
+      "tool": "case_pack.csv",
+      "http_status": null,
+      "latency_ms": null,
+      "ok": true,
+      "detail": "row loaded: txn=3553342 card=C05876-K2 trigger=risk_score"
+    },
+    {
+      "node": "graph_evidence",
+      "tool": "gsql:benchmark_case_context",
+      "http_status": 200,
+      "latency_ms": 429.0,
+      "ok": true,
+      "detail": "counts={B=1, Flagged=1, FlaggedCards=1, FlaggedCustomer=1, CardHistory=991, Devices=0}"
+    },
+    {
+      "node": "graph_evidence",
+      "tool": "gsql:get_transaction",
+      "http_status": 200,
+      "latency_ms": 179.2,
+      "ok": true,
+      "detail": "counts={T=1, CardOwners=1, Customers=1, Devices=0, Regions=1, PEmails=1}"
+    },
+    {
+      "node": "graph_evidence",
+      "tool": "gsql:find_related_cases",
+      "http_status": 200,
+      "latency_ms": 17.0,
+      "ok": true,
+      "detail": "counts={}"
+    },
+    {
+      "node": "relationships",
+      "tool": "find_related_transactions",
+      "http_status": null,
+      "latency_ms": 56.9,
+      "ok": true,
+      "detail": "success, 1 entity type(s), None row(s)"
+    },
+    {
+      "node": "relationships",
+      "tool": "find_device_connections",
+      "http_status": null,
+      "latency_ms": 52.8,
+      "ok": false,
+      "detail": "error Live query 'find_device_connections' matched no graph entities (NO_DEVICE_FOUND)"
+    },
+    {
+      "node": "risk_score",
+      "tool": "scripts.build_cases.analyse",
+      "http_status": null,
+      "latency_ms": null,
+      "ok": true,
+      "detail": "model p=0.7620, calibrated pre=0.2953, 2 signal(s), pattern=none"
+    },
+    {
+      "node": "xai",
+      "tool": "shap.TreeExplainer",
+      "http_status": null,
+      "latency_ms": null,
+      "ok": true,
+      "detail": "6 contribution(s) from 6 feature(s)"
+    },
+    {
+      "node": "check_uncertainty",
+      "tool": "build_evidence",
+      "http_status": null,
+      "latency_ms": null,
+      "ok": true,
+      "detail": "SUFFICIENT: 6 derived-graph facts with 0 corroborating / 7 contradicting signal(s) (items={'direct': 1, 'derived_graph': 6, 'model_analytical': 2})"
+    },
+    {
+      "node": "generate_actions",
+      "tool": "build_cases.decide",
+      "http_status": null,
+      "latency_ms": null,
+      "ok": true,
+      "detail": "verdict=legitimate p0=0.2953 p1=0.0453 graph_items=6"
+    },
+    {
+      "node": "counterfactual",
+      "tool": "counterfactual.engine.model_analysis",
+      "http_status": null,
+      "latency_ms": null,
+      "ok": true,
+      "detail": "OK, baseline=0.7620, 5 model scenario(s), 6 feature sweep"
+    },
+    {
+      "node": "policy",
+      "tool": "policies.rules.select",
+      "http_status": null,
+      "latency_ms": null,
+      "ok": true,
+      "detail": "recommended LINK_HISTORICAL_CASE_FOR_ANALYST_REVIEW (2 candidate(s) evaluated, 4 forbidden denied)"
+    },
+    {
+      "node": "recommend",
+      "tool": "agent.llm.client.generate",
+      "http_status": null,
+      "latency_ms": null,
+      "ok": true,
+      "detail": "llm ok (google/gemma-4-26b-a4b-it), 157 tokens, 31832 ms"
+    }
+  ],
+  "timings_ms": {
+    "triage": 0.0,
+    "graph_evidence": 4808.2,
+    "relationships": 109.8,
+    "risk_score": 16.9,
+    "xai": 0.0,
+    "check_uncertainty": 0.1,
+    "generate_actions": 67.0,
+    "counterfactual": 4961.3,
+    "policy": 0.0,
+    "recommend": 31903.7
+  },
+  "latency_s": 41.873
+}

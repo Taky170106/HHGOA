@@ -1,6 +1,8 @@
 # --- secrets: never commit ---
 .env
 .env.*
+# ...but the empty-placeholder template IS part of the submission
+!.env.example
 *.key
 *.pem
 secrets.*

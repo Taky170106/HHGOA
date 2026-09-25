@@ -10,7 +10,23 @@ import {
   Tag,
 } from "@/components/kit";
 import { ARCHITECTURE, STATUS_LABEL, type LayerStatus } from "@/lib/architecture";
-import { useSummary, useTigerGraph } from "@/lib/useJson";
+import { useJson, useSummary, useTigerGraph } from "@/lib/useJson";
+
+/** Shape returned by app/api/agent — the LangGraph runs on disk. */
+interface AgentRunLite {
+  case_id: string;
+  llm_status: string | null;
+  tokens: number | null;
+}
+interface AgentData {
+  batch: {
+    runs_total?: number;
+    passed?: number;
+    tokens_total?: number;
+    tool_calls_total?: number;
+  } | null;
+  runs: AgentRunLite[];
+}
 
 const TONE: Record<LayerStatus, { text: string; border: string; bg: string }> = {
   live: { text: "var(--color-ok)", border: "border-ok/45", bg: "bg-ok/10" },
@@ -21,6 +37,8 @@ const TONE: Record<LayerStatus, { text: string; border: string; bg: string }> = 
 export default function ArchitecturePage() {
   const { data, error, loading } = useSummary();
   const tg = useTigerGraph();
+  // must be declared before the early returns below (hooks are unconditional)
+  const ag = useJson<AgentData>("/api/agent");
 
   if (error) return <ErrorNote what="/api/summary" message={error} />;
   if (loading || !data) return <Loading what="architecture artifacts" />;
@@ -28,6 +46,12 @@ export default function ArchitecturePage() {
   const live = ARCHITECTURE.filter((l) => l.status === "live");
   const wip = ARCHITECTURE.filter((l) => l.status === "wip");
   const arch = ARCHITECTURE.filter((l) => l.status === "arch");
+  const gaps = [...wip, ...arch];
+
+  // real LLM usage read from agent/runs/ — never a placeholder
+  const runs = ag.data?.runs ?? [];
+  const llmOk = runs.filter((r) => r.llm_status === "ok").length;
+  const llmTokens = ag.data?.batch?.tokens_total ?? 0;
 
   const gsql = data.gsql;
   const mcp = data.mcp as Record<string, number | string>;
@@ -103,10 +127,14 @@ export default function ArchitecturePage() {
           />
           <StatTile
             label="LLM calls"
-            value="0"
-            tone="var(--color-warn)"
-            sub="no API key present — tokens 0"
-            source="cases/*.json → tokens: 0"
+            value={ag.loading ? "…" : String(runs.length)}
+            tone={llmTokens > 0 ? "var(--color-ok)" : "var(--color-warn)"}
+            sub={
+              ag.data
+                ? `${llmOk}/${runs.length} ok · ${llmTokens} tokens`
+                : "reading agent/runs/…"
+            }
+            source="agent/runs/ · validation/phase4_agent_runs.json"
           />
         </div>
       </Section>
@@ -174,22 +202,44 @@ export default function ArchitecturePage() {
         className="border-t border-line"
       >
         <div className="grid gap-3 lg:grid-cols-3">
-          {[...wip, ...arch].map((l) => (
+          {gaps.length === 0 ? (
             <Card
-              key={l.name}
-              title={l.name}
-              right={
-                <Tag tone={l.status === "wip" ? "warn" : "neutral"}>
-                  {STATUS_LABEL[l.status]}
-                </Tag>
-              }
+              title="No layer gap remains"
+              right={<Tag tone="ok">ALL LAYERS BACKED</Tag>}
             >
-              <p className="text-[12px] leading-[18px] text-fg-2">{l.detail}</p>
+              <p className="text-[12px] leading-[18px] text-fg-2">
+                All {ARCHITECTURE.length} reference layers now cite an artifact
+                that actually ran, so this list is empty rather than padded.
+              </p>
+              <p className="mt-2 text-[12px] leading-[18px] text-fg-2">
+                One limitation is deliberate and stays visible above as a
+                BLOCKED probe: the case-result write-back to the graph is not
+                performed, and is documented in docs/GRAPH_WRITE_BLOCKER.md.
+              </p>
               <div className="mt-2 font-mono text-[10.5px] text-dim">
-                {l.evidence}
+                frontend/lib/architecture.ts
               </div>
             </Card>
-          ))}
+          ) : (
+            gaps.map((l) => (
+              <Card
+                key={l.name}
+                title={l.name}
+                right={
+                  <Tag tone={l.status === "wip" ? "warn" : "neutral"}>
+                    {STATUS_LABEL[l.status]}
+                  </Tag>
+                }
+              >
+                <p className="text-[12px] leading-[18px] text-fg-2">
+                  {l.detail}
+                </p>
+                <div className="mt-2 font-mono text-[10.5px] text-dim">
+                  {l.evidence}
+                </div>
+              </Card>
+            ))
+          )}
         </div>
       </Section>
 

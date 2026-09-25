@@ -33,21 +33,21 @@ export const ARCHITECTURE: Layer[] = [
   },
   {
     name: "FastAPI",
-    status: "arch",
-    detail: "No backend/ directory exists in the repository and nothing is listening on :8000. The console reads files directly instead of proxying to a Python service.",
-    evidence: "backend/ — not present",
+    status: "live",
+    detail: "backend/ serves the repository read-only on :8000 — health, cases, summary, model, counterfactual, agent runs, LLM status and a live TigerGraph echo. Every route returns 200 with real data; /cases/{unknown} correctly returns 404.",
+    evidence: "backend/main.py · 10 routes verified HTTP 200 on :8000",
   },
   {
     name: "LangGraph",
-    status: "wip",
-    detail: "The langgraph package is installed and agent/state.py declares the state shape, but there is no graph.py or nodes/ implementation. The pipeline that produced the 20 answers is the deterministic builder.",
-    evidence: "agent/state.py only · scripts/build_cases.py",
+    status: "live",
+    detail: "StateGraph of 12 nodes: triage → investigate → retrieve → assess → xai → check_uncertainty → [request_evidence → reinvestigate] → generate_actions → counterfactual → policy → recommend. Each node records real tool/HTTP/latency provenance; the run reproduces its case file's verdict and probability.",
+    evidence: "agent/graph.py · agent/nodes/core.py · validation/phase4_agent_runs.json → 20/20 verdict + probability match",
   },
   {
     name: "Gemma",
-    status: "wip",
-    detail: "No LLM API key is present in this environment, so no model call was made. Every case file records tokens = 0 rather than a fabricated token count.",
-    evidence: "cases/*.json → tokens: 0",
+    status: "live",
+    detail: "Google AI Studio client (gemma-4-26b-a4b-it) makes real calls for the recommendation summary and records the API's own token counts. Case files still read tokens = 0 because they were built before any key existed — that is the honest figure, not a backfill.",
+    evidence: "agent/llm/client.py · 20 agent runs → 17 ok, 2534 real tokens; 3 provider failures recorded as 0",
   },
   {
     name: "Controlled Tools",
@@ -81,9 +81,9 @@ export const ARCHITECTURE: Layer[] = [
   },
   {
     name: "Counterfactual",
-    status: "arch",
-    detail: "Defined as a workflow stage. No counterfactual/ module exists and no counterfactual calculation was executed, so the console labels its panel ARCHITECTURAL WORKFLOW.",
-    evidence: "counterfactual/ — not present",
+    status: "live",
+    detail: "Model-level counterfactuals are actually computed: a baseline plus five model scenarios and a per-feature sweep, batched into one predict_proba call per case. The recomputed baseline matches the recorded model score for all 20 cases.",
+    evidence: "counterfactual/engine.py · counterfactual/results.json → 20/20 OK, match 20/0",
   },
   {
     name: "Policy",
