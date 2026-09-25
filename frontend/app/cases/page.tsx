@@ -70,7 +70,7 @@ export default function CasesPage() {
             <Button href="/investigation" variant="primary">
               ▶ RUN INVESTIGATION
             </Button>
-            <Button href="/">← OVERVIEW</Button>
+            <Button href="/dashboard">← DASHBOARD</Button>
           </>
         }
         meta={

@@ -1,34 +1,110 @@
 @import "tailwindcss";
 
-@theme {
-  /* dark enterprise palette (graph investigation) */
-  --color-ink-950: #05070b;
-  --color-ink-900: #080b11;
-  --color-ink-850: #0b0f16;
-  --color-ink-800: #0f141c;
-  --color-ink-750: #131a24;
-  --color-ink-700: #18212d;
-  --color-ink-600: #23303f;
-  --color-line: #1c2634;
-  --color-line-2: #2a374a;
-  --color-fg: #dbe4f0;
-  --color-fg-2: #9aa9bd;
-  --color-dim: #66768c;
-  --color-ok: #34d399;
-  --color-warn: #f59e0b;
-  --color-bad: #f43f5e;
-  --color-accent: #38bdf8;
-  --color-violet: #a78bfa;
-  --color-amber: #fbbf24;
+/* ==================================================================
+   GRAVEX — theme from docs/UI-THEME.md (dark, Mozhi/Gravex palette)
+   ================================================================== */
 
-  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
-    Helvetica, Arial, sans-serif;
-  --font-mono: ui-monospace, "Cascadia Mono", "SF Mono", Menlo, Consolas,
-    monospace;
+@theme {
+  /* ground / surfaces (dark theme) */
+  --color-ink-950: #0b0b0c; /* page ground — stays solid */
+  --color-ink-900: rgb(20 20 22 / 0.6); /* glass panel */
+  --color-ink-850: rgb(28 28 31 / 0.68); /* glass raised row */
+  --color-ink-800: #1c1c1f;
+  --color-ink-750: #26262a;
+  --color-ink-700: #2a2a2e;
+  --color-ink-600: #3c3c42; /* line-strong */
+
+  /* lines — translucent white rims read as glass edges */
+  --color-line: rgb(255 255 255 / 0.1);
+  --color-line-2: rgb(255 255 255 / 0.2);
+
+  /* ink ramp */
+  --color-fg: #f4f2ee;
+  --color-fg-2: #b5b2ac;
+  --color-dim: #85827d; /* ink-3 */
+
+  /* status */
+  --color-ok: #4fd6a8;
+  --color-warn: #ffc44a;
+  --color-bad: #ff5c8a;
+
+  /* accents */
+  --color-accent: #ffd24a; /* yellow — accent */
+  --color-accent-2: #1ce8ed; /* cyan — accent-2 */
+  --color-violet: #a79bff; /* cool-lit */
+  --color-amber: #ffd24a; /* legacy alias */
+  --color-magenta: #fd48f2;
+  --color-cool: #3b308f;
+
+  /* type — self-hosted woff2 in public/fonts */
+  --font-sans: "Switzer", ui-sans-serif, system-ui, -apple-system, "Segoe UI",
+    Roboto, Helvetica, Arial, sans-serif;
+  --font-mono: "DM Mono", ui-monospace, "Cascadia Mono", "SF Mono", Menlo,
+    Consolas, monospace;
+  --font-display: "Clash Display", "Switzer", ui-sans-serif, system-ui,
+    sans-serif;
 }
 
 :root {
   color-scheme: dark;
+
+  /* motion tokens (UI-THEME.md §6) */
+  --e-out: cubic-bezier(0.16, 1, 0.3, 1); /* signature expo-out */
+  --e-soft: cubic-bezier(0.2, 0.7, 0.3, 1);
+  --d-tap: 120ms;
+  --d-ui: 200ms;
+  --d-slow: 320ms;
+  --d-reveal: 640ms;
+}
+
+/* ---------- page field: aurora + grain behind the glass ---------- */
+
+.page-field {
+  position: fixed;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  background:
+    radial-gradient(
+      58% 44% at 12% -6%,
+      rgb(59 48 143 / 0.34),
+      transparent 62%
+    ),
+    radial-gradient(
+      46% 36% at 96% 8%,
+      rgb(253 72 242 / 0.12),
+      transparent 64%
+    ),
+    radial-gradient(
+      62% 48% at 74% 104%,
+      rgb(28 232 237 / 0.1),
+      transparent 60%
+    ),
+    radial-gradient(
+      40% 30% at 46% 52%,
+      rgb(255 210 74 / 0.05),
+      transparent 68%
+    ),
+    var(--color-ink-950);
+  animation: aurora-drift 46s ease-in-out infinite alternate;
+}
+
+.page-field::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  opacity: 0.4;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.55'/%3E%3C/svg%3E");
+}
+
+@keyframes aurora-drift {
+  from {
+    filter: hue-rotate(0deg) saturate(1);
+  }
+  to {
+    filter: hue-rotate(14deg) saturate(1.15);
+  }
 }
 
 html,
@@ -37,7 +113,7 @@ body {
 }
 
 body {
-  background: var(--color-ink-950);
+  background: transparent;
   color: var(--color-fg);
   font-family: var(--font-sans);
   overflow: hidden;
@@ -47,7 +123,7 @@ body {
 /* thin scrollbars for dense panels */
 * {
   scrollbar-width: thin;
-  scrollbar-color: #243044 #0b0f16;
+  scrollbar-color: #3c3c42 rgb(11 11 12 / 0.6);
 }
 *::-webkit-scrollbar {
   width: 9px;
@@ -57,74 +133,265 @@ body {
   background: transparent;
 }
 *::-webkit-scrollbar-thumb {
-  background: #243044;
+  background: #3c3c42;
   border-radius: 999px;
   border: 2px solid transparent;
   background-clip: content-box;
 }
 *::-webkit-scrollbar-thumb:hover {
-  background: #34435c;
+  background: #55524e;
   background-clip: content-box;
 }
 
-/* small caps section label */
+/* ---------- glassmorphism ---------------------------------------- */
+
+/* Every panel painted with the ink-900 token becomes real glass:
+   translucent fill + backdrop blur + soft top rim light. */
+[class~="bg-ink-900"] {
+  /* -webkit- MUST come first: lightningcss keeps only the last declaration
+     of the prefixed/unprefixed pair when they are identical. */
+  -webkit-backdrop-filter: blur(16px) saturate(145%);
+  backdrop-filter: blur(16px) saturate(145%);
+  background-image: linear-gradient(
+    180deg,
+    rgb(255 255 255 / 0.06),
+    rgb(255 255 255 / 0) 56px
+  );
+}
+
+/* raised chrome rows (panel headers, table heads) */
+[class~="bg-ink-850"] {
+  background-image: linear-gradient(
+    180deg,
+    rgb(255 255 255 / 0.05),
+    rgb(255 255 255 / 0) 28px
+  );
+}
+
+/* explicit glass for chrome (nav / footer / overlays) */
+.glass-bar {
+  background: rgb(11 11 12 / 0.72);
+  -webkit-backdrop-filter: blur(22px) saturate(150%);
+  backdrop-filter: blur(22px) saturate(150%);
+  border-color: rgb(255 255 255 / 0.1);
+}
+
+.glass-strong {
+  background: rgb(20 20 22 / 0.78);
+  -webkit-backdrop-filter: blur(26px) saturate(160%);
+  backdrop-filter: blur(26px) saturate(160%);
+}
+
+/* ---------- typography ------------------------------------------- */
+
+/* small caps section label — DM Mono, always uppercase (theme §5) */
 .label {
+  font-family: var(--font-mono);
   font-size: 10px;
   letter-spacing: 0.14em;
   text-transform: uppercase;
   color: var(--color-dim);
-  font-weight: 600;
+  font-weight: 500;
 }
 
 .hair {
   border: 1px solid var(--color-line);
 }
 
-.pulse-dot {
-  animation: pulse-dot 2s ease-in-out infinite;
-}
-@keyframes pulse-dot {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.35;
-  }
+.display {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: -0.01em;
 }
 
-/* subtle blueprint grid behind hero / empty regions (no gradient wash) */
-.hero-grid {
-  background-image:
-    linear-gradient(to right, rgba(56, 189, 248, 0.055) 1px, transparent 1px),
-    linear-gradient(to bottom, rgba(56, 189, 248, 0.055) 1px, transparent 1px);
-  background-size: 52px 52px;
-  background-position: center center;
+/* ---------- signature motion ------------------------------------- */
+
+/* reveal on scroll / mount */
+.reveal {
+  opacity: 0;
+  transform: translateY(16px);
+  transition:
+    opacity var(--d-reveal) var(--e-out),
+    transform var(--d-reveal) var(--e-out);
+}
+.reveal.is-in {
+  opacity: 1;
+  transform: none;
 }
 
-.fade-up {
-  animation: fade-up 0.4s ease-out both;
+/* signature hover: lift + deep shadow + edge highlight (theme §6) */
+.lift {
+  transition:
+    transform var(--d-slow) var(--e-out),
+    box-shadow var(--d-slow) var(--e-out),
+    border-color var(--d-ui) var(--e-soft),
+    background-color var(--d-ui) var(--e-soft),
+    color var(--d-ui) var(--e-soft);
 }
+.lift:hover {
+  transform: translateY(-4px);
+  box-shadow:
+    0 0 0 1px rgb(255 255 255 / 0.16),
+    0 18px 40px -16px rgb(0 0 0 / 0.85);
+}
+
+/* page / block entrance */
 @keyframes fade-up {
   from {
     opacity: 0;
-    transform: translateY(8px);
+    transform: translateY(14px);
   }
   to {
     opacity: 1;
     transform: none;
   }
 }
-
-.stage-in {
-  animation: stage-in 0.28s ease-out both;
+.fade-up {
+  animation: fade-up var(--d-reveal) var(--e-out) both;
 }
+
+/* stage rows in the pipeline */
 @keyframes stage-in {
   from {
     opacity: 0;
-    transform: translateY(3px);
+    transform: translateX(-10px);
   }
   to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.stage-in {
+  animation: stage-in var(--d-slow) var(--e-out) both;
+}
+
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.45;
+    transform: scale(0.72);
+  }
+}
+.pulse-dot {
+  animation: pulse-dot 1.7s ease-in-out infinite;
+}
+
+/* caret in terminal blocks */
+@keyframes caret {
+  0%,
+  49% {
+    opacity: 1;
+  }
+  50%,
+  100% {
+    opacity: 0;
+  }
+}
+.caret::after {
+  content: "▍";
+  animation: caret 1s steps(1) infinite;
+}
+
+/* hero grid backdrop (landing + overview hero) */
+.hero-grid {
+  background-image:
+    linear-gradient(rgb(255 255 255 / 0.035) 1px, transparent 1px),
+    linear-gradient(90deg, rgb(255 255 255 / 0.035) 1px, transparent 1px);
+  background-size: 56px 56px;
+  background-position: center top;
+}
+
+/* animated gradient sheen for the landing wordmark */
+@keyframes sheen {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}
+.sheen {
+  background-image: linear-gradient(
+    100deg,
+    var(--color-accent) 0%,
+    #fff6dd 18%,
+    var(--color-magenta) 42%,
+    var(--color-violet) 66%,
+    var(--color-accent) 100%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: sheen 9s linear infinite alternate;
+}
+
+/* flowing highlight along the pipeline strip */
+@keyframes flow {
+  0% {
+    background-position: -140% 0;
+  }
+  100% {
+    background-position: 240% 0;
+  }
+}
+.flow-line {
+  background-image: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgb(255 210 74 / 0.85) 45%,
+    rgb(28 232 237 / 0.9) 55%,
+    transparent 100%
+  );
+  background-size: 60% 100%;
+  background-repeat: no-repeat;
+  animation: flow 3.6s var(--e-soft) infinite;
+}
+
+/* stagger delays for reveal groups */
+.d1 {
+  transition-delay: 70ms;
+}
+.d2 {
+  transition-delay: 140ms;
+}
+.d3 {
+  transition-delay: 210ms;
+}
+.d4 {
+  transition-delay: 280ms;
+}
+.d5 {
+  transition-delay: 350ms;
+}
+.d6 {
+  transition-delay: 420ms;
+}
+
+/* keep interactive glass crisp on focus */
+:focus-visible {
+  outline: 2px solid rgb(255 210 74 / 0.75);
+  outline-offset: 2px;
+}
+
+/* reduced motion — theme §6 */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --d-reveal: 1ms;
+    --d-slow: 1ms;
+  }
+  *,
+  *::before,
+  *::after {
+    animation-duration: 1ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 1ms !important;
+  }
+  .reveal {
     opacity: 1;
     transform: none;
   }

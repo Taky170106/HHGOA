@@ -1,7 +1,63 @@
 "use client";
 
 import Link from "next/link";
-import type { ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
+
+/* ------------------------------------------------------------------ */
+/* motion — reveal on scroll (UI-THEME.md §6 signature motion)         */
+/* ------------------------------------------------------------------ */
+
+/**
+ * Fades/rises its children in the first time they enter the viewport.
+ * Falls back to visible immediately when IntersectionObserver is missing,
+ * and always reveals after a short safety timeout so content can never
+ * stay hidden (recording / automated checks).
+ */
+export function Reveal({
+  children,
+  delay = 0,
+  className = "",
+}: {
+  children: ReactNode;
+  delay?: number;
+  className?: string;
+}) {
+  const ref = useRef<HTMLDivElement>(null);
+  const [shown, setShown] = useState(false);
+
+  useEffect(() => {
+    const el = ref.current;
+    if (!el || typeof IntersectionObserver === "undefined") {
+      setShown(true);
+      return;
+    }
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries.some((e) => e.isIntersecting)) {
+          setShown(true);
+          io.disconnect();
+        }
+      },
+      { rootMargin: "0px 0px -60px 0px", threshold: 0.05 },
+    );
+    io.observe(el);
+    const safety = window.setTimeout(() => setShown(true), 2500);
+    return () => {
+      io.disconnect();
+      window.clearTimeout(safety);
+    };
+  }, []);
+
+  return (
+    <div
+      ref={ref}
+      style={delay ? { transitionDelay: `${delay}ms` } : undefined}
+      className={`reveal ${shown ? "is-in" : ""} ${className}`}
+    >
+      {children}
+    </div>
+  );
+}
 
 /* ------------------------------------------------------------------ */
 /* layout                                                              */
@@ -64,7 +120,7 @@ export function PageHeader({
         <Eyebrow>{eyebrow}</Eyebrow>
         <div className="mt-3 flex flex-wrap items-end justify-between gap-5">
           <div className="max-w-[820px]">
-            <h1 className="text-[34px] leading-[1.12] font-bold tracking-[-0.01em] text-fg">
+            <h1 className="font-display text-[34px] leading-[1.12] font-semibold tracking-[-0.01em] text-fg">
               {title}
             </h1>
             {lede ? (
@@ -106,7 +162,7 @@ export function Section({
             <div>
               {eyebrow ? <Eyebrow>{eyebrow}</Eyebrow> : null}
               {title ? (
-                <h2 className="mt-2 text-[21px] font-bold tracking-tight text-fg">
+                <h2 className="font-display mt-2 text-[21px] font-semibold tracking-tight text-fg">
                   {title}
                 </h2>
               ) : null}
@@ -169,7 +225,7 @@ export function Button({
   title?: string;
 }) {
   const base =
-    "inline-flex h-9 items-center gap-2 rounded-sm px-4 text-[11.5px] font-bold tracking-[0.12em] uppercase transition disabled:cursor-not-allowed disabled:opacity-55";
+    "inline-flex h-9 items-center gap-2 rounded-sm px-4 text-[11.5px] font-bold tracking-[0.12em] uppercase transition duration-200 ease-[cubic-bezier(.16,1,.3,1)] hover:-translate-y-0.5 disabled:cursor-not-allowed disabled:opacity-55 disabled:hover:translate-y-0";
   const styles =
     variant === "primary"
       ? "border border-accent/70 bg-accent/15 text-accent hover:bg-accent/25"
@@ -209,7 +265,10 @@ export function StatTile({
   source?: string;
 }) {
   return (
-    <div className="border border-line bg-ink-900 px-3.5 py-3" title={source}>
+    <div
+      className="lift border border-line bg-ink-900 px-3.5 py-3"
+      title={source}
+    >
       <div className="text-[9.5px] font-semibold tracking-[0.16em] text-dim uppercase">
         {label}
       </div>
@@ -277,7 +336,7 @@ export function ModuleCard({
   return (
     <Link
       href={href}
-      className="group flex flex-col border border-line bg-ink-900 p-5 transition hover:border-accent/50 hover:bg-ink-850"
+      className="lift group flex flex-col border border-line bg-ink-900 p-5 hover:border-accent/50"
     >
       <div className="flex items-center justify-between">
         <span className="font-mono text-[11px] tracking-[0.2em] text-accent">
@@ -378,9 +437,7 @@ export function Card({
     >
       {title ? (
         <header className="flex h-9 shrink-0 items-center justify-between gap-2 border-b border-line bg-ink-850 px-3">
-          <h3 className="text-[10.5px] font-bold tracking-[0.16em] text-fg-2 uppercase">
-            {title}
-          </h3>
+          <h3 className="label truncate">{title}</h3>
           {right ? <div className="shrink-0">{right}</div> : null}
         </header>
       ) : null}

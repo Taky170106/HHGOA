@@ -39,7 +39,7 @@ export function TopBar({
         </div>
         <div className="leading-none">
           <div className="text-[13.5px] font-bold tracking-[0.16em] text-fg">
-            HHG FRAUD INTELLIGENCE
+            GRAVEX FRAUD INTELLIGENCE
           </div>
           <div className="mt-[3px] text-[9px] tracking-[0.2em] text-dim">
             TIGERGRAPH AGENTIC INVESTIGATION · HHGOA 2026
