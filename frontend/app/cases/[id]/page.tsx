@@ -403,7 +403,7 @@ function InvestigationTab({
             </div>
             <div className="flex justify-between border-b border-line/60 pb-1">
               <span className="text-dim">tokens</span>
-              <span className="text-fg">{cf.tokens} — no LLM key</span>
+              <span className="text-fg">{cf.tokens} — recorded before LLM runs</span>
             </div>
             <div className="flex justify-between border-b border-line/60 pb-1">
               <span className="text-dim">latency_s</span>

@@ -81,7 +81,7 @@ export default function DashboardPage() {
                 <Tag tone="bad">GRAPH WRITE BLOCKED</Tag>
                 <Tag tone="accent">GSQL {gsql.queries_executed}/10 LIVE</Tag>
                 <Tag tone="violet">MCP {mcp.live_pass}/{mcp.live_total} LIVE</Tag>
-                <Tag tone="warn">tokens 0 — no LLM key</Tag>
+                <Tag tone="warn">tokens 0 — cases predate LLM runs</Tag>
               </div>
             </div>
 

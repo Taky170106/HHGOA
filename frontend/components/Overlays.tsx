@@ -640,7 +640,7 @@ function TabAudit({ cf }: { cf: CaseFile }) {
         <div className="border border-line bg-ink-850 p-3">
           <div className="label mb-2">AUDIT COUNTERS</div>
           <Field k="tool_calls" v={String(cf.tool_calls)} />
-          <Field k="tokens" v={`${cf.tokens} — no LLM key in this environment`} />
+          <Field k="tokens" v={`${cf.tokens} — case files predate LLM runs`} />
           <Field k="latency_s" v={cf.latency_s.toFixed(2)} />
           <Field k="stop_reason" v={cf.stop_reason} />
         </div>

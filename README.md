@@ -88,6 +88,21 @@ Every number below comes from an artifact in this repository, not a claim.
 
 ---
 
+## System architecture
+
+![GRAVEX system architecture](docs/architecture.png)
+
+On the left, the 14 layers, each tagged from the artifact that proves it —
+**14 LIVE · 0 in progress · 0 architectural**. On the right, the nine-stage
+agent pipeline, ending at the policy gate that every recommendation must clear
+before it reaches an analyst. Graph writes stay blocked by design.
+
+The same view is rendered live at `/architecture`, straight from
+`frontend/lib/architecture.ts`, so the picture and the console cannot drift
+apart.
+
+---
+
 ## Quick start
 
 ```bash

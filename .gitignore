@@ -34,3 +34,7 @@ venv/
 *.log
 *.tmp
 ~$*
+
+# --- demo media: kept local, not part of the submission ---
+audio/
+video_out/
