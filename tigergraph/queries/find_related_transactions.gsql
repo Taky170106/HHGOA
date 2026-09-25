@@ -1,0 +1,125 @@
+# Query E - find_related_transactions
+# Input: txn_id OR card_id OR customer_id (supply one or more, "" to skip)
+#        + max_depth  (1 = seed transactions only; >=2 = one relationship expansion,
+#                      which is this query's natural maximum of 2 edge hops)
+#        + max_results (0 = default cap 500 per result set; otherwise that many)
+# Return: related transactions via verified graph relationships
+#         (card history, same billing region, same device, same purchaser/recipient email)
+# Read-only: SELECT / PRINT only. Bounded: no recursive/unbounded traversal, every
+#            result set is LIMIT-ed.
+#
+# ===========================================================================
+# PHASE 3A REPAIR - TigerGraph Community Edition 4.2.5 (live compiler authoritative)
+# See get_transaction.gsql for the full probe table (F1..F7).
+#   1. A @@ global accumulator cannot be a FROM source (TYP-152). Seed txn ids are
+#      ALSO collected in SetAccum<STRING> @@seed_ids and re-materialised into the
+#      typed local set Seeds via  WHERE txn_id IN @@seed_ids (F6, runtime verified).
+#   2. Forward and reverse traversal cannot be mixed in one query (F3). The reverse
+#      hops (MADE, BILLED_IN, FROM_DEVICE, PURCHASER_EMAIL, RECIPIENT_EMAIL) are
+#      rewritten as forward-only inverted traversals (F5) - identical vertex sets.
+#   3. Chained multi-hop paths inside one FROM clause are rejected (F4); each path is
+#      split into single-hop SELECT statements - identical vertex set.
+#   4. TYP-500:  @@acc += <vertex set>  is rejected in every form; the accumulator
+#      must be filled with  ACCUM @@acc += <vertex>  inside a SELECT (probe p3m_*).
+#   5. Unbounded expansion over shared email/region domains produced multi-hundred-
+#      thousand vertex result sets that exceeded the RESTPP request timeout (HTTP 408
+#      at ~16s). Result sets are now LIMIT-ed via max_results.
+# Printed result keys (@@seedTxns, ViaCard, ViaRegion, ViaDevice, ViaPEmail, ViaREmail)
+# are unchanged.
+# ===========================================================================
+USE GRAPH hhg_fraud_graph
+CREATE QUERY find_related_transactions(STRING txn_id, STRING card_id, STRING customer_id,
+                                       UINT max_depth, UINT max_results)
+                                       FOR GRAPH hhg_fraud_graph {
+
+  SetAccum<VERTEX> @@seedTxns;
+  SetAccum<STRING> @@seed_ids;
+  SetAccum<STRING> @@card_ids;
+  SetAccum<STRING> @@region_codes;
+  SetAccum<STRING> @@dev_ids;
+  SetAccum<STRING> @@pdom;
+  SetAccum<STRING> @@rdom;
+
+  # ---- seeds (all in the declared forward direction) ----
+  IF txn_id != "" THEN
+    S = {Transaction.*};
+    T = SELECT t FROM S:t WHERE t.txn_id == txn_id
+         ACCUM @@seed_ids += t.txn_id,
+                @@seedTxns += t;
+  END;
+
+  IF card_id != "" THEN
+    CS = {Card.*};
+    K = SELECT c FROM CS:c WHERE c.card_id == card_id;
+    CTx = SELECT t FROM K:c -(MADE)- Transaction:t
+           ACCUM @@seed_ids += t.txn_id,
+                  @@seedTxns += t;
+  END;
+
+  IF customer_id != "" THEN
+    CustS = {Customer.*};
+    UC = SELECT c FROM CustS:c WHERE c.customer_id == customer_id;
+    UCards = SELECT k FROM UC:c -(OWNS)- Card:k;
+    UTx = SELECT t FROM UCards:k -(MADE)- Transaction:t
+           ACCUM @@seed_ids += t.txn_id,
+                  @@seedTxns += t;
+  END;
+
+  IF @@seedTxns.size() == 0 THEN
+    PRINT "NO_SEED";
+    RETURN;
+  END;
+
+  # bounded depth: depth 1 = seeds only, no expansion
+  IF max_depth <= 1 THEN
+    PRINT @@seedTxns;
+    PRINT "DEPTH_LIMITED";
+    RETURN;
+  END;
+
+  # bounded result size (0 => default)
+  UINT cap;
+  IF max_results == 0 THEN cap = 500; ELSE cap = max_results; END;
+
+  # re-materialise a typed local vertex set (a @@ accumulator cannot be a FROM source)
+  AllTx = {Transaction.*};
+  Seeds = SELECT t FROM AllTx:t WHERE t.txn_id IN @@seed_ids;
+
+  # ---- card history: seed -> Card (reverse MADE) -> Transaction (forward MADE) ----
+  AllCards = {Card.*};
+  ViaCardCard = SELECT c FROM AllCards:c -(MADE)- Transaction:t
+                  WHERE t.txn_id IN @@seed_ids
+                  ACCUM @@card_ids += c.card_id;
+  ViaCard = SELECT t2 FROM ViaCardCard:c -(MADE)- Transaction:t2 LIMIT cap;
+
+  # ---- same billing region ----
+  ViaRegionReg = SELECT r FROM Seeds:t -(BILLED_IN)- BillingRegion:r
+                   ACCUM @@region_codes += r.region_code;
+  ViaRegion = SELECT t2 FROM AllTx:t2 -(BILLED_IN)- BillingRegion:r2
+                WHERE r2.region_code IN @@region_codes LIMIT cap;
+
+  # ---- same device ----
+  ViaDeviceDev = SELECT d FROM Seeds:t -(FROM_DEVICE)- DeviceProfile:d
+                   ACCUM @@dev_ids += d.device_profile_id;
+  ViaDevice = SELECT t2 FROM AllTx:t2 -(FROM_DEVICE)- DeviceProfile:d2
+                WHERE d2.device_profile_id IN @@dev_ids LIMIT cap;
+
+  # ---- same purchaser email ----
+  ViaPEmailDom = SELECT e FROM Seeds:t -(PURCHASER_EMAIL)- EmailDomain:e
+                   ACCUM @@pdom += e.domain;
+  ViaPEmail = SELECT t2 FROM AllTx:t2 -(PURCHASER_EMAIL)- EmailDomain:e2
+                WHERE e2.domain IN @@pdom LIMIT cap;
+
+  # ---- same recipient email ----
+  ViaREmailDom = SELECT e2 FROM Seeds:t -(RECIPIENT_EMAIL)- EmailDomain:e2
+                   ACCUM @@rdom += e2.domain;
+  ViaREmail = SELECT t2 FROM AllTx:t2 -(RECIPIENT_EMAIL)- EmailDomain:e3
+                WHERE e3.domain IN @@rdom LIMIT cap;
+
+  PRINT @@seedTxns;
+  PRINT ViaCard;
+  PRINT ViaRegion;
+  PRINT ViaDevice;
+  PRINT ViaPEmail;
+  PRINT ViaREmail;
+}

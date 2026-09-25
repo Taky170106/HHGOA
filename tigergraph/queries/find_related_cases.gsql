@@ -1,0 +1,142 @@
+# Query F - find_related_cases
+# Input: entity IDs (txn_id, card_id, customer_id, device_profile_id, region_code, domain)
+# Return: historical ClosedCase records connected through verified graph paths
+# Paths: transaction, shared device, shared region, same card, same customer, same email
+# Read-only: SELECT / PRINT only. No historical relationship is invented - every case
+#            is reached through an actual INVOLVES / ON_CARD / CONNECTED_TO edge.
+#
+# ===========================================================================
+# PHASE 3A REPAIR - TigerGraph Community Edition 4.2.5 (live compiler authoritative)
+# See get_transaction.gsql for the full probe table (F1..F6).
+#   1. A plain -(EDGE)- walks only the declared FROM -> TO direction, so every hop
+#      that starts at an edge's TO type was rejected with TYP-111 ("the edge types
+#      [X] cannot find any compatible starting vertex types from the source").
+#   2. Reverse traversal must be spelled -(<-EDGE)-, but reverse and forward hops
+#      CANNOT be mixed in one query (F3, probe p3e_f3/p3e_f4/p3f_m4/p3f_m5/p3k_k5/
+#      p3k_k7 all rejected with "The query has mixed usage of v1 and v2 syntax").
+#      This query needs both directions (Customer -(OWNS)-> Card is forward, while
+#      ClosedCase -> Transaction is forward from the case side), so EVERY reverse
+#      hop is rewritten as a forward-only inverted traversal out of the full
+#      target-type vertex set (F5, runtime verified by p3k_k3/p3k_k4):
+#          X -(<-E)- Y      ==      SELECT x FROM AllX:x -(E)-> Y:y WHERE y.pk IN @@ids
+#      The returned vertex sets are identical to the reverse form.
+#   3. A @@ accumulator cannot be a FROM source (TYP-152); seed ids are collected in
+#      SetAccum<STRING> and re-materialised with  WHERE pk IN @@ids (F6).
+#   4. Chained multi-hop paths inside one FROM clause are rejected (F4); each path
+#      is split into single-hop SELECTs - identical vertex set.
+# Affected edges: INVOLVES, ON_CARD, CONNECTED_TO (reverse) and FROM_DEVICE
+# (DeviceProfile -> Transaction, reverse), BILLED_IN (Region -> Transaction, reverse),
+# PURCHASER_EMAIL / RECIPIENT_EMAIL (Domain -> Transaction, reverse).
+# Unchanged forward hops: OWNS (Customer -> Card), MADE (Card -> Transaction),
+# and Transaction -> DeviceProfile / BillingRegion / EmailDomain.
+# Purpose, parameters and the printed output key @@seedCases are unchanged.
+# ===========================================================================
+USE GRAPH hhg_fraud_graph
+CREATE QUERY find_related_cases(
+  STRING txn_id, STRING card_id, STRING customer_id,
+  STRING device_profile_id, STRING region_code, STRING domain
+) FOR GRAPH hhg_fraud_graph {
+
+  SetAccum<VERTEX> @@seedCases;
+  SetAccum<STRING> @@dev_ids;     # device profile ids of the seed txn
+  SetAccum<STRING> @@ot_ids;      # txns on the seed txn's device
+  SetAccum<STRING> @@ck_ids;      # cards owned by the seed customer
+  SetAccum<STRING> @@dt_ids;      # txns on the named device
+  SetAccum<STRING> @@rt_ids;      # txns billed in the named region
+  SetAccum<STRING> @@et_ids;      # txns with the named purchaser domain
+  SetAccum<STRING> @@et2_ids;     # txns with the named recipient domain
+
+  AllCases = {ClosedCase.*};
+  AllTx    = {Transaction.*};
+
+  # ---------- transaction ----------
+  IF txn_id != "" THEN
+    T = {Transaction.*};
+    TT = SELECT t FROM T:t WHERE t.txn_id == txn_id;
+
+    # ClosedCase -> Transaction, inverted (INVOLVES is forward from the case)
+    C1 = SELECT c FROM AllCases:c -(INVOLVES)- Transaction:t
+           WHERE t.txn_id == txn_id
+           ACCUM @@seedCases += c;
+    # (accumulator filled directly in the SELECT: TYP-500 rejects  @@acc += vertexSet)
+
+    # txn -> device (forward) -> other txns on that device (inverted FROM_DEVICE)
+    Dev = SELECT d FROM TT:t -(FROM_DEVICE)- DeviceProfile:d
+            ACCUM @@dev_ids += d.device_profile_id;
+    OT = SELECT o FROM AllTx:o -(FROM_DEVICE)- DeviceProfile:d2
+           WHERE d2.device_profile_id IN @@dev_ids
+           ACCUM @@ot_ids += o.txn_id;
+
+    # ... -> cases (inverted INVOLVES)
+    CDev = SELECT c FROM AllCases:c -(INVOLVES)- Transaction:t2
+             WHERE t2.txn_id IN @@ot_ids
+             ACCUM @@seedCases += c;
+  END;
+
+  # ---------- card ----------
+  IF card_id != "" THEN
+    CS = {Card.*};
+    KK = SELECT k FROM CS:k WHERE k.card_id == card_id;
+    C2  = SELECT c FROM AllCases:c -(ON_CARD)- Card:k2
+            WHERE k2.card_id == card_id
+            ACCUM @@seedCases += c;
+    C2b = SELECT c FROM AllCases:c -(CONNECTED_TO)- Card:k3
+            WHERE k3.card_id == card_id
+            ACCUM @@seedCases += c;
+  END;
+
+  # ---------- customer ----------
+  IF customer_id != "" THEN
+    CustS = {Customer.*};
+    CU = SELECT cu FROM CustS:cu WHERE cu.customer_id == customer_id;
+    CK = SELECT k FROM CU:cu -(OWNS)- Card:k
+           ACCUM @@ck_ids += k.card_id;
+    C3 = SELECT c FROM AllCases:c -(ON_CARD)- Card:k2
+           WHERE k2.card_id IN @@ck_ids
+           ACCUM @@seedCases += c;
+  END;
+
+  # ---------- device ----------
+  IF device_profile_id != "" THEN
+    DS = {DeviceProfile.*};
+    DD = SELECT d FROM DS:d WHERE d.device_profile_id == device_profile_id;
+    DT = SELECT t FROM AllTx:t -(FROM_DEVICE)- DeviceProfile:d2
+           WHERE d2.device_profile_id == device_profile_id
+           ACCUM @@dt_ids += t.txn_id;
+    DC = SELECT c FROM AllCases:c -(INVOLVES)- Transaction:t2
+           WHERE t2.txn_id IN @@dt_ids
+           ACCUM @@seedCases += c;
+  END;
+
+  # ---------- billing region ----------
+  IF region_code != "" THEN
+    RS = {BillingRegion.*};
+    RR = SELECT r FROM RS:r WHERE r.region_code == region_code;
+    RT = SELECT t FROM AllTx:t -(BILLED_IN)- BillingRegion:r2
+           WHERE r2.region_code == region_code
+           ACCUM @@rt_ids += t.txn_id;
+    RC = SELECT c FROM AllCases:c -(INVOLVES)- Transaction:t2
+           WHERE t2.txn_id IN @@rt_ids
+           ACCUM @@seedCases += c;
+  END;
+
+  # ---------- email domain ----------
+  IF domain != "" THEN
+    ES = {EmailDomain.*};
+    EE = SELECT e FROM ES:e WHERE e.domain == domain;
+    ET = SELECT t FROM AllTx:t -(PURCHASER_EMAIL)- EmailDomain:e2
+           WHERE e2.domain == domain
+           ACCUM @@et_ids += t.txn_id;
+    ET2 = SELECT t FROM AllTx:t -(RECIPIENT_EMAIL)- EmailDomain:e3
+            WHERE e3.domain == domain
+            ACCUM @@et2_ids += t.txn_id;
+    EC = SELECT c FROM AllCases:c -(INVOLVES)- Transaction:t2
+           WHERE t2.txn_id IN @@et_ids
+           ACCUM @@seedCases += c;
+    EC2 = SELECT c FROM AllCases:c -(INVOLVES)- Transaction:t3
+            WHERE t3.txn_id IN @@et2_ids
+            ACCUM @@seedCases += c;
+  END;
+
+  PRINT @@seedCases;
+}

@@ -1,0 +1,681 @@
+{
+  "case_id": "HHG-015",
+  "case": {
+    "status": "escalated",
+    "verdict": "uncertain",
+    "fraud_probability": 0.6941,
+    "pattern": "card_not_present_new_device",
+    "pattern_description": "",
+    "affected_txn_ids": [
+      "3080252",
+      "3085777",
+      "3085799",
+      "3464869"
+    ],
+    "first_suspicious_txn_id": "3080252",
+    "connected_card_ids": [
+      "C00681-K1",
+      "C01155-K2",
+      "C02881-K1",
+      "C05292-K1",
+      "C05704-K2",
+      "C11227-K2",
+      "C11413-K1"
+    ],
+    "connected_device_profiles": [
+      "Trident/7.0 | Windows 8.1 | ie 11.0 for desktop | 1680x1050"
+    ],
+    "exposure_usd": 1749.9,
+    "evidence": [
+      {
+        "evidence_id": "EV-01",
+        "claim": "Case HHG-015 opened 2016-11-17 19:03:36 from risk_score trigger: Real-time model scored transaction 3464869 ($599.94, online) at 0.77. Review and decide.",
+        "source": "document",
+        "ref": "case_pack.csv#HHG-015",
+        "entity_ids": [
+          "HHG-015",
+          "3464869"
+        ],
+        "evidence_class": "direct"
+      },
+      {
+        "evidence_id": "EV-02",
+        "claim": "Transaction 3464869 of $599.94 on card C03042-K1 is a online transaction in billing region 327.0 (region home).",
+        "source": "graph",
+        "ref": "query:get_transaction(txn_id=3464869)",
+        "entity_ids": [
+          "3464869",
+          "C03042-K1"
+        ],
+        "evidence_class": "derived_graph"
+      },
+      {
+        "evidence_id": "EV-03",
+        "claim": "Transaction 3464869 came from device profile DP-d3790982da8c33b0 marked New, match flag match_status:2, linked to 8 card(s) across 8 customer(s).",
+        "source": "graph",
+        "ref": "query:find_device_connections(txn_id=3464869)",
+        "entity_ids": [
+          "DP-d3790982da8c33b0",
+          "3464869",
+          "C00681-K1",
+          "C01155-K2",
+          "C02881-K1",
+          "C03042-K1",
+          "C05292-K1",
+          "C05704-K2"
+        ],
+        "evidence_class": "derived_graph"
+      },
+      {
+        "evidence_id": "EV-04",
+        "claim": "Card C03042-K1 shows 56 online authorisation(s) in the 48 hours before 3464869.",
+        "source": "graph",
+        "ref": "query:get_card_history(card_id=C03042-K1)",
+        "entity_ids": [
+          "3001718",
+          "3006031",
+          "3006117",
+          "3006493",
+          "3006928",
+          "3006942"
+        ],
+        "evidence_class": "derived_graph"
+      },
+      {
+        "evidence_id": "EV-05",
+        "claim": "Transaction 3464869 deviates from card C03042-K1 history: $599.94 is more than 3x the card median of $99.96.",
+        "source": "graph",
+        "ref": "query:get_card_history(card_id=C03042-K1)",
+        "entity_ids": [
+          "3464869",
+          "C03042-K1"
+        ],
+        "evidence_class": "derived_graph"
+      },
+      {
+        "evidence_id": "EV-06",
+        "claim": "Card C03042-K1 already appears in confirmed-fraud closed case(s) CC-0615, CC-3886.",
+        "source": "graph",
+        "ref": "query:find_related_cases(card_id=C03042-K1)",
+        "entity_ids": [
+          "CC-0615",
+          "CC-3886",
+          "C03042-K1"
+        ],
+        "evidence_class": "derived_graph"
+      },
+      {
+        "evidence_id": "EV-07",
+        "claim": "Device profile DP-d3790982da8c33b0 is also recorded on confirmed-fraud closed case(s) CC-0006, CC-0033, CC-0166, CC-0177, CC-0209 on other cards.",
+        "source": "graph",
+        "ref": "query:find_device_connections(txn_id=3464869)",
+        "entity_ids": [
+          "CC-0006",
+          "CC-0033",
+          "CC-0166",
+          "CC-0177",
+          "CC-0209",
+          "DP-d3790982da8c33b0"
+        ],
+        "evidence_class": "derived_graph"
+      },
+      {
+        "evidence_id": "EV-08",
+        "claim": "Retrieved prior case memory CC-0006, CC-0033, CC-0166, CC-0615, CC-3886 for pattern similarity.",
+        "source": "graph",
+        "ref": "query:find_related_cases(card_id=C03042-K1)",
+        "entity_ids": [
+          "CC-0006",
+          "CC-0033",
+          "CC-0166",
+          "CC-0615",
+          "CC-3886"
+        ],
+        "evidence_class": "derived_graph"
+      },
+      {
+        "evidence_id": "EV-09",
+        "claim": "Model score for transaction 3464869 is 0.5776 (32 features); largest SHAP contributions: dt_seconds (+0.1148), card_historical_cases (-0.0814), product_cd (+0.0392).",
+        "source": "external",
+        "ref": "model:models/fraud_model.pkl + xai/shap_local_benchmark_cases.json",
+        "entity_ids": [
+          "3464869"
+        ],
+        "evidence_class": "model_analytical"
+      },
+      {
+        "evidence_id": "EV-10",
+        "claim": "The bank's input risk_score runs opposite to confirmed outcome in this graph: the 4665 confirmed-fraud alerts carry a median score of 0.47 against 0.88 for the 900 cleared alerts, and only 64.7% of alerts scoring 0.90 or above were confirmed fraud. Case HHG-015 carries a score of 0.77, which the history says is a reason to look, not a verdict.",
+        "source": "document",
+        "ref": "DATASET/closed_cases_history.csv (outcome) x data/vertices/transaction.csv (risk_score)",
+        "entity_ids": [
+          "3464869"
+        ],
+        "evidence_class": "model_analytical"
+      },
+      {
+        "evidence_id": "EV-11",
+        "claim": "Customer states they did not make the $599.94 transaction 3464869 and still has the card",
+        "source": "customer",
+        "ref": "evidence_request:1",
+        "entity_ids": [
+          "3464869"
+        ],
+        "evidence_class": "direct"
+      }
+    ],
+    "similar_prior_cases": [
+      "CC-0006",
+      "CC-0033",
+      "CC-0166",
+      "CC-0615",
+      "CC-3886"
+    ],
+    "summary": "Case HHG-015 covers a online $599.94 transaction 3464869 on card C03042-K1 raised by a risk_score trigger. Graph investigation found 6 corroborating signal(s) - new device, amount outlier, 48h burst, shared-device ring, prior fraud on this card. Pattern assessed as card not present new device; fraud probability 0.49 before additional evidence and 0.69 after, giving a verdict of uncertain. Exposure across 4 transaction(s) is $1749.90. The graph does not corroborate the alert strongly enough to block, so under R1 the card stays active, the case stays open and the requested verification is recorded as outstanding.",
+    "written_to_graph": false,
+    "graph_case_id": ""
+  },
+  "evidence_requests": [
+    {
+      "type": "customer_validation",
+      "asked_after_step": 4,
+      "assumed_response": "Customer states they did not make the $599.94 transaction 3464869 and still has the card"
+    }
+  ],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "VERIFY_WITH_CUSTOMER",
+        "route": "auto",
+        "reason": "R1: probability 0.49 on the available signal(s) is below 0.70, confirm with the cardholder before any blocking action"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "Section 3a: evidence was requested, so an internal case is opened to hold it"
+      },
+      {
+        "action": "MONITOR_CARD",
+        "route": "auto",
+        "reason": "R4: no reply yet, so the card stays active under monitoring while the validation reply is pending"
+      }
+    ],
+    "final": [
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "Section 3a: fraud probability 0.69 >= 0.30, keep the case open and updatable"
+      },
+      {
+        "action": "STEP_UP_AUTH",
+        "route": "auto",
+        "reason": "R1: verdict rests on a single signal with probability 0.69 < 0.70, confirm before any blocking action"
+      },
+      {
+        "action": "ESCALATE_TO_ANALYST",
+        "route": "auto",
+        "reason": "R8: verdict uncertain with exposure $1749.90 > $500"
+      },
+      {
+        "action": "MONITOR_CARD",
+        "route": "auto",
+        "reason": "R4: no reply has settled the question, so the card stays active under raised monitoring while evidence is gathered"
+      }
+    ],
+    "what_changed": "Assumed response moved fraud probability from 0.49 to 0.69 (verdict uncertain). Added: STEP_UP_AUTH, ESCALATE_TO_ANALYST; Removed: VERIFY_WITH_CUSTOMER."
+  },
+  "sar": {
+    "file": false,
+    "reason": "Verdict is uncertain, so no report is filed; the case remains an internal record (Section 3a: most cases never need a report).",
+    "narrative": "",
+    "subjects": [],
+    "total_amount_usd": 0,
+    "activity_dates": []
+  },
+  "stop_reason": "Section 6: further graph steps would not change the recommendation. The customer_validation response is still outstanding, so the case stays open at probability 0.49 -> 0.69 and is recommended under R1/R8 without blocking.",
+  "tool_calls": 6,
+  "tokens": 0,
+  "latency_s": 4.902,
+  "investigation_record": [
+    {
+      "step": 1,
+      "name": "CASE",
+      "detail": "HHG-015 opened 2016-11-17 19:03:36 (risk_score trigger)."
+    },
+    {
+      "step": 2,
+      "name": "TRIGGER",
+      "detail": "Real-time model scored transaction 3464869 ($599.94, online) at 0.77. Review and decide."
+    },
+    {
+      "step": 3,
+      "name": "EVIDENCE_COLLECTION",
+      "detail": "11 evidence item(s) gathered: 7 graph-derived, 2 direct, 2 model."
+    },
+    {
+      "step": 4,
+      "name": "GRAPH_INVESTIGATION",
+      "detail": "TigerGraph queries benchmark_case_context, get_transaction, find_related_cases, find_device_connections returned 10 relationship(s)."
+    },
+    {
+      "step": 5,
+      "name": "FINDINGS",
+      "detail": "Case HHG-015 opened from a risk_score trigger on transaction 3464869.; 6 graph-derived signal(s) support the alert (pattern card_not_present_new_device).; Card(s) C00681-K1, C01155-K2, C02881-K1, C05292-K1 share the device profile with the flagged transaction.; Retrieved closed case(s) CC-0006, CC-0033, CC-0166, CC-0615, CC-3886 as similar prior activity."
+    },
+    {
+      "step": 6,
+      "name": "DECISION",
+      "detail": "verdict=uncertain, fraud_probability=0.6941, pattern=card_not_present_new_device, status=escalated"
+    },
+    {
+      "step": 7,
+      "name": "ACTION",
+      "detail": "CREATE_CASE, STEP_UP_AUTH, ESCALATE_TO_ANALYST, MONITOR_CARD"
+    },
+    {
+      "step": 8,
+      "name": "NEXT_BEST_ACTION",
+      "detail": "CREATE_CASE (auto) - Section 3a: fraud probability 0.69 >= 0.30, keep the case open and updatable"
+    },
+    {
+      "step": 9,
+      "name": "APPROVAL_ROUTE",
+      "detail": "auto"
+    }
+  ],
+  "findings": [
+    {
+      "finding_id": "F-01",
+      "title": "Trigger",
+      "statement": "Case HHG-015 opened from a risk_score trigger on transaction 3464869.",
+      "evidence_ids": [
+        "EV-01"
+      ],
+      "type": "direct"
+    },
+    {
+      "finding_id": "F-02",
+      "title": "Graph corroboration",
+      "statement": "6 graph-derived signal(s) support the alert (pattern card_not_present_new_device).",
+      "evidence_ids": [
+        "EV-02",
+        "EV-03",
+        "EV-04",
+        "EV-05",
+        "EV-06",
+        "EV-07",
+        "EV-08"
+      ],
+      "type": "derived_graph"
+    },
+    {
+      "finding_id": "F-03",
+      "title": "Connected cards",
+      "statement": "Card(s) C00681-K1, C01155-K2, C02881-K1, C05292-K1 share the device profile with the flagged transaction.",
+      "evidence_ids": [
+        "EV-03"
+      ],
+      "type": "derived_graph"
+    },
+    {
+      "finding_id": "F-04",
+      "title": "Prior case memory",
+      "statement": "Retrieved closed case(s) CC-0006, CC-0033, CC-0166, CC-0615, CC-3886 as similar prior activity.",
+      "evidence_ids": [
+        "EV-08"
+      ],
+      "type": "derived_graph"
+    },
+    {
+      "finding_id": "F-05",
+      "title": "Model evidence",
+      "statement": "Model probability 0.5776; largest SHAP contributions dt_seconds, card_historical_cases, product_cd.",
+      "evidence_ids": [
+        "EV-09",
+        "EV-10"
+      ],
+      "type": "model_analytical"
+    }
+  ],
+  "decision": {
+    "decision": "uncertain",
+    "status": "escalated",
+    "rationale": "Section 6: further graph steps would not change the recommendation. The customer_validation response is still outstanding, so the case stays open at probability 0.49 -> 0.69 and is recommended under R1/R8 without blocking. Pattern card_not_present_new_device. Fraud probability 0.4941 (before) -> 0.6941 (after additional evidence). Evidence used: EV-01, EV-02, EV-03, EV-04, EV-05, EV-06, EV-07, EV-08, EV-09, EV-10, EV-11.",
+    "supporting_evidence_ids": [
+      "EV-01",
+      "EV-02",
+      "EV-03",
+      "EV-04",
+      "EV-05",
+      "EV-06",
+      "EV-07",
+      "EV-08",
+      "EV-09",
+      "EV-10",
+      "EV-11"
+    ],
+    "policy_rules": [
+      "R1",
+      "R8",
+      "Section 3a"
+    ]
+  },
+  "actions_taken": [
+    {
+      "action": "CREATE_CASE",
+      "route": "auto",
+      "reason": "Section 3a: fraud probability 0.69 >= 0.30, keep the case open and updatable"
+    },
+    {
+      "action": "STEP_UP_AUTH",
+      "route": "auto",
+      "reason": "R1: verdict rests on a single signal with probability 0.69 < 0.70, confirm before any blocking action"
+    },
+    {
+      "action": "ESCALATE_TO_ANALYST",
+      "route": "auto",
+      "reason": "R8: verdict uncertain with exposure $1749.90 > $500"
+    },
+    {
+      "action": "MONITOR_CARD",
+      "route": "auto",
+      "reason": "R4: no reply has settled the question, so the card stays active under raised monitoring while evidence is gathered"
+    }
+  ],
+  "actions_recommended_awaiting_approval": [],
+  "graph_evidence": {
+    "single_source_of_truth": "TigerGraph hhg_fraud_graph (Community Edition 4.2.5)",
+    "phase_2_baseline": "8 vertex types / 11 edge types / 2,505,266 edges (unchanged)",
+    "queries": [
+      {
+        "name": "benchmark_case_context",
+        "params": {
+          "case_id": "HHG-015"
+        },
+        "http_status": 200,
+        "latency_ms": 148.2
+      },
+      {
+        "name": "get_transaction",
+        "params": {
+          "txn_id": "3464869"
+        },
+        "http_status": 200,
+        "latency_ms": 97.3
+      },
+      {
+        "name": "find_related_cases",
+        "params": {
+          "card_id": "C03042-K1"
+        },
+        "http_status": 200,
+        "latency_ms": 11.2
+      },
+      {
+        "name": "find_device_connections",
+        "params": {
+          "txn_id": "3464869"
+        },
+        "http_status": 200,
+        "latency_ms": 88.0
+      }
+    ],
+    "entities": {
+      "BenchmarkCase": [
+        "HHG-015"
+      ],
+      "Transaction": [
+        "3464869"
+      ],
+      "Card": [
+        "C03042-K1"
+      ],
+      "Customer": [
+        "C03042"
+      ],
+      "DeviceProfile": [
+        "DP-d3790982da8c33b0"
+      ],
+      "BillingRegion": [
+        "327.0"
+      ],
+      "EmailDomain": [
+        "anonymous.com",
+        "anonymous.com"
+      ],
+      "ClosedCase": [
+        "CC-1313",
+        "CC-3886",
+        "CC-0615"
+      ],
+      "connected_card_ids": [
+        "C00681-K1",
+        "C01155-K2",
+        "C02881-K1",
+        "C05292-K1",
+        "C05704-K2",
+        "C11227-K2",
+        "C11413-K1"
+      ]
+    },
+    "edges": [
+      {
+        "edge": "TRIGGERS",
+        "from": "HHG-015",
+        "to": "3464869",
+        "from_type": "BenchmarkCase",
+        "to_type": "Transaction"
+      },
+      {
+        "edge": "MADE",
+        "from": "C03042-K1",
+        "to": "3464869",
+        "from_type": "Card",
+        "to_type": "Transaction"
+      },
+      {
+        "edge": "OWNS",
+        "from": "C03042",
+        "to": "C03042-K1",
+        "from_type": "Customer",
+        "to_type": "Card"
+      },
+      {
+        "edge": "FROM_DEVICE",
+        "from": "3464869",
+        "to": "DP-d3790982da8c33b0",
+        "from_type": "Transaction",
+        "to_type": "DeviceProfile"
+      },
+      {
+        "edge": "BILLED_IN",
+        "from": "3464869",
+        "to": "327.0",
+        "from_type": "Transaction",
+        "to_type": "BillingRegion"
+      },
+      {
+        "edge": "NEXT",
+        "from": "3464869",
+        "to": "3468946",
+        "from_type": "Transaction",
+        "to_type": "Transaction"
+      },
+      {
+        "edge": "NEXT",
+        "from": "3462404",
+        "to": "3464869",
+        "from_type": "Transaction",
+        "to_type": "Transaction"
+      },
+      {
+        "edge": "ON_CARD",
+        "from": "CC-1313",
+        "to": "C03042-K1",
+        "from_type": "ClosedCase",
+        "to_type": "Card"
+      },
+      {
+        "edge": "ON_CARD",
+        "from": "CC-3886",
+        "to": "C03042-K1",
+        "from_type": "ClosedCase",
+        "to_type": "Card"
+      },
+      {
+        "edge": "ON_CARD",
+        "from": "CC-0615",
+        "to": "C03042-K1",
+        "from_type": "ClosedCase",
+        "to_type": "Card"
+      }
+    ],
+    "graph_facts": [
+      "Transaction 3464869 of $599.94 on card C03042-K1 is a online transaction in billing region 327.0 (region home).",
+      "Transaction 3464869 came from device profile DP-d3790982da8c33b0 marked New, match flag match_status:2, linked to 8 card(s) across 8 customer(s).",
+      "Card C03042-K1 shows 56 online authorisation(s) in the 48 hours before 3464869.",
+      "Transaction 3464869 deviates from card C03042-K1 history: $599.94 is more than 3x the card median of $99.96.",
+      "Card C03042-K1 already appears in confirmed-fraud closed case(s) CC-0615, CC-3886.",
+      "Device profile DP-d3790982da8c33b0 is also recorded on confirmed-fraud closed case(s) CC-0006, CC-0033, CC-0166, CC-0177, CC-0209 on other cards.",
+      "Retrieved prior case memory CC-0006, CC-0033, CC-0166, CC-0615, CC-3886 for pattern similarity."
+    ],
+    "investigation_interpretation": [
+      "pattern=card_not_present_new_device",
+      "verdict=uncertain",
+      "fraud_probability=0.4941 (before) -> 0.6941 (after additional evidence)",
+      "anomaly_signals=6"
+    ],
+    "graph_fact_vs_interpretation": "Every entry under graph_facts is returned by a live GSQL query or computed from the loaded edge set; entries under investigation_interpretation are the agent's reading of those facts under the published policy."
+  },
+  "sar_status": {
+    "file": false,
+    "reason": "Verdict is uncertain, so no report is filed; the case remains an internal record (Section 3a: most cases never need a report).",
+    "required_approval_route": "none"
+  },
+  "required_approval_route": [
+    "auto"
+  ],
+  "pre_additional_evidence_state": {
+    "stage": "before_additional_evidence",
+    "current_evidence": [
+      "EV-01",
+      "EV-02",
+      "EV-03",
+      "EV-04",
+      "EV-05",
+      "EV-06",
+      "EV-07",
+      "EV-08",
+      "EV-09",
+      "EV-10"
+    ],
+    "current_findings": [
+      "F-01",
+      "F-02",
+      "F-03",
+      "F-04",
+      "F-05"
+    ],
+    "preliminary_decision": {
+      "verdict": "uncertain",
+      "fraud_probability": 0.4941,
+      "pattern": "card_not_present_new_device",
+      "status": "open"
+    },
+    "preliminary_next_best_action": [
+      {
+        "action": "VERIFY_WITH_CUSTOMER",
+        "route": "auto",
+        "reason": "R1: probability 0.49 on the available signal(s) is below 0.70, confirm with the cardholder before any blocking action"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "Section 3a: evidence was requested, so an internal case is opened to hold it"
+      },
+      {
+        "action": "MONITOR_CARD",
+        "route": "auto",
+        "reason": "R4: no reply yet, so the card stays active under monitoring while the validation reply is pending"
+      }
+    ],
+    "required_approval_route": [
+      "auto"
+    ],
+    "additional_evidence_requested": true,
+    "evidence_requested": [
+      {
+        "type": "customer_validation",
+        "asked_after_step": 4,
+        "assumed_response": "Customer states they did not make the $599.94 transaction 3464869 and still has the card"
+      }
+    ]
+  },
+  "post_additional_evidence_state": {
+    "stage": "after_additional_evidence",
+    "additional_evidence_received": true,
+    "additional_evidence": [
+      "Customer states they did not make the $599.94 transaction 3464869 and still has the card"
+    ],
+    "updated_evidence": [
+      "EV-01",
+      "EV-02",
+      "EV-03",
+      "EV-04",
+      "EV-05",
+      "EV-06",
+      "EV-07",
+      "EV-08",
+      "EV-09",
+      "EV-10",
+      "EV-11"
+    ],
+    "updated_findings": [
+      "F-01",
+      "F-02",
+      "F-03",
+      "F-04",
+      "F-05"
+    ],
+    "updated_decision": {
+      "verdict": "uncertain",
+      "fraud_probability": 0.6941,
+      "pattern": "card_not_present_new_device",
+      "status": "escalated"
+    },
+    "updated_next_best_action": [
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "Section 3a: fraud probability 0.69 >= 0.30, keep the case open and updatable"
+      },
+      {
+        "action": "STEP_UP_AUTH",
+        "route": "auto",
+        "reason": "R1: verdict rests on a single signal with probability 0.69 < 0.70, confirm before any blocking action"
+      },
+      {
+        "action": "ESCALATE_TO_ANALYST",
+        "route": "auto",
+        "reason": "R8: verdict uncertain with exposure $1749.90 > $500"
+      },
+      {
+        "action": "MONITOR_CARD",
+        "route": "auto",
+        "reason": "R4: no reply has settled the question, so the card stays active under raised monitoring while evidence is gathered"
+      }
+    ],
+    "updated_approval_route": [
+      "auto"
+    ],
+    "what_changed": "Assumed response moved fraud probability from 0.49 to 0.69 (verdict uncertain). Added: STEP_UP_AUTH, ESCALATE_TO_ANALYST; Removed: VERIFY_WITH_CUSTOMER.",
+    "note": "Stage B reflects the assumed response recorded in evidence_requests."
+  },
+  "graph_write": {
+    "status": "BLOCKED",
+    "written_to_graph": false,
+    "graph_case_id": "",
+    "reason": "Phase 2 graph is locked at its validated 8-vertex/11-edge/2,505,266-edge state; inserting a case vertex would mutate validated counts. Recorded in docs/GRAPH_WRITE_BLOCKER.md with the ready-to-run GSQL.",
+    "reference": "graph reference for this answer is the entity/edge block in graph_evidence above"
+  }
+}

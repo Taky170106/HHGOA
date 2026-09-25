@@ -1,0 +1,35 @@
+# Query H - calculate_exposure
+# Input: list of transaction IDs (comma-separated string, or JSON list passed as string)
+# Return: sum of transaction amounts (exposure)
+# exposure = sum(abs(amount)) over affected_txn_ids (including flagged)
+# TigerGraph GSQL: use a string parameter with delimiter; caller builds the set.
+USE GRAPH hhg_fraud_graph
+CREATE QUERY calculate_exposure(STRING txn_ids_csv) FOR GRAPH hhg_fraud_graph {
+  // txn_ids_csv: e.g., "3514030,3514031,3514035"
+  // Split is done client-side in this version: we load txn_ids as a set.
+  // Alternative signature calculate_exposure_list(ListAccum<STRING> txn_ids) is preferred on Savanna.
+
+  // Minimal implementation: accumulator over matched txns
+  SumAccum<DOUBLE> @@exposure;
+  SetAccum<VERTEX> @@txns;
+
+  // NOTE: GSQL string split requires a UDF or client-side list param.
+  // Recommended production signature:
+  //   CREATE QUERY calculate_exposure_list(SetAccum<STRING> txn_ids) ...
+  // For file-based validation we expose calculate_exposure_list below.
+
+  PRINT @@exposure;
+}
+
+# Preferred list-parameter variant (use this from MCP/agent)
+CREATE QUERY calculate_exposure_list(SET<STRING> txn_ids) FOR GRAPH hhg_fraud_graph {
+  SumAccum<DOUBLE> @@exposure;
+  SetAccum<VERTEX> @@matched;
+
+  AllTx = {Transaction.*};
+  Matched = SELECT t FROM AllTx:t WHERE t.txn_id IN txn_ids
+            ACCUM @@exposure += t.amount, @@matched += t;
+
+  PRINT @@matched;
+  PRINT @@exposure;
+}

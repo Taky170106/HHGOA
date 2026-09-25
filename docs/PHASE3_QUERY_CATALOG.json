@@ -1,0 +1,972 @@
+{
+  "phase": 3,
+  "title": "HHGoa 2026 - Phase 3 GSQL investigation query catalog",
+  "graph": "hhg_fraud_graph",
+  "tigergraph_edition": "Community Edition 4.2.5",
+  "total_investigation_queries": 10,
+  "queries_previously_http_404": [
+    "benchmark_case_context",
+    "find_device_connections",
+    "find_related_cases",
+    "find_related_transactions",
+    "get_transaction"
+  ],
+  "http_404_after_repair": 0,
+  "queries_compiled": 10,
+  "queries_installed": 10,
+  "queries_executed": 10,
+  "read_only_verified": true,
+  "traversal_grammar": {
+    "forward": "-(EDGE)-  and  -(EDGE)->  are equivalent",
+    "reverse": "-(<-EDGE)-  is the only compiling reverse spelling",
+    "restriction": "a query may contain ONLY forward hops or ONLY reverse hops; mixing is rejected with 'mixed usage of v1 and v2 syntax'",
+    "repair_technique": "reverse hop rewritten as forward-only inverted traversal: SELECT x FROM AllX:x -(E)-> Y:y WHERE y.pk IN @@ids",
+    "probe_files": [
+      "tigergraph/queries/_probe_syntax.gsql",
+      "tigergraph/queries/_probe_syntax2.gsql",
+      "tigergraph/queries/_probe_syntax3.gsql",
+      "tigergraph/queries/_probe_syntax4.gsql",
+      "tigergraph/queries/_probe_syntax5.gsql",
+      "tigergraph/queries/_probe_syntax6.gsql",
+      "tigergraph/queries/_probe_syntax7.gsql",
+      "tigergraph/queries/_probe_syntax8.gsql",
+      "tigergraph/queries/_probe_syntax9.gsql",
+      "tigergraph/queries/_probe_syntax10.gsql",
+      "tigergraph/queries/_probe_syntax11.gsql"
+    ]
+  },
+  "queries": [
+    {
+      "query_name": "get_transaction",
+      "slot": "Q1",
+      "purpose": "Transaction plus directly connected 1-hop context",
+      "parameters": [
+        "txn_id"
+      ],
+      "read_only": true,
+      "source_file": "tigergraph/queries/get_transaction.gsql",
+      "compilation_status": "COMPILED",
+      "installation_status": "INSTALLED",
+      "install_probe_http_status": 400,
+      "install_probe_meaning": "400/200 = installed (query reached the executor); 404 = NOT installed",
+      "execution_status": "EXECUTED",
+      "execution_http_status": 200,
+      "execution_ms": 107.5,
+      "result_structure": {
+        "T": 1,
+        "CardOwners": 1,
+        "Customers": 1,
+        "Devices": 1,
+        "Regions": 0,
+        "PEmails": 1,
+        "REmails": 1,
+        "NextTxns": 1,
+        "PrevTxns": 0
+      },
+      "representative_test": {
+        "params": {
+          "txn_id": "3000120"
+        },
+        "http_status": 200,
+        "ok": true
+      },
+      "benchmark_support": false,
+      "status": "PASS",
+      "invalid_input_test": {
+        "params": {
+          "txn_id": ""
+        },
+        "http_status": 200,
+        "ok": true,
+        "result_structure": {
+          "\"NOT_FOUND\"": "NOT_FOUND"
+        }
+      }
+    },
+    {
+      "query_name": "find_related_transactions",
+      "slot": "Q2",
+      "purpose": "Related transactions via shared card/region/device/email, depth and result bounded",
+      "parameters": [
+        "txn_id",
+        "card_id",
+        "customer_id",
+        "max_depth",
+        "max_results"
+      ],
+      "read_only": true,
+      "source_file": "tigergraph/queries/find_related_transactions.gsql",
+      "compilation_status": "COMPILED",
+      "installation_status": "INSTALLED",
+      "install_probe_http_status": 400,
+      "install_probe_meaning": "400/200 = installed (query reached the executor); 404 = NOT installed",
+      "execution_status": "EXECUTED",
+      "execution_http_status": 200,
+      "execution_ms": 144.6,
+      "result_structure": {
+        "@@seedTxns": 1,
+        "ViaCard": 50,
+        "ViaRegion": 0,
+        "ViaDevice": 23,
+        "ViaPEmail": 50,
+        "ViaREmail": 50
+      },
+      "representative_test": {
+        "params": {
+          "txn_id": "3000120",
+          "card_id": "",
+          "customer_id": "",
+          "max_depth": 2,
+          "max_results": 50
+        },
+        "http_status": 200,
+        "ok": true
+      },
+      "benchmark_support": false,
+      "status": "PASS",
+      "invalid_input_test": {
+        "params": {
+          "txn_id": "",
+          "card_id": "",
+          "customer_id": "",
+          "max_depth": 2,
+          "max_results": 50
+        },
+        "http_status": 200,
+        "ok": true,
+        "result_structure": {
+          "\"NO_SEED\"": "NO_SEED"
+        }
+      }
+    },
+    {
+      "query_name": "find_device_connections",
+      "slot": "Q3",
+      "purpose": "Other transactions/cards/customers sharing a DeviceProfile",
+      "parameters": [
+        "txn_id",
+        "device_profile_id"
+      ],
+      "read_only": true,
+      "source_file": "tigergraph/queries/find_device_connections.gsql",
+      "compilation_status": "COMPILED",
+      "installation_status": "INSTALLED",
+      "install_probe_http_status": 400,
+      "install_probe_meaning": "400/200 = installed (query reached the executor); 404 = NOT installed",
+      "execution_status": "EXECUTED",
+      "execution_http_status": 200,
+      "execution_ms": 79.7,
+      "result_structure": {
+        "@@devices": 1,
+        "LinkedTxns": 5,
+        "LinkedCards": 5,
+        "LinkedCustomers": 5
+      },
+      "representative_test": {
+        "params": {
+          "txn_id": "3000001",
+          "device_profile_id": ""
+        },
+        "http_status": 200,
+        "ok": true
+      },
+      "benchmark_support": false,
+      "status": "PASS",
+      "invalid_input_test": {
+        "params": {
+          "txn_id": "",
+          "device_profile_id": ""
+        },
+        "http_status": 200,
+        "ok": true,
+        "result_structure": {
+          "\"NO_DEVICE_FOUND\"": "NO_DEVICE_FOUND"
+        }
+      }
+    },
+    {
+      "query_name": "find_related_cases",
+      "slot": "Q4",
+      "purpose": "Historical ClosedCase records reachable from supplied entities",
+      "parameters": [
+        "txn_id",
+        "card_id",
+        "customer_id",
+        "device_profile_id",
+        "region_code",
+        "domain"
+      ],
+      "read_only": true,
+      "source_file": "tigergraph/queries/find_related_cases.gsql",
+      "compilation_status": "COMPILED",
+      "installation_status": "INSTALLED",
+      "install_probe_http_status": 400,
+      "install_probe_meaning": "400/200 = installed (query reached the executor); 404 = NOT installed",
+      "execution_status": "EXECUTED",
+      "execution_http_status": 200,
+      "execution_ms": 12.7,
+      "result_structure": {
+        "@@seedCases": 7
+      },
+      "representative_test": {
+        "params": {
+          "txn_id": "",
+          "card_id": "C00259-K1",
+          "customer_id": "",
+          "device_profile_id": "",
+          "region_code": "",
+          "domain": ""
+        },
+        "http_status": 200,
+        "ok": true
+      },
+      "benchmark_support": false,
+      "status": "PASS",
+      "invalid_input_test": {
+        "params": {
+          "txn_id": "",
+          "card_id": "",
+          "customer_id": "",
+          "device_profile_id": "",
+          "region_code": "",
+          "domain": ""
+        },
+        "http_status": 200,
+        "ok": true,
+        "result_structure": {
+          "@@seedCases": 0
+        }
+      }
+    },
+    {
+      "query_name": "benchmark_case_context",
+      "slot": "Q5",
+      "purpose": "Full investigation context for a benchmark case (BenchmarkCase -TRIGGERS-> Transaction)",
+      "parameters": [
+        "case_id"
+      ],
+      "read_only": true,
+      "source_file": "tigergraph/queries/benchmark_case_context.gsql",
+      "compilation_status": "COMPILED",
+      "installation_status": "INSTALLED",
+      "install_probe_http_status": 400,
+      "install_probe_meaning": "400/200 = installed (query reached the executor); 404 = NOT installed",
+      "execution_status": "EXECUTED",
+      "execution_http_status": 200,
+      "execution_ms": 181.2,
+      "result_structure": {
+        "B": 1,
+        "Flagged": 1,
+        "FlaggedCards": 1,
+        "FlaggedCustomer": 1,
+        "CardHistory": 422,
+        "Devices": 0,
+        "Regions": 1,
+        "PEmails": 0,
+        "REmails": 0,
+        "RelatedViaDevice": 0,
+        "RelatedViaRegion": 12,
+        "RelatedViaCard": 4,
+        "NextTx": 1,
+        "PrevTx": 1
+      },
+      "representative_test": {
+        "params": {
+          "case_id": "HHG-001"
+        },
+        "http_status": 200,
+        "ok": true
+      },
+      "benchmark_support": true,
+      "status": "PASS",
+      "invalid_input_test": {
+        "params": {
+          "case_id": "HHG-999"
+        },
+        "http_status": 200,
+        "ok": true,
+        "result_structure": {
+          "\"BENCHMARK_NOT_FOUND\"": "BENCHMARK_NOT_FOUND"
+        }
+      }
+    },
+    {
+      "query_name": "get_card_history",
+      "slot": "Q6",
+      "purpose": "Card transaction history",
+      "parameters": [
+        "card_id"
+      ],
+      "read_only": true,
+      "source_file": "tigergraph/queries/get_card_history.gsql",
+      "compilation_status": "COMPILED",
+      "installation_status": "INSTALLED",
+      "install_probe_http_status": 400,
+      "install_probe_meaning": "400/200 = installed (query reached the executor); 404 = NOT installed",
+      "execution_status": "EXECUTED",
+      "execution_http_status": 200,
+      "execution_ms": 19.2,
+      "result_structure": {
+        "K": 1,
+        "Txns": 60,
+        "NextEdges": 59
+      },
+      "representative_test": {
+        "params": {
+          "card_id": "C00259-K1"
+        },
+        "http_status": 200,
+        "ok": true
+      },
+      "benchmark_support": false,
+      "status": "PASS"
+    },
+    {
+      "query_name": "get_customer_history",
+      "slot": "Q8",
+      "purpose": "Customer/card/transaction relationships",
+      "parameters": [
+        "customer_id"
+      ],
+      "read_only": true,
+      "source_file": "tigergraph/queries/get_customer_history.gsql",
+      "compilation_status": "COMPILED",
+      "installation_status": "INSTALLED",
+      "install_probe_http_status": 400,
+      "install_probe_meaning": "400/200 = installed (query reached the executor); 404 = NOT installed",
+      "execution_status": "EXECUTED",
+      "execution_http_status": 200,
+      "execution_ms": 34.0,
+      "result_structure": {
+        "C": 1,
+        "Cards": 1,
+        "Txns": 60
+      },
+      "representative_test": {
+        "params": {
+          "customer_id": "C00259"
+        },
+        "http_status": 200,
+        "ok": true
+      },
+      "benchmark_support": false,
+      "status": "PASS"
+    },
+    {
+      "query_name": "temporal_chain",
+      "slot": "Q6b",
+      "purpose": "Card temporal transaction chain",
+      "parameters": [
+        "card_id"
+      ],
+      "read_only": true,
+      "source_file": "tigergraph/queries/temporal_chain.gsql",
+      "compilation_status": "COMPILED",
+      "installation_status": "INSTALLED",
+      "install_probe_http_status": 400,
+      "install_probe_meaning": "400/200 = installed (query reached the executor); 404 = NOT installed",
+      "execution_status": "EXECUTED",
+      "execution_http_status": 200,
+      "execution_ms": 18.2,
+      "result_structure": {
+        "K": 1,
+        "Txns": 60,
+        "NextEdges": 59
+      },
+      "representative_test": {
+        "params": {
+          "card_id": "C00259-K1"
+        },
+        "http_status": 200,
+        "ok": true
+      },
+      "benchmark_support": false,
+      "status": "PASS"
+    },
+    {
+      "query_name": "calculate_exposure",
+      "slot": "A1",
+      "purpose": "Deterministic exposure over a CSV of transaction ids",
+      "parameters": [
+        "txn_ids_csv"
+      ],
+      "read_only": true,
+      "source_file": "tigergraph/queries/calculate_exposure.gsql",
+      "compilation_status": "COMPILED",
+      "installation_status": "INSTALLED",
+      "install_probe_http_status": 200,
+      "install_probe_meaning": "400/200 = installed (query reached the executor); 404 = NOT installed",
+      "execution_status": "EXECUTED",
+      "execution_http_status": 200,
+      "execution_ms": 6.1,
+      "result_structure": {
+        "@@exposure": 0
+      },
+      "representative_test": {
+        "params": {
+          "txn_ids_csv": "3000120"
+        },
+        "http_status": 200,
+        "ok": true
+      },
+      "benchmark_support": false,
+      "status": "PASS"
+    },
+    {
+      "query_name": "calculate_exposure_list",
+      "slot": "A2",
+      "purpose": "Deterministic exposure over a set of transaction ids",
+      "parameters": [
+        "txn_ids"
+      ],
+      "read_only": true,
+      "source_file": "tigergraph/queries/calculate_exposure_list.gsql",
+      "compilation_status": "COMPILED",
+      "installation_status": "INSTALLED",
+      "install_probe_http_status": 400,
+      "install_probe_meaning": "400/200 = installed (query reached the executor); 404 = NOT installed",
+      "execution_status": "EXECUTED",
+      "execution_http_status": 200,
+      "execution_ms": 24.2,
+      "result_structure": {
+        "@@matched": 1,
+        "@@exposure": 155.43
+      },
+      "representative_test": {
+        "params": {
+          "txn_ids": "3000120"
+        },
+        "http_status": 200,
+        "ok": true
+      },
+      "benchmark_support": false,
+      "status": "PASS"
+    }
+  ],
+  "benchmark_cases": {
+    "total": 20,
+    "trigger_match": 20,
+    "detail": [
+      {
+        "case_id": "HHG-001",
+        "expected_txn": "3514030",
+        "returned_txn": [
+          "3514030"
+        ],
+        "trigger_match": true,
+        "http_status": 200,
+        "elapsed_ms": 167.0,
+        "result_structure": {
+          "B": 1,
+          "Flagged": 1,
+          "FlaggedCards": 1,
+          "FlaggedCustomer": 1,
+          "CardHistory": 422,
+          "Devices": 0,
+          "Regions": 1,
+          "PEmails": 0,
+          "REmails": 0,
+          "RelatedViaDevice": 0,
+          "RelatedViaRegion": 12,
+          "RelatedViaCard": 4,
+          "NextTx": 1,
+          "PrevTx": 1
+        }
+      },
+      {
+        "case_id": "HHG-002",
+        "expected_txn": "3478782",
+        "returned_txn": [
+          "3478782"
+        ],
+        "trigger_match": true,
+        "http_status": 200,
+        "elapsed_ms": 132.7,
+        "result_structure": {
+          "B": 1,
+          "Flagged": 1,
+          "FlaggedCards": 1,
+          "FlaggedCustomer": 1,
+          "CardHistory": 44,
+          "Devices": 0,
+          "Regions": 0,
+          "PEmails": 1,
+          "REmails": 1,
+          "RelatedViaDevice": 0,
+          "RelatedViaRegion": 0,
+          "RelatedViaCard": 1,
+          "NextTx": 1,
+          "PrevTx": 1
+        }
+      },
+      {
+        "case_id": "HHG-003",
+        "expected_txn": "3530164",
+        "returned_txn": [
+          "3530164"
+        ],
+        "trigger_match": true,
+        "http_status": 200,
+        "elapsed_ms": 223.8,
+        "result_structure": {
+          "B": 1,
+          "Flagged": 1,
+          "FlaggedCards": 1,
+          "FlaggedCustomer": 1,
+          "CardHistory": 1140,
+          "Devices": 0,
+          "Regions": 1,
+          "PEmails": 1,
+          "REmails": 0,
+          "RelatedViaDevice": 0,
+          "RelatedViaRegion": 272,
+          "RelatedViaCard": 6,
+          "NextTx": 1,
+          "PrevTx": 1
+        }
+      },
+      {
+        "case_id": "HHG-004",
+        "expected_txn": "3583227",
+        "returned_txn": [
+          "3583227"
+        ],
+        "trigger_match": true,
+        "http_status": 200,
+        "elapsed_ms": 156.8,
+        "result_structure": {
+          "B": 1,
+          "Flagged": 1,
+          "FlaggedCards": 1,
+          "FlaggedCustomer": 1,
+          "CardHistory": 216,
+          "Devices": 1,
+          "Regions": 0,
+          "PEmails": 1,
+          "REmails": 1,
+          "RelatedViaDevice": 0,
+          "RelatedViaRegion": 0,
+          "RelatedViaCard": 4,
+          "NextTx": 1,
+          "PrevTx": 1
+        }
+      },
+      {
+        "case_id": "HHG-005",
+        "expected_txn": "3523199",
+        "returned_txn": [
+          "3523199"
+        ],
+        "trigger_match": true,
+        "http_status": 200,
+        "elapsed_ms": 155.8,
+        "result_structure": {
+          "B": 1,
+          "Flagged": 1,
+          "FlaggedCards": 1,
+          "FlaggedCustomer": 1,
+          "CardHistory": 92,
+          "Devices": 1,
+          "Regions": 1,
+          "PEmails": 1,
+          "REmails": 1,
+          "RelatedViaDevice": 5,
+          "RelatedViaRegion": 272,
+          "RelatedViaCard": 3,
+          "NextTx": 1,
+          "PrevTx": 1
+        }
+      },
+      {
+        "case_id": "HHG-006",
+        "expected_txn": "3476682",
+        "returned_txn": [
+          "3476682"
+        ],
+        "trigger_match": true,
+        "http_status": 200,
+        "elapsed_ms": 186.2,
+        "result_structure": {
+          "B": 1,
+          "Flagged": 1,
+          "FlaggedCards": 1,
+          "FlaggedCustomer": 1,
+          "CardHistory": 261,
+          "Devices": 1,
+          "Regions": 1,
+          "PEmails": 1,
+          "REmails": 0,
+          "RelatedViaDevice": 25,
+          "RelatedViaRegion": 306,
+          "RelatedViaCard": 0,
+          "NextTx": 1,
+          "PrevTx": 1
+        }
+      },
+      {
+        "case_id": "HHG-007",
+        "expected_txn": "3514948",
+        "returned_txn": [
+          "3514948"
+        ],
+        "trigger_match": true,
+        "http_status": 200,
+        "elapsed_ms": 263.2,
+        "result_structure": {
+          "B": 1,
+          "Flagged": 1,
+          "FlaggedCards": 1,
+          "FlaggedCustomer": 1,
+          "CardHistory": 2792,
+          "Devices": 0,
+          "Regions": 1,
+          "PEmails": 1,
+          "REmails": 0,
+          "RelatedViaDevice": 0,
+          "RelatedViaRegion": 306,
+          "RelatedViaCard": 19,
+          "NextTx": 1,
+          "PrevTx": 1
+        }
+      },
+      {
+        "case_id": "HHG-008",
+        "expected_txn": "3558054",
+        "returned_txn": [
+          "3558054"
+        ],
+        "trigger_match": true,
+        "http_status": 200,
+        "elapsed_ms": 170.5,
+        "result_structure": {
+          "B": 1,
+          "Flagged": 1,
+          "FlaggedCards": 1,
+          "FlaggedCustomer": 1,
+          "CardHistory": 928,
+          "Devices": 1,
+          "Regions": 0,
+          "PEmails": 1,
+          "REmails": 1,
+          "RelatedViaDevice": 0,
+          "RelatedViaRegion": 0,
+          "RelatedViaCard": 19,
+          "NextTx": 1,
+          "PrevTx": 1
+        }
+      },
+      {
+        "case_id": "HHG-009",
+        "expected_txn": "3581141",
+        "returned_txn": [
+          "3581141"
+        ],
+        "trigger_match": true,
+        "http_status": 200,
+        "elapsed_ms": 146.7,
+        "result_structure": {
+          "B": 1,
+          "Flagged": 1,
+          "FlaggedCards": 1,
+          "FlaggedCustomer": 1,
+          "CardHistory": 56,
+          "Devices": 1,
+          "Regions": 1,
+          "PEmails": 0,
+          "REmails": 1,
+          "RelatedViaDevice": 37,
+          "RelatedViaRegion": 51,
+          "RelatedViaCard": 0,
+          "NextTx": 1,
+          "PrevTx": 1
+        }
+      },
+      {
+        "case_id": "HHG-010",
+        "expected_txn": "3506725",
+        "returned_txn": [
+          "3506725"
+        ],
+        "trigger_match": true,
+        "http_status": 200,
+        "elapsed_ms": 161.0,
+        "result_structure": {
+          "B": 1,
+          "Flagged": 1,
+          "FlaggedCards": 1,
+          "FlaggedCustomer": 1,
+          "CardHistory": 36,
+          "Devices": 1,
+          "Regions": 1,
+          "PEmails": 1,
+          "REmails": 1,
+          "RelatedViaDevice": 12,
+          "RelatedViaRegion": 44,
+          "RelatedViaCard": 1,
+          "NextTx": 1,
+          "PrevTx": 1
+        }
+      },
+      {
+        "case_id": "HHG-011",
+        "expected_txn": "3583368",
+        "returned_txn": [
+          "3583368"
+        ],
+        "trigger_match": true,
+        "http_status": 200,
+        "elapsed_ms": 438.6,
+        "result_structure": {
+          "B": 1,
+          "Flagged": 1,
+          "FlaggedCards": 1,
+          "FlaggedCustomer": 1,
+          "CardHistory": 10361,
+          "Devices": 1,
+          "Regions": 0,
+          "PEmails": 1,
+          "REmails": 1,
+          "RelatedViaDevice": 0,
+          "RelatedViaRegion": 0,
+          "RelatedViaCard": 11,
+          "NextTx": 1,
+          "PrevTx": 1
+        }
+      },
+      {
+        "case_id": "HHG-012",
+        "expected_txn": "3553342",
+        "returned_txn": [
+          "3553342"
+        ],
+        "trigger_match": true,
+        "http_status": 200,
+        "elapsed_ms": 158.2,
+        "result_structure": {
+          "B": 1,
+          "Flagged": 1,
+          "FlaggedCards": 1,
+          "FlaggedCustomer": 1,
+          "CardHistory": 991,
+          "Devices": 0,
+          "Regions": 1,
+          "PEmails": 1,
+          "REmails": 0,
+          "RelatedViaDevice": 0,
+          "RelatedViaRegion": 14,
+          "RelatedViaCard": 2,
+          "NextTx": 1,
+          "PrevTx": 1
+        }
+      },
+      {
+        "case_id": "HHG-013",
+        "expected_txn": "3526826",
+        "returned_txn": [
+          "3526826"
+        ],
+        "trigger_match": true,
+        "http_status": 200,
+        "elapsed_ms": 173.2,
+        "result_structure": {
+          "B": 1,
+          "Flagged": 1,
+          "FlaggedCards": 1,
+          "FlaggedCustomer": 1,
+          "CardHistory": 1569,
+          "Devices": 1,
+          "Regions": 0,
+          "PEmails": 1,
+          "REmails": 1,
+          "RelatedViaDevice": 0,
+          "RelatedViaRegion": 0,
+          "RelatedViaCard": 4,
+          "NextTx": 1,
+          "PrevTx": 1
+        }
+      },
+      {
+        "case_id": "HHG-014",
+        "expected_txn": "3478561",
+        "returned_txn": [
+          "3478561"
+        ],
+        "trigger_match": true,
+        "http_status": 200,
+        "elapsed_ms": 142.2,
+        "result_structure": {
+          "B": 1,
+          "Flagged": 1,
+          "FlaggedCards": 1,
+          "FlaggedCustomer": 1,
+          "CardHistory": 85,
+          "Devices": 1,
+          "Regions": 1,
+          "PEmails": 1,
+          "REmails": 1,
+          "RelatedViaDevice": 4,
+          "RelatedViaRegion": 124,
+          "RelatedViaCard": 0,
+          "NextTx": 1,
+          "PrevTx": 1
+        }
+      },
+      {
+        "case_id": "HHG-015",
+        "expected_txn": "3464869",
+        "returned_txn": [
+          "3464869"
+        ],
+        "trigger_match": true,
+        "http_status": 200,
+        "elapsed_ms": 166.5,
+        "result_structure": {
+          "B": 1,
+          "Flagged": 1,
+          "FlaggedCards": 1,
+          "FlaggedCustomer": 1,
+          "CardHistory": 79,
+          "Devices": 1,
+          "Regions": 1,
+          "PEmails": 1,
+          "REmails": 1,
+          "RelatedViaDevice": 0,
+          "RelatedViaRegion": 77,
+          "RelatedViaCard": 3,
+          "NextTx": 1,
+          "PrevTx": 1
+        }
+      },
+      {
+        "case_id": "HHG-016",
+        "expected_txn": "3534820",
+        "returned_txn": [
+          "3534820"
+        ],
+        "trigger_match": true,
+        "http_status": 200,
+        "elapsed_ms": 136.5,
+        "result_structure": {
+          "B": 1,
+          "Flagged": 1,
+          "FlaggedCards": 1,
+          "FlaggedCustomer": 1,
+          "CardHistory": 61,
+          "Devices": 1,
+          "Regions": 0,
+          "PEmails": 1,
+          "REmails": 1,
+          "RelatedViaDevice": 10,
+          "RelatedViaRegion": 0,
+          "RelatedViaCard": 0,
+          "NextTx": 1,
+          "PrevTx": 1
+        }
+      },
+      {
+        "case_id": "HHG-017",
+        "expected_txn": "3450629",
+        "returned_txn": [
+          "3450629"
+        ],
+        "trigger_match": true,
+        "http_status": 200,
+        "elapsed_ms": 152.9,
+        "result_structure": {
+          "B": 1,
+          "Flagged": 1,
+          "FlaggedCards": 1,
+          "FlaggedCustomer": 1,
+          "CardHistory": 59,
+          "Devices": 1,
+          "Regions": 1,
+          "PEmails": 1,
+          "REmails": 1,
+          "RelatedViaDevice": 8,
+          "RelatedViaRegion": 411,
+          "RelatedViaCard": 1,
+          "NextTx": 1,
+          "PrevTx": 1
+        }
+      },
+      {
+        "case_id": "HHG-018",
+        "expected_txn": "3491361",
+        "returned_txn": [
+          "3491361"
+        ],
+        "trigger_match": true,
+        "http_status": 200,
+        "elapsed_ms": 334.8,
+        "result_structure": {
+          "B": 1,
+          "Flagged": 1,
+          "FlaggedCards": 1,
+          "FlaggedCustomer": 1,
+          "CardHistory": 7091,
+          "Devices": 0,
+          "Regions": 1,
+          "PEmails": 0,
+          "REmails": 0,
+          "RelatedViaDevice": 0,
+          "RelatedViaRegion": 171,
+          "RelatedViaCard": 20,
+          "NextTx": 1,
+          "PrevTx": 1
+        }
+      },
+      {
+        "case_id": "HHG-019",
+        "expected_txn": "3503878",
+        "returned_txn": [
+          "3503878"
+        ],
+        "trigger_match": true,
+        "http_status": 200,
+        "elapsed_ms": 159.2,
+        "result_structure": {
+          "B": 1,
+          "Flagged": 1,
+          "FlaggedCards": 1,
+          "FlaggedCustomer": 1,
+          "CardHistory": 248,
+          "Devices": 1,
+          "Regions": 1,
+          "PEmails": 1,
+          "REmails": 1,
+          "RelatedViaDevice": 0,
+          "RelatedViaRegion": 306,
+          "RelatedViaCard": 4,
+          "NextTx": 1,
+          "PrevTx": 1
+        }
+      },
+      {
+        "case_id": "HHG-020",
+        "expected_txn": "3509359",
+        "returned_txn": [
+          "3509359"
+        ],
+        "trigger_match": true,
+        "http_status": 200,
+        "elapsed_ms": 150.5,
+        "result_structure": {
+          "B": 1,
+          "Flagged": 1,
+          "FlaggedCards": 1,
+          "FlaggedCustomer": 1,
+          "CardHistory": 112,
+          "Devices": 1,
+          "Regions": 1,
+          "PEmails": 1,
+          "REmails": 1,
+          "RelatedViaDevice": 2,
+          "RelatedViaRegion": 306,
+          "RelatedViaCard": 2,
+          "NextTx": 1,
+          "PrevTx": 1
+        }
+      }
+    ]
+  }
+}

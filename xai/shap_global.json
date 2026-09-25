@@ -1,0 +1,68 @@
+{
+  "scope": "MODEL EXPLANATION (SHAP over the trained classifier) \u2014 not an explanation of the graph itself",
+  "model": "sklearn.ensemble.RandomForestClassifier",
+  "n_rows_explained": 1392,
+  "mean_abs_shap_top15": [
+    {
+      "feature": "dt_seconds",
+      "mean_abs_shap": 0.075361
+    },
+    {
+      "feature": "card_historical_cases",
+      "mean_abs_shap": 0.054923
+    },
+    {
+      "feature": "card_on_card_cases",
+      "mean_abs_shap": 0.051578
+    },
+    {
+      "feature": "device_distinct_cards",
+      "mean_abs_shap": 0.044695
+    },
+    {
+      "feature": "device_shared_txn_degree",
+      "mean_abs_shap": 0.034525
+    },
+    {
+      "feature": "product_cd",
+      "mean_abs_shap": 0.033793
+    },
+    {
+      "feature": "log_amount",
+      "mean_abs_shap": 0.032489
+    },
+    {
+      "feature": "device_has_edge",
+      "mean_abs_shap": 0.032174
+    },
+    {
+      "feature": "amount",
+      "mean_abs_shap": 0.031341
+    },
+    {
+      "feature": "addr2",
+      "mean_abs_shap": 0.023357
+    },
+    {
+      "feature": "region_degree",
+      "mean_abs_shap": 0.019378
+    },
+    {
+      "feature": "purchaser_domain_degree",
+      "mean_abs_shap": 0.01602
+    },
+    {
+      "feature": "card_mean_time_delta",
+      "mean_abs_shap": 0.013637
+    },
+    {
+      "feature": "prev_amount_ratio",
+      "mean_abs_shap": 0.013439
+    },
+    {
+      "feature": "recipient_domain_degree",
+      "mean_abs_shap": 0.013407
+    }
+  ],
+  "baseline_output_mean": 0.7607
+}

@@ -1,0 +1,840 @@
+{
+ "vertices": [
+  {
+   "path": "data/vertices/benchmark_case.csv",
+   "rows": 20,
+   "columns": [
+    "case_id",
+    "opened_at",
+    "trigger_type",
+    "trigger_text",
+    "flagged_txn_id",
+    "card_id",
+    "customer_id",
+    "risk_score"
+   ],
+   "types": {
+    "case_id": {
+     "str": 20
+    },
+    "opened_at": {
+     "str": 20
+    },
+    "trigger_type": {
+     "str": 20
+    },
+    "trigger_text": {
+     "str": 20
+    },
+    "flagged_txn_id": {
+     "int": 20
+    },
+    "card_id": {
+     "str": 20
+    },
+    "customer_id": {
+     "str": 20
+    },
+    "risk_score": {
+     "float": 20
+    }
+   },
+   "null_counts": {},
+   "id_distinct": {
+    "case_id": 20
+   },
+   "id_duplicates": {}
+  },
+  {
+   "path": "data/vertices/billing_region.csv",
+   "rows": 332,
+   "columns": [
+    "region_code",
+    "country_code",
+    "is_home_region",
+    "customer_count",
+    "card_count",
+    "txn_count"
+   ],
+   "types": {
+    "region_code": {
+     "float": 332
+    },
+    "country_code": {
+     "float": 332
+    },
+    "is_home_region": {
+     "str": 332
+    },
+    "customer_count": {
+     "int": 332
+    },
+    "card_count": {
+     "int": 332
+    },
+    "txn_count": {
+     "int": 332
+    }
+   },
+   "null_counts": {},
+   "id_distinct": {
+    "region_code": 332
+   },
+   "id_duplicates": {}
+  },
+  {
+   "path": "data/vertices/card.csv",
+   "rows": 13553,
+   "columns": [
+    "card_id",
+    "card1_num",
+    "customer_id",
+    "card4",
+    "card6",
+    "card2",
+    "card3",
+    "card5"
+   ],
+   "types": {
+    "card_id": {
+     "str": 13553
+    },
+    "card1_num": {
+     "int": 13553
+    },
+    "customer_id": {
+     "str": 13553
+    },
+    "card4": {
+     "str": 13533
+    },
+    "card6": {
+     "str": 13542
+    },
+    "card2": {
+     "float": 13240
+    },
+    "card3": {
+     "float": 13543
+    },
+    "card5": {
+     "float": 13423
+    }
+   },
+   "null_counts": {
+    "card2": 313,
+    "card5": 130,
+    "card4": 20,
+    "card6": 11,
+    "card3": 10
+   },
+   "id_distinct": {
+    "card_id": 13553
+   },
+   "id_duplicates": {}
+  },
+  {
+   "path": "data/vertices/card_mapping.csv",
+   "rows": 13553,
+   "columns": [
+    "card_id",
+    "card1_num",
+    "customer_id"
+   ],
+   "types": {
+    "card_id": {
+     "str": 13553
+    },
+    "card1_num": {
+     "int": 13553
+    },
+    "customer_id": {
+     "str": 13553
+    }
+   },
+   "null_counts": {},
+   "id_distinct": {
+    "card_id": 13553
+   },
+   "id_duplicates": {}
+  },
+  {
+   "path": "data/vertices/closed_case.csv",
+   "rows": 5565,
+   "columns": [
+    "case_id",
+    "customer_id",
+    "card_id",
+    "opened_at",
+    "closed_at",
+    "outcome",
+    "pattern",
+    "first_fraud_txn_id",
+    "txn_ids",
+    "n_txns",
+    "exposure_usd",
+    "connected_card_ids",
+    "actions_taken",
+    "report_filed",
+    "analyst_notes"
+   ],
+   "types": {
+    "case_id": {
+     "str": 5565
+    },
+    "customer_id": {
+     "str": 5565
+    },
+    "card_id": {
+     "str": 5565
+    },
+    "opened_at": {
+     "str": 5565
+    },
+    "closed_at": {
+     "str": 5565
+    },
+    "outcome": {
+     "str": 5565
+    },
+    "pattern": {
+     "str": 5565
+    },
+    "first_fraud_txn_id": {
+     "int": 4665
+    },
+    "txn_ids": {
+     "int": 3458,
+     "str": 2107
+    },
+    "n_txns": {
+     "int": 5565
+    },
+    "exposure_usd": {
+     "float": 5565
+    },
+    "actions_taken": {
+     "str": 5565
+    },
+    "report_filed": {
+     "str": 5565
+    },
+    "analyst_notes": {
+     "str": 5565
+    },
+    "connected_card_ids": {
+     "str": 4
+    }
+   },
+   "null_counts": {
+    "connected_card_ids": 5561,
+    "first_fraud_txn_id": 900
+   },
+   "id_distinct": {
+    "case_id": 5565
+   },
+   "id_duplicates": {}
+  },
+  {
+   "path": "data/vertices/customer.csv",
+   "rows": 13553,
+   "columns": [
+    "customer_id",
+    "total_txns",
+    "online_txns",
+    "in_person_txns",
+    "region_count",
+    "avg_amount",
+    "max_amount",
+    "first_ts",
+    "last_ts"
+   ],
+   "types": {
+    "customer_id": {
+     "str": 13553
+    },
+    "total_txns": {
+     "int": 13553
+    },
+    "online_txns": {
+     "int": 13553
+    },
+    "in_person_txns": {
+     "int": 13553
+    },
+    "region_count": {
+     "int": 13553
+    },
+    "avg_amount": {
+     "float": 13553
+    },
+    "max_amount": {
+     "float": 13553
+    },
+    "first_ts": {
+     "str": 13553
+    },
+    "last_ts": {
+     "str": 13553
+    }
+   },
+   "null_counts": {},
+   "id_distinct": {
+    "customer_id": 13553
+   },
+   "id_duplicates": {}
+  },
+  {
+   "path": "data/vertices/device_profile.csv",
+   "rows": 9706,
+   "columns": [
+    "device_profile_id",
+    "device_type",
+    "device_info",
+    "os",
+    "browser",
+    "screen",
+    "txn_count",
+    "customer_count",
+    "card_count",
+    "specificity"
+   ],
+   "types": {
+    "device_profile_id": {
+     "str": 9706
+    },
+    "device_type": {
+     "str": 9706
+    },
+    "device_info": {
+     "str": 9434,
+     "int": 2
+    },
+    "browser": {
+     "str": 9645
+    },
+    "txn_count": {
+     "int": 9706
+    },
+    "customer_count": {
+     "int": 9706
+    },
+    "card_count": {
+     "int": 9706
+    },
+    "specificity": {
+     "float": 9706
+    },
+    "os": {
+     "str": 5412
+    },
+    "screen": {
+     "str": 5075
+    }
+   },
+   "null_counts": {
+    "os": 4294,
+    "screen": 4631,
+    "device_info": 270,
+    "browser": 61
+   },
+   "id_distinct": {
+    "device_profile_id": 9706
+   },
+   "id_duplicates": {}
+  },
+  {
+   "path": "data/vertices/email_domain.csv",
+   "rows": 60,
+   "columns": [
+    "domain",
+    "domain_type",
+    "customer_count",
+    "card_count",
+    "txn_count"
+   ],
+   "types": {
+    "domain": {
+     "str": 60
+    },
+    "domain_type": {
+     "str": 60
+    },
+    "customer_count": {
+     "int": 60
+    },
+    "card_count": {
+     "int": 60
+    },
+    "txn_count": {
+     "int": 60
+    }
+   },
+   "null_counts": {},
+   "id_distinct": {
+    "domain": 60
+   },
+   "id_duplicates": {}
+  },
+  {
+   "path": "data/vertices/transaction.csv",
+   "rows": 590742,
+   "columns": [
+    "txn_id",
+    "txn_num",
+    "customer_id",
+    "card_id",
+    "card1_num",
+    "ts",
+    "dt_seconds",
+    "amount",
+    "product_cd",
+    "channel",
+    "risk_score",
+    "addr1",
+    "addr2",
+    "dist1",
+    "dist2",
+    "p_emaildomain",
+    "r_emaildomain"
+   ],
+   "types": {
+    "txn_id": {
+     "int": 590742
+    },
+    "txn_num": {
+     "int": 590742
+    },
+    "customer_id": {
+     "str": 590742
+    },
+    "card_id": {
+     "str": 590742
+    },
+    "card1_num": {
+     "int": 590742
+    },
+    "ts": {
+     "str": 590742
+    },
+    "dt_seconds": {
+     "int": 590742
+    },
+    "amount": {
+     "float": 590742
+    },
+    "product_cd": {
+     "str": 590742
+    },
+    "channel": {
+     "str": 590742
+    },
+    "risk_score": {
+     "float": 590742
+    },
+    "p_emaildomain": {
+     "str": 496262
+    },
+    "addr1": {
+     "float": 525003
+    },
+    "addr2": {
+     "float": 525003
+    },
+    "r_emaildomain": {
+     "str": 137453
+    },
+    "dist2": {
+     "float": 37656
+    },
+    "dist1": {
+     "float": 238269
+    }
+   },
+   "null_counts": {
+    "addr1": 65739,
+    "addr2": 65739,
+    "dist1": 352473,
+    "dist2": 553086,
+    "r_emaildomain": 453289,
+    "p_emaildomain": 94480
+   },
+   "id_distinct": {
+    "txn_id": 590742
+   },
+   "id_duplicates": {}
+  }
+ ],
+ "edges": [
+  {
+   "path": "data/edges/billed_in.csv",
+   "rows": 525003,
+   "columns": [
+    "from_txn_id",
+    "to_region_code",
+    "is_home_country",
+    "channel"
+   ],
+   "types": {
+    "from_txn_id": {
+     "int": 525003
+    },
+    "to_region_code": {
+     "float": 525003
+    },
+    "is_home_country": {
+     "str": 525003
+    },
+    "channel": {
+     "str": 525003
+    }
+   },
+   "null_counts": {},
+   "id_distinct": {
+    "from_txn_id": 525003,
+    "to_region_code": 332
+   },
+   "id_duplicates": {
+    "to_region_code": 524671
+   }
+  },
+  {
+   "path": "data/edges/connected_to.csv",
+   "rows": 92,
+   "columns": [
+    "from_case_id",
+    "to_card_id",
+    "connection_type"
+   ],
+   "types": {
+    "from_case_id": {
+     "str": 92
+    },
+    "to_card_id": {
+     "str": 92
+    },
+    "connection_type": {
+     "str": 92
+    }
+   },
+   "null_counts": {},
+   "id_distinct": {
+    "from_case_id": 4,
+    "to_card_id": 24
+   },
+   "id_duplicates": {
+    "from_case_id": 88,
+    "to_card_id": 68
+   }
+  },
+  {
+   "path": "data/edges/from_device.csv",
+   "rows": 144432,
+   "columns": [
+    "from_txn_id",
+    "to_device_profile_id",
+    "newness",
+    "proxy_type",
+    "match_status",
+    "device_type"
+   ],
+   "types": {
+    "from_txn_id": {
+     "int": 144432
+    },
+    "to_device_profile_id": {
+     "str": 144432
+    },
+    "newness": {
+     "str": 141180
+    },
+    "match_status": {
+     "str": 77948
+    },
+    "device_type": {
+     "str": 141005
+    },
+    "proxy_type": {
+     "str": 5288
+    }
+   },
+   "null_counts": {
+    "proxy_type": 139144,
+    "match_status": 66484,
+    "newness": 3252,
+    "device_type": 3427
+   },
+   "id_distinct": {
+    "from_txn_id": 144432,
+    "to_device_profile_id": 9706
+   },
+   "id_duplicates": {
+    "to_device_profile_id": 134726
+   }
+  },
+  {
+   "path": "data/edges/involves.csv",
+   "rows": 14955,
+   "columns": [
+    "from_case_id",
+    "to_txn_id",
+    "is_first_fraud",
+    "sequence_in_case"
+   ],
+   "types": {
+    "from_case_id": {
+     "str": 14955
+    },
+    "to_txn_id": {
+     "int": 14955
+    },
+    "is_first_fraud": {
+     "str": 14955
+    },
+    "sequence_in_case": {
+     "int": 14955
+    }
+   },
+   "null_counts": {},
+   "id_distinct": {
+    "from_case_id": 5565,
+    "to_txn_id": 14955
+   },
+   "id_duplicates": {
+    "from_case_id": 9390
+   }
+  },
+  {
+   "path": "data/edges/made.csv",
+   "rows": 590742,
+   "columns": [
+    "from_card_id",
+    "to_txn_id",
+    "sequence_num"
+   ],
+   "types": {
+    "from_card_id": {
+     "str": 590742
+    },
+    "to_txn_id": {
+     "int": 590742
+    },
+    "sequence_num": {
+     "int": 590742
+    }
+   },
+   "null_counts": {},
+   "id_distinct": {
+    "from_card_id": 13553,
+    "to_txn_id": 590742
+   },
+   "id_duplicates": {
+    "from_card_id": 577189
+   }
+  },
+  {
+   "path": "data/edges/next.csv",
+   "rows": 577189,
+   "columns": [
+    "from_txn_id",
+    "to_txn_id",
+    "time_delta_hours",
+    "amount_ratio",
+    "channel_change"
+   ],
+   "types": {
+    "from_txn_id": {
+     "int": 577189
+    },
+    "to_txn_id": {
+     "int": 577189
+    },
+    "time_delta_hours": {
+     "float": 577189
+    },
+    "amount_ratio": {
+     "float": 577189
+    },
+    "channel_change": {
+     "str": 577189
+    }
+   },
+   "null_counts": {},
+   "id_distinct": {
+    "from_txn_id": 577189,
+    "to_txn_id": 577189
+   },
+   "id_duplicates": {}
+  },
+  {
+   "path": "data/edges/on_card.csv",
+   "rows": 5565,
+   "columns": [
+    "from_case_id",
+    "to_card_id"
+   ],
+   "types": {
+    "from_case_id": {
+     "str": 5565
+    },
+    "to_card_id": {
+     "str": 5565
+    }
+   },
+   "null_counts": {},
+   "id_distinct": {
+    "from_case_id": 5565,
+    "to_card_id": 1913
+   },
+   "id_duplicates": {
+    "to_card_id": 3652
+   }
+  },
+  {
+   "path": "data/edges/owns.csv",
+   "rows": 13553,
+   "columns": [
+    "from_customer_id",
+    "to_card_id"
+   ],
+   "types": {
+    "from_customer_id": {
+     "str": 13553
+    },
+    "to_card_id": {
+     "str": 13553
+    }
+   },
+   "null_counts": {},
+   "id_distinct": {
+    "from_customer_id": 13553,
+    "to_card_id": 13553
+   },
+   "id_duplicates": {}
+  },
+  {
+   "path": "data/edges/purchaser_email.csv",
+   "rows": 496262,
+   "columns": [
+    "from_txn_id",
+    "to_domain"
+   ],
+   "types": {
+    "from_txn_id": {
+     "int": 496262
+    },
+    "to_domain": {
+     "str": 496262
+    }
+   },
+   "null_counts": {},
+   "id_distinct": {
+    "from_txn_id": 496262,
+    "to_domain": 59
+   },
+   "id_duplicates": {
+    "to_domain": 496203
+   }
+  },
+  {
+   "path": "data/edges/recipient_email.csv",
+   "rows": 137453,
+   "columns": [
+    "from_txn_id",
+    "to_domain"
+   ],
+   "types": {
+    "from_txn_id": {
+     "int": 137453
+    },
+    "to_domain": {
+     "str": 137453
+    }
+   },
+   "null_counts": {},
+   "id_distinct": {
+    "from_txn_id": 137453,
+    "to_domain": 60
+   },
+   "id_duplicates": {
+    "to_domain": 137393
+   }
+  },
+  {
+   "path": "data/edges/triggers.csv",
+   "rows": 20,
+   "columns": [
+    "from_case_id",
+    "to_txn_id",
+    "trigger_type",
+    "risk_score"
+   ],
+   "types": {
+    "from_case_id": {
+     "str": 20
+    },
+    "to_txn_id": {
+     "int": 20
+    },
+    "trigger_type": {
+     "str": 20
+    },
+    "risk_score": {
+     "float": 20
+    }
+   },
+   "null_counts": {},
+   "id_distinct": {
+    "from_case_id": 20,
+    "to_txn_id": 20
+   },
+   "id_duplicates": {}
+  }
+ ],
+ "fk_orphans": {
+  "billed_in.csv": {
+   "from_txn_id": 0,
+   "to_region_code": 0
+  },
+  "connected_to.csv": {
+   "from_case_id": 0,
+   "to_card_id": 0
+  },
+  "from_device.csv": {
+   "from_txn_id": 0,
+   "to_device_profile_id": 0
+  },
+  "involves.csv": {
+   "from_case_id": 0,
+   "to_txn_id": 0
+  },
+  "made.csv": {
+   "from_card_id": 0,
+   "to_txn_id": 0
+  },
+  "next.csv": {
+   "from_txn_id": 0,
+   "to_txn_id": 0
+  },
+  "on_card.csv": {
+   "from_case_id": 0,
+   "to_card_id": 37
+  },
+  "owns.csv": {
+   "from_customer_id": 0,
+   "to_card_id": 0
+  },
+  "purchaser_email.csv": {
+   "from_txn_id": 0,
+   "to_domain": 0
+  },
+  "recipient_email.csv": {
+   "from_txn_id": 0,
+   "to_domain": 0
+  },
+  "triggers.csv": {
+   "from_case_id": 0,
+   "to_txn_id": 0
+  }
+ }
+}

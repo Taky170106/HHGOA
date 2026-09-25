@@ -1,0 +1,84 @@
+USE GRAPH hhg_fraud_graph
+
+/* ================= Group A: reverse traversal of a directed edge =================
+   MADE is CREATE DIRECTED EDGE MADE (FROM Card, TO Transaction).
+   Source below is a Transaction set, target is Card => must go "backwards".
+   We test every plausible spelling of the edge spec. */
+
+CREATE QUERY p3b_a1() FOR GRAPH hhg_fraud_graph {
+  S = {Transaction.*};
+  R = SELECT c FROM S:t -(MADE)- Card:c;
+  PRINT R;
+}
+
+CREATE QUERY p3b_a2() FOR GRAPH hhg_fraud_graph {
+  S = {Transaction.*};
+  R = SELECT c FROM S:t -(<-MADE)- Card:c;
+  PRINT R;
+}
+
+CREATE QUERY p3b_a3() FOR GRAPH hhg_fraud_graph {
+  S = {Transaction.*};
+  R = SELECT c FROM S:t -(MADE<-)- Card:c;
+  PRINT R;
+}
+
+CREATE QUERY p3b_a4() FOR GRAPH hhg_fraud_graph {
+  S = {Transaction.*};
+  R = SELECT c FROM S:t -(MADE+)- Card:c;
+  PRINT R;
+}
+
+CREATE QUERY p3b_a5() FOR GRAPH hhg_fraud_graph {
+  S = {Transaction.*};
+  R = SELECT c FROM S:t -(MADE*)- Card:c;
+  PRINT R;
+}
+
+CREATE QUERY p3b_a6() FOR GRAPH hhg_fraud_graph {
+  S = {Transaction.*};
+  R = SELECT c FROM S:t -(MADE)+- Card:c;
+  PRINT R;
+}
+
+CREATE QUERY p3b_a7() FOR GRAPH hhg_fraud_graph {
+  S = {Transaction.*};
+  R = SELECT c FROM S:t -(MADE)>- Card:c;
+  PRINT R;
+}
+
+CREATE QUERY p3b_a8() FOR GRAPH hhg_fraud_graph {
+  S = {Transaction.*};
+  R = SELECT c FROM S:t -(MADE)-< Card:c;
+  PRINT R;
+}
+
+/* ================= Group B: control constructs ================= */
+
+/* B1: all-forward two-hop chain - is chaining itself legal? */
+CREATE QUERY p3b_b1() FOR GRAPH hhg_fraud_graph {
+  C0 = {Card.*};
+  R = SELECT t2 FROM C0:c -(MADE)- Transaction:t -(NEXT)- Transaction:t2;
+  PRINT R;
+}
+
+/* B2: typed global accumulator used as a FROM source */
+CREATE QUERY p3b_b2() FOR GRAPH hhg_fraud_graph {
+  SetAccum<VERTEX(DeviceProfile)> @@devs;
+  D0 = {DeviceProfile.*};
+  @@devs += D0;
+  R = SELECT t FROM @@devs:d -(FROM_DEVICE)- Transaction:t;
+  PRINT R;
+}
+
+/* ================= Group C: reverse-free workaround (attribute based) =================
+   Transaction carries card_id, so txn -> card can be done with a filtered scan. */
+CREATE QUERY p3b_c1() FOR GRAPH hhg_fraud_graph {
+  SetAccum<STRING> @@ids;
+  A = {Transaction.*};
+  T = SELECT t FROM A:t WHERE t.txn_num == 0 ACCUM @@ids += t.card_id;
+  C0 = {Card.*};
+  Cards = SELECT c FROM C0:c WHERE c.card_id IN @@ids;
+  PRINT T;
+  PRINT Cards;
+}

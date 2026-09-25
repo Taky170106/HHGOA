@@ -1,0 +1,387 @@
+{
+  "expected_case_ids": [
+    "HHG-001",
+    "HHG-002",
+    "HHG-003",
+    "HHG-004",
+    "HHG-005",
+    "HHG-006",
+    "HHG-007",
+    "HHG-008",
+    "HHG-009",
+    "HHG-010",
+    "HHG-011",
+    "HHG-012",
+    "HHG-013",
+    "HHG-014",
+    "HHG-015",
+    "HHG-016",
+    "HHG-017",
+    "HHG-018",
+    "HHG-019",
+    "HHG-020"
+  ],
+  "expected_count": 20,
+  "files_found": 20,
+  "files_matching_case_pack": true,
+  "cases_passed": 20,
+  "cases_failed": 0,
+  "total_errors": 0,
+  "errors": [],
+  "warnings": [],
+  "per_case": [
+    {
+      "case_id": "HHG-001",
+      "ok": true,
+      "errors": [],
+      "verdict": "legitimate",
+      "pattern": "none",
+      "fraud_probability": 0.0473,
+      "exposure_usd": 0.0,
+      "evidence_items": 10,
+      "sar_file": false,
+      "next_best_action": "CLOSE_NO_FRAUD",
+      "approval_route": [
+        "auto"
+      ],
+      "additional_evidence_received": true,
+      "tool_calls": 5
+    },
+    {
+      "case_id": "HHG-002",
+      "ok": true,
+      "errors": [],
+      "verdict": "fraud",
+      "pattern": "card_not_present_fraud",
+      "fraud_probability": 0.7803,
+      "exposure_usd": 292.36,
+      "evidence_items": 10,
+      "sar_file": false,
+      "next_best_action": "BLOCK_CARD",
+      "approval_route": [
+        "L1",
+        "auto"
+      ],
+      "additional_evidence_received": true,
+      "tool_calls": 5
+    },
+    {
+      "case_id": "HHG-003",
+      "ok": true,
+      "errors": [],
+      "verdict": "uncertain",
+      "pattern": "none",
+      "fraud_probability": 0.4263,
+      "exposure_usd": 49.0,
+      "evidence_items": 10,
+      "sar_file": false,
+      "next_best_action": "CREATE_CASE",
+      "approval_route": [
+        "auto"
+      ],
+      "additional_evidence_received": false,
+      "tool_calls": 5
+    },
+    {
+      "case_id": "HHG-004",
+      "ok": true,
+      "errors": [],
+      "verdict": "fraud",
+      "pattern": "card_not_present_new_device",
+      "fraud_probability": 0.98,
+      "exposure_usd": 1167.02,
+      "evidence_items": 12,
+      "sar_file": true,
+      "next_best_action": "BLOCK_CARD",
+      "approval_route": [
+        "L1",
+        "L2",
+        "auto"
+      ],
+      "additional_evidence_received": true,
+      "tool_calls": 6
+    },
+    {
+      "case_id": "HHG-005",
+      "ok": true,
+      "errors": [],
+      "verdict": "uncertain",
+      "pattern": "account_takeover",
+      "fraud_probability": 0.6132,
+      "exposure_usd": 100.07,
+      "evidence_items": 10,
+      "sar_file": false,
+      "next_best_action": "CREATE_CASE",
+      "approval_route": [
+        "auto"
+      ],
+      "additional_evidence_received": true,
+      "tool_calls": 6
+    },
+    {
+      "case_id": "HHG-006",
+      "ok": true,
+      "errors": [],
+      "verdict": "fraud",
+      "pattern": "card_not_present_new_device",
+      "fraud_probability": 0.7984,
+      "exposure_usd": 1956.08,
+      "evidence_items": 12,
+      "sar_file": true,
+      "next_best_action": "BLOCK_CARD",
+      "approval_route": [
+        "L1",
+        "L2",
+        "auto"
+      ],
+      "additional_evidence_received": true,
+      "tool_calls": 6
+    },
+    {
+      "case_id": "HHG-007",
+      "ok": true,
+      "errors": [],
+      "verdict": "legitimate",
+      "pattern": "none",
+      "fraud_probability": 0.02,
+      "exposure_usd": 0.0,
+      "evidence_items": 10,
+      "sar_file": false,
+      "next_best_action": "CLOSE_NO_FRAUD",
+      "approval_route": [
+        "auto"
+      ],
+      "additional_evidence_received": true,
+      "tool_calls": 5
+    },
+    {
+      "case_id": "HHG-008",
+      "ok": true,
+      "errors": [],
+      "verdict": "uncertain",
+      "pattern": "none",
+      "fraud_probability": 0.4039,
+      "exposure_usd": 1741.12,
+      "evidence_items": 11,
+      "sar_file": false,
+      "next_best_action": "CREATE_CASE",
+      "approval_route": [
+        "auto"
+      ],
+      "additional_evidence_received": false,
+      "tool_calls": 6
+    },
+    {
+      "case_id": "HHG-009",
+      "ok": true,
+      "errors": [],
+      "verdict": "uncertain",
+      "pattern": "none",
+      "fraud_probability": 0.4181,
+      "exposure_usd": 635.02,
+      "evidence_items": 10,
+      "sar_file": false,
+      "next_best_action": "CREATE_CASE",
+      "approval_route": [
+        "auto"
+      ],
+      "additional_evidence_received": false,
+      "tool_calls": 6
+    },
+    {
+      "case_id": "HHG-010",
+      "ok": true,
+      "errors": [],
+      "verdict": "uncertain",
+      "pattern": "card_not_present_new_device",
+      "fraud_probability": 0.652,
+      "exposure_usd": 1000.03,
+      "evidence_items": 10,
+      "sar_file": false,
+      "next_best_action": "CREATE_CASE",
+      "approval_route": [
+        "auto"
+      ],
+      "additional_evidence_received": true,
+      "tool_calls": 6
+    },
+    {
+      "case_id": "HHG-011",
+      "ok": true,
+      "errors": [],
+      "verdict": "fraud",
+      "pattern": "card_testing",
+      "fraud_probability": 0.8767,
+      "exposure_usd": 50.14,
+      "evidence_items": 12,
+      "sar_file": true,
+      "next_best_action": "DECLINE_TRANSACTION",
+      "approval_route": [
+        "L1",
+        "L2",
+        "auto"
+      ],
+      "additional_evidence_received": false,
+      "tool_calls": 6
+    },
+    {
+      "case_id": "HHG-012",
+      "ok": true,
+      "errors": [],
+      "verdict": "legitimate",
+      "pattern": "none",
+      "fraud_probability": 0.0453,
+      "exposure_usd": 0.0,
+      "evidence_items": 10,
+      "sar_file": false,
+      "next_best_action": "CLOSE_NO_FRAUD",
+      "approval_route": [
+        "auto"
+      ],
+      "additional_evidence_received": true,
+      "tool_calls": 5
+    },
+    {
+      "case_id": "HHG-013",
+      "ok": true,
+      "errors": [],
+      "verdict": "uncertain",
+      "pattern": "card_not_present_new_device",
+      "fraud_probability": 0.6174,
+      "exposure_usd": 35.66,
+      "evidence_items": 10,
+      "sar_file": false,
+      "next_best_action": "CREATE_CASE",
+      "approval_route": [
+        "auto"
+      ],
+      "additional_evidence_received": true,
+      "tool_calls": 6
+    },
+    {
+      "case_id": "HHG-014",
+      "ok": true,
+      "errors": [],
+      "verdict": "fraud",
+      "pattern": "account_takeover",
+      "fraud_probability": 0.7197,
+      "exposure_usd": 439.61,
+      "evidence_items": 9,
+      "sar_file": true,
+      "next_best_action": "BLOCK_CARD",
+      "approval_route": [
+        "L1",
+        "L2",
+        "auto"
+      ],
+      "additional_evidence_received": true,
+      "tool_calls": 6
+    },
+    {
+      "case_id": "HHG-015",
+      "ok": true,
+      "errors": [],
+      "verdict": "uncertain",
+      "pattern": "card_not_present_new_device",
+      "fraud_probability": 0.6941,
+      "exposure_usd": 1749.9,
+      "evidence_items": 11,
+      "sar_file": false,
+      "next_best_action": "CREATE_CASE",
+      "approval_route": [
+        "auto"
+      ],
+      "additional_evidence_received": true,
+      "tool_calls": 6
+    },
+    {
+      "case_id": "HHG-016",
+      "ok": true,
+      "errors": [],
+      "verdict": "fraud",
+      "pattern": "card_not_present_new_device",
+      "fraud_probability": 0.8705,
+      "exposure_usd": 194.64,
+      "evidence_items": 11,
+      "sar_file": true,
+      "next_best_action": "BLOCK_CARD",
+      "approval_route": [
+        "L1",
+        "L2",
+        "auto"
+      ],
+      "additional_evidence_received": true,
+      "tool_calls": 6
+    },
+    {
+      "case_id": "HHG-017",
+      "ok": true,
+      "errors": [],
+      "verdict": "uncertain",
+      "pattern": "undocumented",
+      "fraud_probability": 0.6015,
+      "exposure_usd": 6200.04,
+      "evidence_items": 10,
+      "sar_file": true,
+      "next_best_action": "CREATE_CASE",
+      "approval_route": [
+        "L2",
+        "auto"
+      ],
+      "additional_evidence_received": true,
+      "tool_calls": 6
+    },
+    {
+      "case_id": "HHG-018",
+      "ok": true,
+      "errors": [],
+      "verdict": "uncertain",
+      "pattern": "none",
+      "fraud_probability": 0.4292,
+      "exposure_usd": 39.08,
+      "evidence_items": 10,
+      "sar_file": false,
+      "next_best_action": "CREATE_CASE",
+      "approval_route": [
+        "auto"
+      ],
+      "additional_evidence_received": false,
+      "tool_calls": 5
+    },
+    {
+      "case_id": "HHG-019",
+      "ok": true,
+      "errors": [],
+      "verdict": "uncertain",
+      "pattern": "account_takeover",
+      "fraud_probability": 0.597,
+      "exposure_usd": 500.01,
+      "evidence_items": 11,
+      "sar_file": false,
+      "next_best_action": "CREATE_CASE",
+      "approval_route": [
+        "auto"
+      ],
+      "additional_evidence_received": true,
+      "tool_calls": 6
+    },
+    {
+      "case_id": "HHG-020",
+      "ok": true,
+      "errors": [],
+      "verdict": "uncertain",
+      "pattern": "card_not_present_new_device",
+      "fraud_probability": 0.5749,
+      "exposure_usd": 125.08,
+      "evidence_items": 11,
+      "sar_file": false,
+      "next_best_action": "CREATE_CASE",
+      "approval_route": [
+        "auto"
+      ],
+      "additional_evidence_received": true,
+      "tool_calls": 6
+    }
+  ],
+  "status": "PASS"
+}

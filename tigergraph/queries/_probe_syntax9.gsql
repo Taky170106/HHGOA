@@ -1,0 +1,70 @@
+USE GRAPH hhg_fraud_graph
+
+/* k1: CONTROL - reverse hop alone (expected: OK) */
+CREATE QUERY p3k_k1() FOR GRAPH hhg_fraud_graph {
+  S = {Transaction.*};
+  R = SELECT c FROM S:t -(<-MADE)- Card:c;
+  PRINT R;
+}
+
+/* k2: CONTROL - forward hop alone (expected: OK) */
+CREATE QUERY p3k_k2() FOR GRAPH hhg_fraud_graph {
+  S = {Transaction.*};
+  R = SELECT d FROM S:t -(FROM_DEVICE)- DeviceProfile:d;
+  PRINT R;
+}
+
+/* k3: can SELECT return the SOURCE alias after a forward hop?
+       (inverted traversal: Card -(MADE)-> Transaction filtered by txn id) */
+CREATE QUERY p3k_k3(STRING tid) FOR GRAPH hhg_fraud_graph {
+  A = {Card.*};
+  R = SELECT c FROM A:c -(MADE)-> Transaction:t WHERE t.txn_id == tid;
+  PRINT R;
+}
+
+/* k4: inverted traversal restricted by IN @@set */
+CREATE QUERY p3k_k4(STRING tid) FOR GRAPH hhg_fraud_graph {
+  SetAccum<STRING> @@ids;
+  T0 = {Transaction.*};
+  A = {Card.*};
+  T1 = SELECT t FROM T0:t WHERE t.txn_id == tid ACCUM @@ids += t.txn_id;
+  R = SELECT c FROM A:c -(MADE)-> Transaction:t WHERE t.txn_id IN @@ids;
+  PRINT T1;
+  PRINT R;
+}
+
+/* k5: mixing reverse + forward WITH explicit edge aliases */
+CREATE QUERY p3k_k5() FOR GRAPH hhg_fraud_graph {
+  S = {Transaction.*};
+  R1 = SELECT c FROM S:t -(<-MADE:e1)- Card:c;
+  R2 = SELECT d FROM S:t -(FROM_DEVICE:e2)- DeviceProfile:d;
+  PRINT R1;
+  PRINT R2;
+}
+
+/* k6: CONTROL - two reverse hops from two different source sets */
+CREATE QUERY p3k_k6() FOR GRAPH hhg_fraud_graph {
+  S = {Transaction.*};
+  D0 = {DeviceProfile.*};
+  R1 = SELECT c FROM S:t -(<-MADE)- Card:c;
+  R2 = SELECT tx FROM D0:d -(<-FROM_DEVICE)- Transaction:tx;
+  PRINT R1;
+  PRINT R2;
+}
+
+/* k7: reverse hop + forward hop, DIFFERENT source sets and variables */
+CREATE QUERY p3k_k7() FOR GRAPH hhg_fraud_graph {
+  S = {Transaction.*};
+  C0 = {Customer.*};
+  R1 = SELECT c FROM S:t -(<-MADE)- Card:c;
+  R2 = SELECT cd FROM C0:cu -(OWNS)- Card:cd;
+  PRINT R1;
+  PRINT R2;
+}
+
+/* k8: reverse written with edge type only, target unaliased target-type form */
+CREATE QUERY p3k_k8() FOR GRAPH hhg_fraud_graph {
+  S = {Transaction.*};
+  R = SELECT c FROM S:t -(<-MADE)- Card;
+  PRINT R;
+}

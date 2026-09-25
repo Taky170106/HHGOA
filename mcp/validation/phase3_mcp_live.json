@@ -1,0 +1,125 @@
+{
+  "live_total": 7,
+  "live_pass": 7,
+  "cases": [
+    {
+      "tool": "get_transaction",
+      "status": "success",
+      "source_kind": "tigergraph_live",
+      "latency_ms": 209.0,
+      "result_blocks": 9,
+      "live": true,
+      "error": ""
+    },
+    {
+      "tool": "find_related_transactions",
+      "status": "success",
+      "source_kind": "tigergraph_live",
+      "latency_ms": 178.9,
+      "result_blocks": 6,
+      "live": true,
+      "error": ""
+    },
+    {
+      "tool": "find_device_connections",
+      "status": "success",
+      "source_kind": "tigergraph_live",
+      "latency_ms": 89.8,
+      "result_blocks": 4,
+      "live": true,
+      "error": ""
+    },
+    {
+      "tool": "find_related_cases",
+      "status": "success",
+      "source_kind": "tigergraph_live",
+      "latency_ms": 14.4,
+      "result_blocks": 1,
+      "live": true,
+      "error": ""
+    },
+    {
+      "tool": "benchmark_case_context",
+      "status": "success",
+      "source_kind": "tigergraph_live",
+      "latency_ms": 168.0,
+      "result_blocks": 14,
+      "live": true,
+      "error": ""
+    },
+    {
+      "tool": "get_card_history",
+      "status": "success",
+      "source_kind": "tigergraph_live",
+      "latency_ms": 34.8,
+      "result_blocks": 3,
+      "live": true,
+      "error": ""
+    },
+    {
+      "tool": "get_customer_history",
+      "status": "success",
+      "source_kind": "tigergraph_live",
+      "latency_ms": 17.9,
+      "result_blocks": 3,
+      "live": true,
+      "error": ""
+    }
+  ],
+  "invalid": [
+    {
+      "case": "bogus txn_id",
+      "handled": true,
+      "error_code": "NOT_FOUND",
+      "source_kind": "tigergraph_live",
+      "message": "Live query 'get_transaction' matched no graph entities (NOT_FOUND)"
+    },
+    {
+      "case": "bogus case_id",
+      "handled": true,
+      "error_code": "NOT_FOUND",
+      "source_kind": "tigergraph_live",
+      "message": "Live query 'benchmark_case_context' matched no graph entities (BENCHMARK_NOT_FOUND)"
+    },
+    {
+      "case": "empty card_id",
+      "handled": true,
+      "error_code": "INVALID_INPUT",
+      "source_kind": "file_fallback",
+      "message": "1 validation error for GetCardHistoryInput\ncard_id\n  Value error, card_id must match ^C\\d+-K\\d+$ [type=value_error, input_value='', input_type=str]\n    For further information visit https://errors.pydantic.dev/2.13/v/value_error"
+    },
+    {
+      "case": "empty seeds",
+      "handled": true,
+      "error_code": "INVALID_INPUT",
+      "source_kind": "file_fallback",
+      "message": "1 validation error for FindRelatedTransactionsInput\n  Value error, At least one of txn_id, card_id, customer_id required [type=value_error, input_value={'txn_id': None, 'card_id..._hops': 1, 'limit': 100}, input_type=dict]\n    For further information visit https://errors.pydantic.dev/2.13/v/value_error"
+    }
+  ],
+  "policy_allowed": [
+    "benchmark_case_context",
+    "calculate_exposure",
+    "find_device_connections",
+    "find_related_cases",
+    "find_related_transactions",
+    "get_card_history",
+    "get_customer_history",
+    "get_transaction",
+    "temporal_chain"
+  ],
+  "policy_denied": [
+    "delete_edge",
+    "drop_graph",
+    "insert_vertex",
+    "load_csv",
+    "run_gsql"
+  ],
+  "dangerous_blocked": [
+    "drop_graph",
+    "run_gsql",
+    "insert_vertex",
+    "delete_edge",
+    "load_csv"
+  ],
+  "status": "PASS"
+}

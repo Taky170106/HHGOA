@@ -1,0 +1,18 @@
+# Query B - get_customer_history
+# Input: customer_id (e.g., C12382)
+# Return: customer -> cards -> transactions (with temporal ordering when supported)
+USE GRAPH hhg_fraud_graph
+CREATE QUERY get_customer_history(STRING customer_id) FOR GRAPH hhg_fraud_graph {
+  CustomerSet = {Customer.*};
+  C = SELECT c FROM CustomerSet:c WHERE c.customer_id == customer_id;
+  IF C.size() == 0 THEN PRINT "CUSTOMER_NOT_FOUND"; RETURN; END;
+
+  Cards = SELECT card FROM C:c -(OWNS)- Card:card;
+  Txns = SELECT t FROM Cards:card -(MADE)- Transaction:t;
+
+  // enriched with device & region for context (sample)
+  // Order txns by ts for presentation: TigerGraph returns unsorted; caller sorts by Transaction.ts
+  PRINT C;
+  PRINT Cards;
+  PRINT Txns;
+}

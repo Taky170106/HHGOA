@@ -1,0 +1,645 @@
+{
+  "phase": "2",
+  "status": "PASS",
+  "tigergraph_version": "4.2.5",
+  "tigergraph_edition": "community",
+  "graph_name": "hhg_fraud_graph",
+  "container": "hhg-tigergraph",
+  "image": "tigergraph/community:4.2.5",
+  "services_online": 16,
+  "validation_layers": {
+    "file_level": {
+      "method": "tigergraph/scripts/16_file_integrity.py over data/vertices/*.csv + data/edges/*.csv (no server involved)",
+      "checks": [
+        "row count vs expected baseline",
+        "duplicate primary identifiers",
+        "empty primary identifiers",
+        "malformed rows (column count != header)",
+        "edge source endpoint exists in vertex PK set",
+        "edge target endpoint exists in vertex PK set",
+        "duplicate from/to relationships",
+        "HHG-001..HHG-020 trigger transaction exists and TRIGGERS edge present"
+      ],
+      "evidence": "docs/phase2_file_integrity.json",
+      "vertices_pass": "8/8",
+      "edges_pass": "11/11",
+      "benchmark_connected": "20/20",
+      "status": "PASS"
+    },
+    "live_tigergraph": {
+      "method": "RUN QUERY count_all() and RUN QUERY phase2_validate() executed inside container hhg-tigergraph against graph hhg_fraud_graph; loader summaries read from RUN LOADING JOB output",
+      "instance": "tigergraph/community:4.2.5 (Community Edition), gsql b7e492bd40b45153ee2a8758b03183b50ebb6eca, 16/16 services Online",
+      "checks": [
+        "in-graph vertex count per type",
+        "in-graph edge count per type (traversal based)",
+        "distinct edge source and target coverage per edge type (orphan check)",
+        "ClosedCase.card_id attribute agrees with its ON_CARD edge target",
+        "BenchmarkCase -> TRIGGERS -> Transaction.txn_id == BenchmarkCase.flagged_txn_id",
+        "rejected rows reported by every loading job"
+      ],
+      "evidence": [
+        "tigergraph/validation/phase2_counts.json",
+        "tigergraph/validation/phase2_validate_result.json",
+        "tigergraph/validation/phase2_load.log"
+      ],
+      "vertices_pass": "8/8",
+      "edges_pass": "11/11",
+      "benchmark_connected": "20/20",
+      "rejected_rows": 0,
+      "status": "PASS"
+    },
+    "note": "File-level PASS alone is not sufficient evidence for Phase 2; the live layer must also pass. Both layers pass."
+  },
+  "resolved_blockers": [
+    {
+      "id": "B1",
+      "title": "card2/card3/card5 serialized as 189.0 against schema type UINT",
+      "evidence": "13,543 of 13,553 Card rows rejected by the loader (Valid Object: 10). Raw DATASET/transactions.csv checked across all 590,742 rows: every non-empty card2/card3/card5 matches ^\\d+\\.0*$ with zero non-integral values.",
+      "fix": "ETL normalisation in tigergraph/scripts/build_graph_data.py strips the float64 artifact. Schema type UINT kept unchanged - the approved model was not altered.",
+      "result": "Card loaded 13,553 / 13,553, 0 rejected rows"
+    },
+    {
+      "id": "B2",
+      "title": "benchmark_case.trigger_text quotes not honoured, causing column shift",
+      "evidence": "11 of 20 BenchmarkCase rows rejected; only the 9 comma-free rows loaded. DATASET/case_pack.csv contains 22 double-quote bytes across 11 rows.",
+      "fix": "QUOTE=\"double\" added to the loading jobs (TigerGraph 4.2.5 documented USING option). No data was altered.",
+      "result": "BenchmarkCase loaded 20 / 20, 0 rejected rows"
+    },
+    {
+      "id": "B3",
+      "title": "closed_case.analyst_notes silently truncated at the first embedded comma",
+      "evidence": "2,324 of 5,565 analyst_notes values truncated (example CC-0002: 335 -> 247 characters). DATASET/closed_cases_history.csv contains 4,648 double-quote bytes across 2,324 rows.",
+      "fix": "QUOTE=\"double\" added to the loading jobs. No data was altered.",
+      "result": "ClosedCase loaded 5,565 / 5,565 with full text, 0 rejected rows"
+    },
+    {
+      "id": "D5",
+      "title": "37 ON_CARD orphans over 21 distinct cards",
+      "evidence": "closed_case.card_id referenced lower card suffixes (e.g. C02231-K1) while card_mapping.md defines one canonical Card per customer at the maximum suffix. The ETL never applied the documented canonical map to ON_CARD or ClosedCase.card_id.",
+      "fix": "canonical_card_id() applied in the ETL per schema/card_mapping.md; 37 values resolved.",
+      "result": "ON_CARD 5,565 / 5,565 with 0 orphans; live query confirms 5,565 ClosedCase.card_id values equal their ON_CARD edge target"
+    }
+  ],
+  "open_blockers": [
+    {
+      "id": "Q1",
+      "title": "5 of 9 investigation query files in tigergraph/queries/*.gsql do not compile under TigerGraph 4.2.5",
+      "status": "PENDING",
+      "status_code": "PENDING_LIVE_EXECUTION",
+      "is_phase2_pass_criterion": false,
+      "detail": "benchmark_case_context (line 12 col 42, syntax), find_device_connections (line 24 col 29, TYP-152), find_related_cases (line 17 col 23, TYP-111), find_related_transactions (line 31 col 27, syntax), get_transaction (line 32 col 43, syntax) are saved as draft queries and are not installed.",
+      "live_check_performed": "Read-only RESTPP GET /query/hhg_fraud_graph/<name> via tigergraph/scripts/28_q1_install_state.py; control group count_all and phase2_validate both return HTTP 200.",
+      "live_install_state": {
+        "investigation_installed": [
+          "calculate_exposure",
+          "calculate_exposure_list",
+          "get_card_history",
+          "get_customer_history",
+          "temporal_chain"
+        ],
+        "investigation_not_installed": [
+          "benchmark_case_context",
+          "find_device_connections",
+          "find_related_cases",
+          "find_related_transactions",
+          "get_transaction"
+        ],
+        "installed_total_in_graph": 7
+      },
+      "evidence": "tigergraph/validation/q1_live_install_state.json",
+      "why_not_resolved": "The Phase 2 live validation evidence (count_all, phase2_validate) measures vertex counts, edge counts, orphan coverage and benchmark connectivity. It never touches the investigation queries, so it cannot satisfy Q1. Resolving Q1 requires repairing 5 GSQL investigation query files, which the Phase 2 stop condition forbids.",
+      "owner_phase": "3"
+    }
+  ],
+  "schema": {
+    "vertex_types": 8,
+    "edge_types": 11,
+    "schema_file": "tigergraph/schema/schema.gsql",
+    "loading_jobs": 19,
+    "installed_queries": [
+      "count_all",
+      "phase2_validate"
+    ]
+  },
+  "vertices": {
+    "Customer": {
+      "expected": 13553,
+      "actual": 13553,
+      "difference": 0,
+      "file_rows": 13553,
+      "file_vs_expected": "PASS",
+      "duplicate_pk": 0,
+      "empty_pk": 0,
+      "malformed_rows": 0,
+      "rejected_rows": 0,
+      "status": "PASS"
+    },
+    "Card": {
+      "expected": 13553,
+      "actual": 13553,
+      "difference": 0,
+      "file_rows": 13553,
+      "file_vs_expected": "PASS",
+      "duplicate_pk": 0,
+      "empty_pk": 0,
+      "malformed_rows": 0,
+      "rejected_rows": 0,
+      "status": "PASS"
+    },
+    "Transaction": {
+      "expected": 590742,
+      "actual": 590742,
+      "difference": 0,
+      "file_rows": 590742,
+      "file_vs_expected": "PASS",
+      "duplicate_pk": 0,
+      "empty_pk": 0,
+      "malformed_rows": 0,
+      "rejected_rows": 0,
+      "status": "PASS"
+    },
+    "DeviceProfile": {
+      "expected": 9706,
+      "actual": 9706,
+      "difference": 0,
+      "file_rows": 9706,
+      "file_vs_expected": "PASS",
+      "duplicate_pk": 0,
+      "empty_pk": 0,
+      "malformed_rows": 0,
+      "rejected_rows": 0,
+      "status": "PASS"
+    },
+    "EmailDomain": {
+      "expected": 60,
+      "actual": 60,
+      "difference": 0,
+      "file_rows": 60,
+      "file_vs_expected": "PASS",
+      "duplicate_pk": 0,
+      "empty_pk": 0,
+      "malformed_rows": 0,
+      "rejected_rows": 0,
+      "status": "PASS"
+    },
+    "BillingRegion": {
+      "expected": 332,
+      "actual": 332,
+      "difference": 0,
+      "file_rows": 332,
+      "file_vs_expected": "PASS",
+      "duplicate_pk": 0,
+      "empty_pk": 0,
+      "malformed_rows": 0,
+      "rejected_rows": 0,
+      "status": "PASS"
+    },
+    "ClosedCase": {
+      "expected": 5565,
+      "actual": 5565,
+      "difference": 0,
+      "file_rows": 5565,
+      "file_vs_expected": "PASS",
+      "duplicate_pk": 0,
+      "empty_pk": 0,
+      "malformed_rows": 0,
+      "rejected_rows": 0,
+      "status": "PASS"
+    },
+    "BenchmarkCase": {
+      "expected": 20,
+      "actual": 20,
+      "difference": 0,
+      "file_rows": 20,
+      "file_vs_expected": "PASS",
+      "duplicate_pk": 0,
+      "empty_pk": 0,
+      "malformed_rows": 0,
+      "rejected_rows": 0,
+      "status": "PASS"
+    }
+  },
+  "edges": {
+    "OWNS": {
+      "expected": 13553,
+      "actual": 13553,
+      "difference": 0,
+      "file_rows": 13553,
+      "source_vertex": "Customer",
+      "target_vertex": "Card",
+      "orphan_source": 0,
+      "orphan_target": 0,
+      "duplicate_relationships": 0,
+      "rejected_rows": 0,
+      "status": "PASS"
+    },
+    "MADE": {
+      "expected": 590742,
+      "actual": 590742,
+      "difference": 0,
+      "file_rows": 590742,
+      "source_vertex": "Card",
+      "target_vertex": "Transaction",
+      "orphan_source": 0,
+      "orphan_target": 0,
+      "duplicate_relationships": 0,
+      "rejected_rows": 0,
+      "status": "PASS"
+    },
+    "NEXT": {
+      "expected": 577189,
+      "actual": 577189,
+      "difference": 0,
+      "file_rows": 577189,
+      "source_vertex": "Transaction",
+      "target_vertex": "Transaction",
+      "orphan_source": 0,
+      "orphan_target": 0,
+      "duplicate_relationships": 0,
+      "rejected_rows": 0,
+      "status": "PASS"
+    },
+    "BILLED_IN": {
+      "expected": 525003,
+      "actual": 525003,
+      "difference": 0,
+      "file_rows": 525003,
+      "source_vertex": "Transaction",
+      "target_vertex": "BillingRegion",
+      "orphan_source": 0,
+      "orphan_target": 0,
+      "duplicate_relationships": 0,
+      "rejected_rows": 0,
+      "status": "PASS"
+    },
+    "PURCHASER_EMAIL": {
+      "expected": 496262,
+      "actual": 496262,
+      "difference": 0,
+      "file_rows": 496262,
+      "source_vertex": "Transaction",
+      "target_vertex": "EmailDomain",
+      "orphan_source": 0,
+      "orphan_target": 0,
+      "duplicate_relationships": 0,
+      "rejected_rows": 0,
+      "status": "PASS"
+    },
+    "RECIPIENT_EMAIL": {
+      "expected": 137453,
+      "actual": 137453,
+      "difference": 0,
+      "file_rows": 137453,
+      "source_vertex": "Transaction",
+      "target_vertex": "EmailDomain",
+      "orphan_source": 0,
+      "orphan_target": 0,
+      "duplicate_relationships": 0,
+      "rejected_rows": 0,
+      "status": "PASS"
+    },
+    "FROM_DEVICE": {
+      "expected": 144432,
+      "actual": 144432,
+      "difference": 0,
+      "file_rows": 144432,
+      "source_vertex": "Transaction",
+      "target_vertex": "DeviceProfile",
+      "orphan_source": 0,
+      "orphan_target": 0,
+      "duplicate_relationships": 0,
+      "rejected_rows": 0,
+      "status": "PASS"
+    },
+    "INVOLVES": {
+      "expected": 14955,
+      "actual": 14955,
+      "difference": 0,
+      "file_rows": 14955,
+      "source_vertex": "ClosedCase",
+      "target_vertex": "Transaction",
+      "orphan_source": 0,
+      "orphan_target": 0,
+      "duplicate_relationships": 0,
+      "rejected_rows": 0,
+      "status": "PASS"
+    },
+    "ON_CARD": {
+      "expected": 5565,
+      "actual": 5565,
+      "difference": 0,
+      "file_rows": 5565,
+      "source_vertex": "ClosedCase",
+      "target_vertex": "Card",
+      "orphan_source": 0,
+      "orphan_target": 0,
+      "duplicate_relationships": 0,
+      "rejected_rows": 0,
+      "status": "PASS"
+    },
+    "CONNECTED_TO": {
+      "expected": 92,
+      "actual": 92,
+      "difference": 0,
+      "file_rows": 92,
+      "source_vertex": "ClosedCase",
+      "target_vertex": "Card",
+      "orphan_source": 0,
+      "orphan_target": 0,
+      "duplicate_relationships": 0,
+      "rejected_rows": 0,
+      "status": "PASS"
+    },
+    "TRIGGERS": {
+      "expected": 20,
+      "actual": 20,
+      "difference": 0,
+      "file_rows": 20,
+      "source_vertex": "BenchmarkCase",
+      "target_vertex": "Transaction",
+      "orphan_source": 0,
+      "orphan_target": 0,
+      "duplicate_relationships": 0,
+      "rejected_rows": 0,
+      "status": "PASS"
+    }
+  },
+  "integrity": {
+    "duplicate_ids": 0,
+    "empty_ids": 0,
+    "malformed_records": 0,
+    "orphan_edges": 0,
+    "orphan_edges_by_type": {
+      "OWNS": 0,
+      "MADE": 0,
+      "NEXT": 0,
+      "BILLED_IN": 0,
+      "PURCHASER_EMAIL": 0,
+      "RECIPIENT_EMAIL": 0,
+      "FROM_DEVICE": 0,
+      "INVOLVES": 0,
+      "ON_CARD": 0,
+      "CONNECTED_TO": 0,
+      "TRIGGERS": 0
+    },
+    "invalid_foreign_ids": 0,
+    "duplicate_relationships": 0,
+    "rejected_rows": 0,
+    "rejected_rows_by_file": {
+      "vertices/customer.csv": 0,
+      "vertices/card.csv": 0,
+      "vertices/transaction.csv": 0,
+      "vertices/device_profile.csv": 0,
+      "vertices/email_domain.csv": 0,
+      "vertices/billing_region.csv": 0,
+      "vertices/closed_case.csv": 0,
+      "vertices/benchmark_case.csv": 0,
+      "edges/owns.csv": 0,
+      "edges/made.csv": 0,
+      "edges/next.csv": 0,
+      "edges/billed_in.csv": 0,
+      "edges/purchaser_email.csv": 0,
+      "edges/recipient_email.csv": 0,
+      "edges/from_device.csv": 0,
+      "edges/involves.csv": 0,
+      "edges/on_card.csv": 0,
+      "edges/connected_to.csv": 0,
+      "edges/triggers.csv": 0
+    },
+    "missing_benchmark_transactions": 0,
+    "count_mismatches": [],
+    "edge_total_actual": 2505266,
+    "edge_total_previously_published": 2499760,
+    "edge_total_correction": 5506
+  },
+  "benchmark_cases": {
+    "expected": 20,
+    "connected": 20,
+    "status": "PASS",
+    "cases": {
+      "HHG-001": {
+        "case_id": "HHG-001",
+        "vertex": true,
+        "trigger_txn_id": "3514030",
+        "trigger_txn_exists": true,
+        "triggers_edge": true,
+        "status": "PASS",
+        "live_status": "PASS"
+      },
+      "HHG-002": {
+        "case_id": "HHG-002",
+        "vertex": true,
+        "trigger_txn_id": "3478782",
+        "trigger_txn_exists": true,
+        "triggers_edge": true,
+        "status": "PASS",
+        "live_status": "PASS"
+      },
+      "HHG-003": {
+        "case_id": "HHG-003",
+        "vertex": true,
+        "trigger_txn_id": "3530164",
+        "trigger_txn_exists": true,
+        "triggers_edge": true,
+        "status": "PASS",
+        "live_status": "PASS"
+      },
+      "HHG-004": {
+        "case_id": "HHG-004",
+        "vertex": true,
+        "trigger_txn_id": "3583227",
+        "trigger_txn_exists": true,
+        "triggers_edge": true,
+        "status": "PASS",
+        "live_status": "PASS"
+      },
+      "HHG-005": {
+        "case_id": "HHG-005",
+        "vertex": true,
+        "trigger_txn_id": "3523199",
+        "trigger_txn_exists": true,
+        "triggers_edge": true,
+        "status": "PASS",
+        "live_status": "PASS"
+      },
+      "HHG-006": {
+        "case_id": "HHG-006",
+        "vertex": true,
+        "trigger_txn_id": "3476682",
+        "trigger_txn_exists": true,
+        "triggers_edge": true,
+        "status": "PASS",
+        "live_status": "PASS"
+      },
+      "HHG-007": {
+        "case_id": "HHG-007",
+        "vertex": true,
+        "trigger_txn_id": "3514948",
+        "trigger_txn_exists": true,
+        "triggers_edge": true,
+        "status": "PASS",
+        "live_status": "PASS"
+      },
+      "HHG-008": {
+        "case_id": "HHG-008",
+        "vertex": true,
+        "trigger_txn_id": "3558054",
+        "trigger_txn_exists": true,
+        "triggers_edge": true,
+        "status": "PASS",
+        "live_status": "PASS"
+      },
+      "HHG-009": {
+        "case_id": "HHG-009",
+        "vertex": true,
+        "trigger_txn_id": "3581141",
+        "trigger_txn_exists": true,
+        "triggers_edge": true,
+        "status": "PASS",
+        "live_status": "PASS"
+      },
+      "HHG-010": {
+        "case_id": "HHG-010",
+        "vertex": true,
+        "trigger_txn_id": "3506725",
+        "trigger_txn_exists": true,
+        "triggers_edge": true,
+        "status": "PASS",
+        "live_status": "PASS"
+      },
+      "HHG-011": {
+        "case_id": "HHG-011",
+        "vertex": true,
+        "trigger_txn_id": "3583368",
+        "trigger_txn_exists": true,
+        "triggers_edge": true,
+        "status": "PASS",
+        "live_status": "PASS"
+      },
+      "HHG-012": {
+        "case_id": "HHG-012",
+        "vertex": true,
+        "trigger_txn_id": "3553342",
+        "trigger_txn_exists": true,
+        "triggers_edge": true,
+        "status": "PASS",
+        "live_status": "PASS"
+      },
+      "HHG-013": {
+        "case_id": "HHG-013",
+        "vertex": true,
+        "trigger_txn_id": "3526826",
+        "trigger_txn_exists": true,
+        "triggers_edge": true,
+        "status": "PASS",
+        "live_status": "PASS"
+      },
+      "HHG-014": {
+        "case_id": "HHG-014",
+        "vertex": true,
+        "trigger_txn_id": "3478561",
+        "trigger_txn_exists": true,
+        "triggers_edge": true,
+        "status": "PASS",
+        "live_status": "PASS"
+      },
+      "HHG-015": {
+        "case_id": "HHG-015",
+        "vertex": true,
+        "trigger_txn_id": "3464869",
+        "trigger_txn_exists": true,
+        "triggers_edge": true,
+        "status": "PASS",
+        "live_status": "PASS"
+      },
+      "HHG-016": {
+        "case_id": "HHG-016",
+        "vertex": true,
+        "trigger_txn_id": "3534820",
+        "trigger_txn_exists": true,
+        "triggers_edge": true,
+        "status": "PASS",
+        "live_status": "PASS"
+      },
+      "HHG-017": {
+        "case_id": "HHG-017",
+        "vertex": true,
+        "trigger_txn_id": "3450629",
+        "trigger_txn_exists": true,
+        "triggers_edge": true,
+        "status": "PASS",
+        "live_status": "PASS"
+      },
+      "HHG-018": {
+        "case_id": "HHG-018",
+        "vertex": true,
+        "trigger_txn_id": "3491361",
+        "trigger_txn_exists": true,
+        "triggers_edge": true,
+        "status": "PASS",
+        "live_status": "PASS"
+      },
+      "HHG-019": {
+        "case_id": "HHG-019",
+        "vertex": true,
+        "trigger_txn_id": "3503878",
+        "trigger_txn_exists": true,
+        "triggers_edge": true,
+        "status": "PASS",
+        "live_status": "PASS"
+      },
+      "HHG-020": {
+        "case_id": "HHG-020",
+        "vertex": true,
+        "trigger_txn_id": "3509359",
+        "trigger_txn_exists": true,
+        "triggers_edge": true,
+        "status": "PASS",
+        "live_status": "PASS"
+      }
+    },
+    "live_summary": {
+      "expected": 20,
+      "benchmark_vertices": 20,
+      "triggers_edges": 20,
+      "cases_with_matching_trigger_txn": 20,
+      "cases_without_trigger": 0,
+      "all_connected": true
+    }
+  },
+  "rejected_rows": 0,
+  "loader_totals": {
+    "jobs_executed": 19,
+    "jobs_successful": 19,
+    "total_lines": 3138797,
+    "total_objects": 3138797,
+    "total_errors": 0,
+    "vertex_rows": 633531,
+    "edge_rows": 2505266,
+    "loader_total_equals_file_total": true,
+    "verification_script": "tigergraph/scripts/25_verify_totals.py"
+  },
+  "orphan_edges": 0,
+  "duplicate_ids": 0,
+  "empty_identifiers": 0,
+  "benchmark_case_connectivity": "20/20",
+  "file_level_status": "PASS",
+  "data_files_changed_by_phase2_fixes": [
+    "edges/on_card.csv",
+    "vertices/card.csv",
+    "vertices/closed_case.csv"
+  ],
+  "live_evidence": {
+    "count_all": "tigergraph/validation/phase2_counts.json",
+    "phase2_validate": "tigergraph/validation/phase2_validate_result.json",
+    "loader_log": "tigergraph/validation/phase2_load.log",
+    "file_integrity": "docs/phase2_file_integrity.json",
+    "hashes_before": "tigergraph/validation/data_hashes_phase2_before.json",
+    "hashes_after": "tigergraph/validation/data_hashes_phase2_after.json"
+  },
+  "mcp_layer": {
+    "file_fallback_tests": "33 passed",
+    "live_connection_test": "PASS (live)",
+    "note": "live tool execution requires tigergraph/queries/*.gsql to be installed; 5 of 10 investigation query definitions installed, 5 files have pre-existing GSQL compile errors under 4.2.5 (7 queries installed in graph total: those 5 plus count_all + phase2_validate). Verified read-only via RESTPP GET /query/hhg_fraud_graph/<name> - see tigergraph/validation/q1_live_install_state.json (see docs/PHASE2_VALIDATION_REPORT.md, BLOCKER Q1)"
+  }
+}

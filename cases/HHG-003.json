@@ -1,0 +1,627 @@
+{
+  "case_id": "HHG-003",
+  "case": {
+    "status": "open",
+    "verdict": "uncertain",
+    "fraud_probability": 0.4263,
+    "pattern": "none",
+    "pattern_description": "",
+    "affected_txn_ids": [
+      "3530164"
+    ],
+    "first_suspicious_txn_id": "3530164",
+    "connected_card_ids": [],
+    "connected_device_profiles": [],
+    "exposure_usd": 49.0,
+    "evidence": [
+      {
+        "evidence_id": "EV-01",
+        "claim": "Case HHG-003 opened 2016-12-10 15:01:21 from customer_report trigger: Customer C08623 message: 'I never made this $49.00 purchase. Please check my card.' Refers to 3530164.",
+        "source": "document",
+        "ref": "case_pack.csv#HHG-003",
+        "entity_ids": [
+          "HHG-003",
+          "3530164"
+        ],
+        "evidence_class": "direct"
+      },
+      {
+        "evidence_id": "EV-02",
+        "claim": "Cardholder states the 3530164 transaction of $49.00 was not made by them (denial recorded in the trigger).",
+        "source": "customer",
+        "ref": "trigger:case_pack.csv#HHG-003",
+        "entity_ids": [
+          "C08623",
+          "C08623-K2",
+          "3530164"
+        ],
+        "evidence_class": "direct"
+      },
+      {
+        "evidence_id": "EV-03",
+        "claim": "Transaction 3530164 of $49.00 on card C08623-K2 is a in_person transaction in billing region 330.0 (region home).",
+        "source": "graph",
+        "ref": "query:get_transaction(txn_id=3530164)",
+        "entity_ids": [
+          "3530164",
+          "C08623-K2"
+        ],
+        "evidence_class": "derived_graph"
+      },
+      {
+        "evidence_id": "EV-04",
+        "claim": "Transaction 3530164 carries no FROM_DEVICE edge: the graph holds no device evidence for this alert.",
+        "source": "graph",
+        "ref": "query:get_transaction(txn_id=3530164)",
+        "entity_ids": [
+          "3530164"
+        ],
+        "evidence_class": "derived_graph"
+      },
+      {
+        "evidence_id": "EV-05",
+        "claim": "Card C08623-K2 shows 49 online authorisation(s) in the 48 hours before 3530164.",
+        "source": "graph",
+        "ref": "query:get_card_history(card_id=C08623-K2)",
+        "entity_ids": [
+          "3020881",
+          "3020895",
+          "3022086",
+          "3025135",
+          "3032361",
+          "3032384"
+        ],
+        "evidence_class": "derived_graph"
+      },
+      {
+        "evidence_id": "EV-06",
+        "claim": "Card C08623-K2 already appears in confirmed-fraud closed case(s) CC-2817, CC-2935, CC-3327, CC-3682, CC-4957.",
+        "source": "graph",
+        "ref": "query:find_related_cases(card_id=C08623-K2)",
+        "entity_ids": [
+          "CC-2817",
+          "CC-2935",
+          "CC-3327",
+          "CC-3682",
+          "CC-4957",
+          "C08623-K2"
+        ],
+        "evidence_class": "derived_graph"
+      },
+      {
+        "evidence_id": "EV-07",
+        "claim": "Card C08623-K2 has 61 earlier transaction(s) with the same amount ($49.00), channel and product code - a repeating charge rather than an anomalous purchase.",
+        "source": "graph",
+        "ref": "query:get_card_history(card_id=C08623-K2)",
+        "entity_ids": [
+          "3015779",
+          "3025933",
+          "3034331",
+          "3036182",
+          "3046776",
+          "3530164"
+        ],
+        "evidence_class": "derived_graph"
+      },
+      {
+        "evidence_id": "EV-08",
+        "claim": "Retrieved prior case memory CC-2817, CC-2935, CC-3327, CC-3682, CC-4957 for pattern similarity.",
+        "source": "graph",
+        "ref": "query:find_related_cases(card_id=C08623-K2)",
+        "entity_ids": [
+          "CC-2817",
+          "CC-2935",
+          "CC-3327",
+          "CC-3682",
+          "CC-4957"
+        ],
+        "evidence_class": "derived_graph"
+      },
+      {
+        "evidence_id": "EV-09",
+        "claim": "Model score for transaction 3530164 is 0.8255 (32 features); largest SHAP contributions: device_distinct_cards (+0.0844), device_shared_txn_degree (+0.0725), card_historical_cases (-0.0647).",
+        "source": "external",
+        "ref": "model:models/fraud_model.pkl + xai/shap_local_benchmark_cases.json",
+        "entity_ids": [
+          "3530164"
+        ],
+        "evidence_class": "model_analytical"
+      },
+      {
+        "evidence_id": "EV-10",
+        "claim": "The bank's input risk_score runs opposite to confirmed outcome in this graph: the 4665 confirmed-fraud alerts carry a median score of 0.47 against 0.88 for the 900 cleared alerts, and only 64.7% of alerts scoring 0.90 or above were confirmed fraud. Case HHG-003 carries no risk_score, so the score was used in neither direction.",
+        "source": "document",
+        "ref": "DATASET/closed_cases_history.csv (outcome) x data/vertices/transaction.csv (risk_score)",
+        "entity_ids": [
+          "3530164"
+        ],
+        "evidence_class": "model_analytical"
+      }
+    ],
+    "similar_prior_cases": [
+      "CC-2817",
+      "CC-2935",
+      "CC-3327",
+      "CC-3682",
+      "CC-4957"
+    ],
+    "summary": "Case HHG-003 covers a in_person $49.00 transaction 3530164 on card C08623-K2 raised by a customer_report trigger. Graph investigation found 2 corroborating signal(s) - 48h burst, prior fraud on this card. Pattern assessed as none; fraud probability 0.43 before additional evidence and 0.43 after, giving a verdict of uncertain. Exposure across 1 transaction(s) is $49.00. The graph does not corroborate the alert strongly enough to block, so under R1 the card stays active, the case stays open and the requested verification is recorded as outstanding.",
+    "written_to_graph": false,
+    "graph_case_id": ""
+  },
+  "evidence_requests": [],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "R7: the disputed charge matches the cardholder's recurring pattern, so an internal case records the dispute and the history"
+      },
+      {
+        "action": "VERIFY_WITH_CUSTOMER",
+        "route": "auto",
+        "reason": "R7: confirm the recurring charge with the cardholder before any block"
+      },
+      {
+        "action": "WARN_CUSTOMER",
+        "route": "auto",
+        "reason": "R7: advise the cardholder of the recurring charge; do not block the card"
+      }
+    ],
+    "final": [
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "R7: the disputed charge matches the cardholder's recurring pattern, so an internal case records the dispute and the history"
+      },
+      {
+        "action": "VERIFY_WITH_CUSTOMER",
+        "route": "auto",
+        "reason": "R7: confirm the recurring charge with the cardholder before any block"
+      },
+      {
+        "action": "WARN_CUSTOMER",
+        "route": "auto",
+        "reason": "R7: advise the cardholder of the recurring charge; do not block the card"
+      }
+    ],
+    "what_changed": "No additional evidence was requested: 10 graph evidence item(s) leave the probability at 0.43, and further graph steps would not change the recommendation (Section 6), so the case stays open under R1/R8 with the same next best actions."
+  },
+  "sar": {
+    "file": false,
+    "reason": "Verdict is uncertain, so no report is filed; the case remains an internal record (Section 3a: most cases never need a report).",
+    "narrative": "",
+    "subjects": [],
+    "total_amount_usd": 0,
+    "activity_dates": []
+  },
+  "stop_reason": "R7: the disputed charge matches the cardholder's own recurring pattern and the graph produced 0 strong corroborating signal(s); a block is ruled out and only customer verification remains.",
+  "tool_calls": 5,
+  "tokens": 0,
+  "latency_s": 6.327,
+  "investigation_record": [
+    {
+      "step": 1,
+      "name": "CASE",
+      "detail": "HHG-003 opened 2016-12-10 15:01:21 (customer_report trigger)."
+    },
+    {
+      "step": 2,
+      "name": "TRIGGER",
+      "detail": "Customer C08623 message: 'I never made this $49.00 purchase. Please check my card.' Refers to 3530164."
+    },
+    {
+      "step": 3,
+      "name": "EVIDENCE_COLLECTION",
+      "detail": "10 evidence item(s) gathered: 6 graph-derived, 2 direct, 2 model."
+    },
+    {
+      "step": 4,
+      "name": "GRAPH_INVESTIGATION",
+      "detail": "TigerGraph queries benchmark_case_context, get_transaction, find_related_cases returned 12 relationship(s)."
+    },
+    {
+      "step": 5,
+      "name": "FINDINGS",
+      "detail": "Case HHG-003 opened from a customer_report trigger on transaction 3530164.; Customer C08623 denies the transaction.; 2 graph-derived signal(s) support the alert (pattern none).; Transaction matches a repeating amount/channel/product on this card (policy R7)."
+    },
+    {
+      "step": 6,
+      "name": "DECISION",
+      "detail": "verdict=uncertain, fraud_probability=0.4263, pattern=none, status=open"
+    },
+    {
+      "step": 7,
+      "name": "ACTION",
+      "detail": "CREATE_CASE, VERIFY_WITH_CUSTOMER, WARN_CUSTOMER"
+    },
+    {
+      "step": 8,
+      "name": "NEXT_BEST_ACTION",
+      "detail": "CREATE_CASE (auto) - R7: the disputed charge matches the cardholder's recurring pattern, so an internal case records the dispute and the history"
+    },
+    {
+      "step": 9,
+      "name": "APPROVAL_ROUTE",
+      "detail": "auto"
+    }
+  ],
+  "findings": [
+    {
+      "finding_id": "F-01",
+      "title": "Trigger",
+      "statement": "Case HHG-003 opened from a customer_report trigger on transaction 3530164.",
+      "evidence_ids": [
+        "EV-01"
+      ],
+      "type": "direct"
+    },
+    {
+      "finding_id": "F-02",
+      "title": "Cardholder position",
+      "statement": "Customer C08623 denies the transaction.",
+      "evidence_ids": [
+        "EV-02"
+      ],
+      "type": "direct"
+    },
+    {
+      "finding_id": "F-03",
+      "title": "Graph corroboration",
+      "statement": "2 graph-derived signal(s) support the alert (pattern none).",
+      "evidence_ids": [
+        "EV-03",
+        "EV-04",
+        "EV-05",
+        "EV-06",
+        "EV-07",
+        "EV-08"
+      ],
+      "type": "derived_graph"
+    },
+    {
+      "finding_id": "F-04",
+      "title": "Recurring charge",
+      "statement": "Transaction matches a repeating amount/channel/product on this card (policy R7).",
+      "evidence_ids": [],
+      "type": "derived_graph"
+    },
+    {
+      "finding_id": "F-05",
+      "title": "Prior case memory",
+      "statement": "Retrieved closed case(s) CC-2817, CC-2935, CC-3327, CC-3682, CC-4957 as similar prior activity.",
+      "evidence_ids": [
+        "EV-08"
+      ],
+      "type": "derived_graph"
+    },
+    {
+      "finding_id": "F-06",
+      "title": "Model evidence",
+      "statement": "Model probability 0.8255; largest SHAP contributions device_distinct_cards, device_shared_txn_degree, card_historical_cases.",
+      "evidence_ids": [
+        "EV-09",
+        "EV-10"
+      ],
+      "type": "model_analytical"
+    }
+  ],
+  "decision": {
+    "decision": "uncertain",
+    "status": "open",
+    "rationale": "R7: the disputed charge matches the cardholder's own recurring pattern and the graph produced 0 strong corroborating signal(s); a block is ruled out and only customer verification remains. Pattern none. Fraud probability 0.4263 (before) -> 0.4263 (after additional evidence). Evidence used: EV-01, EV-02, EV-03, EV-04, EV-05, EV-06, EV-07, EV-08, EV-09, EV-10.",
+    "supporting_evidence_ids": [
+      "EV-01",
+      "EV-02",
+      "EV-03",
+      "EV-04",
+      "EV-05",
+      "EV-06",
+      "EV-07",
+      "EV-08",
+      "EV-09",
+      "EV-10"
+    ],
+    "policy_rules": [
+      "R7"
+    ]
+  },
+  "actions_taken": [
+    {
+      "action": "CREATE_CASE",
+      "route": "auto",
+      "reason": "R7: the disputed charge matches the cardholder's recurring pattern, so an internal case records the dispute and the history"
+    },
+    {
+      "action": "VERIFY_WITH_CUSTOMER",
+      "route": "auto",
+      "reason": "R7: confirm the recurring charge with the cardholder before any block"
+    },
+    {
+      "action": "WARN_CUSTOMER",
+      "route": "auto",
+      "reason": "R7: advise the cardholder of the recurring charge; do not block the card"
+    }
+  ],
+  "actions_recommended_awaiting_approval": [],
+  "graph_evidence": {
+    "single_source_of_truth": "TigerGraph hhg_fraud_graph (Community Edition 4.2.5)",
+    "phase_2_baseline": "8 vertex types / 11 edge types / 2,505,266 edges (unchanged)",
+    "queries": [
+      {
+        "name": "benchmark_case_context",
+        "params": {
+          "case_id": "HHG-003"
+        },
+        "http_status": 200,
+        "latency_ms": 192.9
+      },
+      {
+        "name": "get_transaction",
+        "params": {
+          "txn_id": "3530164"
+        },
+        "http_status": 200,
+        "latency_ms": 100.6
+      },
+      {
+        "name": "find_related_cases",
+        "params": {
+          "card_id": "C08623-K2"
+        },
+        "http_status": 200,
+        "latency_ms": 22.0
+      }
+    ],
+    "entities": {
+      "BenchmarkCase": [
+        "HHG-003"
+      ],
+      "Transaction": [
+        "3530164"
+      ],
+      "Card": [
+        "C08623-K2"
+      ],
+      "Customer": [
+        "C08623"
+      ],
+      "DeviceProfile": [],
+      "BillingRegion": [
+        "330.0"
+      ],
+      "EmailDomain": [
+        "me.com"
+      ],
+      "ClosedCase": [
+        "CC-2817",
+        "CC-3682",
+        "CC-4957",
+        "CC-1589",
+        "CC-2935",
+        "CC-3327"
+      ],
+      "connected_card_ids": []
+    },
+    "edges": [
+      {
+        "edge": "TRIGGERS",
+        "from": "HHG-003",
+        "to": "3530164",
+        "from_type": "BenchmarkCase",
+        "to_type": "Transaction"
+      },
+      {
+        "edge": "MADE",
+        "from": "C08623-K2",
+        "to": "3530164",
+        "from_type": "Card",
+        "to_type": "Transaction"
+      },
+      {
+        "edge": "OWNS",
+        "from": "C08623",
+        "to": "C08623-K2",
+        "from_type": "Customer",
+        "to_type": "Card"
+      },
+      {
+        "edge": "BILLED_IN",
+        "from": "3530164",
+        "to": "330.0",
+        "from_type": "Transaction",
+        "to_type": "BillingRegion"
+      },
+      {
+        "edge": "NEXT",
+        "from": "3530164",
+        "to": "3531019",
+        "from_type": "Transaction",
+        "to_type": "Transaction"
+      },
+      {
+        "edge": "NEXT",
+        "from": "3530056",
+        "to": "3530164",
+        "from_type": "Transaction",
+        "to_type": "Transaction"
+      },
+      {
+        "edge": "ON_CARD",
+        "from": "CC-2817",
+        "to": "C08623-K2",
+        "from_type": "ClosedCase",
+        "to_type": "Card"
+      },
+      {
+        "edge": "ON_CARD",
+        "from": "CC-3682",
+        "to": "C08623-K2",
+        "from_type": "ClosedCase",
+        "to_type": "Card"
+      },
+      {
+        "edge": "ON_CARD",
+        "from": "CC-4957",
+        "to": "C08623-K2",
+        "from_type": "ClosedCase",
+        "to_type": "Card"
+      },
+      {
+        "edge": "ON_CARD",
+        "from": "CC-1589",
+        "to": "C08623-K2",
+        "from_type": "ClosedCase",
+        "to_type": "Card"
+      },
+      {
+        "edge": "ON_CARD",
+        "from": "CC-2935",
+        "to": "C08623-K2",
+        "from_type": "ClosedCase",
+        "to_type": "Card"
+      },
+      {
+        "edge": "ON_CARD",
+        "from": "CC-3327",
+        "to": "C08623-K2",
+        "from_type": "ClosedCase",
+        "to_type": "Card"
+      }
+    ],
+    "graph_facts": [
+      "Transaction 3530164 of $49.00 on card C08623-K2 is a in_person transaction in billing region 330.0 (region home).",
+      "Transaction 3530164 carries no FROM_DEVICE edge: the graph holds no device evidence for this alert.",
+      "Card C08623-K2 shows 49 online authorisation(s) in the 48 hours before 3530164.",
+      "Card C08623-K2 already appears in confirmed-fraud closed case(s) CC-2817, CC-2935, CC-3327, CC-3682, CC-4957.",
+      "Card C08623-K2 has 61 earlier transaction(s) with the same amount ($49.00), channel and product code - a repeating charge rather than an anomalous purchase.",
+      "Retrieved prior case memory CC-2817, CC-2935, CC-3327, CC-3682, CC-4957 for pattern similarity."
+    ],
+    "investigation_interpretation": [
+      "pattern=none",
+      "verdict=uncertain",
+      "fraud_probability=0.4263 (before) -> 0.4263 (after additional evidence)",
+      "anomaly_signals=2"
+    ],
+    "graph_fact_vs_interpretation": "Every entry under graph_facts is returned by a live GSQL query or computed from the loaded edge set; entries under investigation_interpretation are the agent's reading of those facts under the published policy."
+  },
+  "sar_status": {
+    "file": false,
+    "reason": "Verdict is uncertain, so no report is filed; the case remains an internal record (Section 3a: most cases never need a report).",
+    "required_approval_route": "none"
+  },
+  "required_approval_route": [
+    "auto"
+  ],
+  "pre_additional_evidence_state": {
+    "stage": "before_additional_evidence",
+    "current_evidence": [
+      "EV-01",
+      "EV-02",
+      "EV-03",
+      "EV-04",
+      "EV-05",
+      "EV-06",
+      "EV-07",
+      "EV-08",
+      "EV-09",
+      "EV-10"
+    ],
+    "current_findings": [
+      "F-01",
+      "F-02",
+      "F-03",
+      "F-04",
+      "F-05",
+      "F-06"
+    ],
+    "preliminary_decision": {
+      "verdict": "uncertain",
+      "fraud_probability": 0.4263,
+      "pattern": "none",
+      "status": "open"
+    },
+    "preliminary_next_best_action": [
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "R7: the disputed charge matches the cardholder's recurring pattern, so an internal case records the dispute and the history"
+      },
+      {
+        "action": "VERIFY_WITH_CUSTOMER",
+        "route": "auto",
+        "reason": "R7: confirm the recurring charge with the cardholder before any block"
+      },
+      {
+        "action": "WARN_CUSTOMER",
+        "route": "auto",
+        "reason": "R7: advise the cardholder of the recurring charge; do not block the card"
+      }
+    ],
+    "required_approval_route": [
+      "auto"
+    ],
+    "additional_evidence_requested": false,
+    "evidence_requested": []
+  },
+  "post_additional_evidence_state": {
+    "stage": "after_additional_evidence",
+    "additional_evidence_received": false,
+    "additional_evidence": [],
+    "updated_evidence": [
+      "EV-01",
+      "EV-02",
+      "EV-03",
+      "EV-04",
+      "EV-05",
+      "EV-06",
+      "EV-07",
+      "EV-08",
+      "EV-09",
+      "EV-10"
+    ],
+    "updated_findings": [
+      "F-01",
+      "F-02",
+      "F-03",
+      "F-04",
+      "F-05",
+      "F-06"
+    ],
+    "updated_decision": {
+      "verdict": "uncertain",
+      "fraud_probability": 0.4263,
+      "pattern": "none",
+      "status": "open"
+    },
+    "updated_next_best_action": [
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "R7: the disputed charge matches the cardholder's recurring pattern, so an internal case records the dispute and the history"
+      },
+      {
+        "action": "VERIFY_WITH_CUSTOMER",
+        "route": "auto",
+        "reason": "R7: confirm the recurring charge with the cardholder before any block"
+      },
+      {
+        "action": "WARN_CUSTOMER",
+        "route": "auto",
+        "reason": "R7: advise the cardholder of the recurring charge; do not block the card"
+      }
+    ],
+    "updated_approval_route": [
+      "auto"
+    ],
+    "what_changed": "No additional evidence was requested: 10 graph evidence item(s) leave the probability at 0.43, and further graph steps would not change the recommendation (Section 6), so the case stays open under R1/R8 with the same next best actions.",
+    "note": "No additional evidence was requested by this case; the post-evidence state is therefore unchanged from the pre-evidence state."
+  },
+  "graph_write": {
+    "status": "BLOCKED",
+    "written_to_graph": false,
+    "graph_case_id": "",
+    "reason": "Phase 2 graph is locked at its validated 8-vertex/11-edge/2,505,266-edge state; inserting a case vertex would mutate validated counts. Recorded in docs/GRAPH_WRITE_BLOCKER.md with the ready-to-run GSQL.",
+    "reference": "graph reference for this answer is the entity/edge block in graph_evidence above"
+  }
+}

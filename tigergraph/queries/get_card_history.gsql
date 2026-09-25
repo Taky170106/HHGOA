@@ -1,0 +1,17 @@
+# Query C - get_card_history
+# Input: card_id (canonical CXXXX-KY, e.g., C12382-K1)
+# Return: card -> transactions ordered by ts, with NEXT chain available
+USE GRAPH hhg_fraud_graph
+CREATE QUERY get_card_history(STRING card_id) FOR GRAPH hhg_fraud_graph {
+  CardSet = {Card.*};
+  K = SELECT c FROM CardSet:c WHERE c.card_id == card_id;
+  IF K.size() == 0 THEN PRINT "CARD_NOT_FOUND"; RETURN; END;
+
+  Txns = SELECT t FROM K:c -(MADE)- Transaction:t;
+  // NEXT edges already encode temporal ordering; expose them for ordered traversal
+  NextEdges = SELECT t FROM Txns:t -(NEXT)- Transaction:n;
+
+  PRINT K;
+  PRINT Txns;
+  PRINT NextEdges;
+}

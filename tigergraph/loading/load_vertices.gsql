@@ -1,0 +1,65 @@
+# GSQL Loading Jobs - Vertices
+# Run after: gsql tigergraph/schema/schema.gsql
+# Data dir: data/vertices/ (produced by tigergraph/scripts/build_graph_data.py)
+# All jobs are idempotent (overwrite on re-load via same PK).
+#
+# QUOTE="double" (Phase 2): closed_case.csv and benchmark_case.csv are byte-identical
+# to DATASET/closed_cases_history.csv and DATASET/case_pack.csv, and those sources
+# quote free-text fields containing "," (2,324 and 11 rows). Without QUOTE the loader
+# treats those commas as column separators, which rejected 11 BenchmarkCase rows and
+# silently truncated 2,324 analyst_notes values. The other 17 graph CSVs contain zero
+# double-quote bytes, so the option is a provable no-op for them.
+
+USE GRAPH hhg_fraud_graph
+
+# ---- Customer ----
+CREATE LOADING JOB load_customer FOR GRAPH hhg_fraud_graph {
+  DEFINE FILENAME f = "data/vertices/customer.csv";
+  LOAD f TO VERTEX Customer VALUES ($"customer_id", $"total_txns", $"online_txns", $"in_person_txns", $"region_count", $"avg_amount", $"max_amount", $"first_ts", $"last_ts") USING header="true", separator=",", QUOTE="double";
+}
+
+# ---- Card ----
+CREATE LOADING JOB load_card FOR GRAPH hhg_fraud_graph {
+  DEFINE FILENAME f = "data/vertices/card.csv";
+  LOAD f TO VERTEX Card VALUES ($"card_id", $"card1_num", $"customer_id", $"card4", $"card6", $"card2", $"card3", $"card5") USING header="true", separator=",", QUOTE="double";
+}
+
+# ---- Transaction ----
+CREATE LOADING JOB load_transaction FOR GRAPH hhg_fraud_graph {
+  DEFINE FILENAME f = "data/vertices/transaction.csv";
+  LOAD f TO VERTEX Transaction VALUES ($"txn_id", $"txn_num", $"customer_id", $"card_id", $"card1_num", $"ts", $"dt_seconds", $"amount", $"product_cd", $"channel", $"risk_score", $"addr1", $"addr2", $"dist1", $"dist2", $"p_emaildomain", $"r_emaildomain") USING header="true", separator=",", QUOTE="double";
+}
+
+# ---- DeviceProfile ----
+CREATE LOADING JOB load_device_profile FOR GRAPH hhg_fraud_graph {
+  DEFINE FILENAME f = "data/vertices/device_profile.csv";
+  LOAD f TO VERTEX DeviceProfile VALUES ($"device_profile_id", $"device_type", $"device_info", $"os", $"browser", $"screen", $"customer_count", $"card_count", $"txn_count", $"specificity") USING header="true", separator=",", QUOTE="double";
+}
+
+# ---- EmailDomain ----
+CREATE LOADING JOB load_email_domain FOR GRAPH hhg_fraud_graph {
+  DEFINE FILENAME f = "data/vertices/email_domain.csv";
+  LOAD f TO VERTEX EmailDomain VALUES ($"domain", $"domain_type", $"customer_count", $"card_count", $"txn_count") USING header="true", separator=",", QUOTE="double";
+}
+
+# ---- BillingRegion ----
+CREATE LOADING JOB load_billing_region FOR GRAPH hhg_fraud_graph {
+  DEFINE FILENAME f = "data/vertices/billing_region.csv";
+  LOAD f TO VERTEX BillingRegion VALUES ($"region_code", $"country_code", $"is_home_region", $"customer_count", $"card_count", $"txn_count") USING header="true", separator=",", QUOTE="double";
+}
+
+# ---- ClosedCase ----
+CREATE LOADING JOB load_closed_case FOR GRAPH hhg_fraud_graph {
+  DEFINE FILENAME f = "data/vertices/closed_case.csv";
+  LOAD f TO VERTEX ClosedCase VALUES ($"case_id", $"customer_id", $"card_id", $"opened_at", $"closed_at", $"outcome", $"pattern", $"first_fraud_txn_id", $"n_txns", $"exposure_usd", $"report_filed", $"actions_taken", $"analyst_notes") USING header="true", separator=",", QUOTE="double";
+}
+
+# ---- BenchmarkCase ----
+CREATE LOADING JOB load_benchmark_case FOR GRAPH hhg_fraud_graph {
+  DEFINE FILENAME f = "data/vertices/benchmark_case.csv";
+  LOAD f TO VERTEX BenchmarkCase VALUES ($"case_id", $"opened_at", $"trigger_type", $"trigger_text", $"flagged_txn_id", $"card_id", $"customer_id", $"risk_score") USING header="true", separator=",", QUOTE="double";
+}
+
+# Run individually:
+# GSQL> RUN LOADING JOB load_customer USING f="data/vertices/customer.csv"
+# Or via tg loader: gsql -g hhg_fraud_graph "RUN LOADING JOB load_customer USING f=\"data/vertices/customer.csv\""

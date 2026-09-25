@@ -1,0 +1,47 @@
+USE GRAPH hhg_fraud_graph
+
+/* m1: SetAccum<VERTEX> += vertex set  (the failing form) */
+CREATE QUERY p3m_m1() FOR GRAPH hhg_fraud_graph {
+  SetAccum<VERTEX> @@s;
+  S = {Transaction.*};
+  T = SELECT t FROM S:t WHERE t.txn_id == "3514030";
+  @@s += T;
+  PRINT @@s;
+}
+
+/* m2: SetAccum<VERTEX> += individual vertex inside ACCUM */
+CREATE QUERY p3m_m2() FOR GRAPH hhg_fraud_graph {
+  SetAccum<VERTEX> @@s;
+  S = {Transaction.*};
+  T = SELECT t FROM S:t WHERE t.txn_id == "3514030"
+       ACCUM @@s += t;
+  PRINT @@s;
+}
+
+/* m3: typed SetAccum<VERTEX<Transaction>> += vertex set */
+CREATE QUERY p3m_m3() FOR GRAPH hhg_fraud_graph {
+  SetAccum<VERTEX<Transaction>> @@s;
+  S = {Transaction.*};
+  T = SELECT t FROM S:t WHERE t.txn_id == "3514030";
+  @@s += T;
+  PRINT @@s;
+}
+
+/* m4: typed SetAccum<VERTEX<Transaction>> += individual vertex */
+CREATE QUERY p3m_m4() FOR GRAPH hhg_fraud_graph {
+  SetAccum<VERTEX<Transaction>> @@s;
+  S = {Transaction.*};
+  T = SELECT t FROM S:t WHERE t.txn_id == "3514030"
+       ACCUM @@s += t;
+  PRINT @@s;
+}
+
+/* m5: typed SetAccum += union of two vertex sets */
+CREATE QUERY p3m_m5() FOR GRAPH hhg_fraud_graph {
+  SetAccum<VERTEX<Card>> @@s;
+  S = {Card.*};
+  A = SELECT c FROM S:c WHERE c.card_id == "C12382-K1";
+  @@s += A;
+  @@s += A;
+  PRINT @@s;
+}

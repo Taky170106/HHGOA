@@ -1,0 +1,285 @@
+{
+  "case_id": "HHG-001",
+  "ran_at": "2026-09-25T04:26:19Z",
+  "status": "PASS",
+  "steps": [
+    {
+      "step": 1,
+      "name": "CASE",
+      "detail": "Real-time model scored transaction 3514030 ($77.07, in billing region 444.0) at 0.61. Review and decide."
+    },
+    {
+      "step": 2,
+      "name": "GRAPH_EVIDENCE",
+      "detail": "3 live GSQL queries, all read-only",
+      "queries": [
+        "benchmark_case_context",
+        "get_transaction",
+        "find_related_cases"
+      ]
+    },
+    {
+      "step": 3,
+      "name": "RELATIONSHIPS",
+      "detail": "card=C12382-K1 customer=C12382 device=none region=444.0 related_cases=4"
+    },
+    {
+      "step": 4,
+      "name": "RISK_SCORE",
+      "detail": "model=0.8333 calibrated=0.2973",
+      "model_probability": 0.8333,
+      "calibrated_probability": 0.2973,
+      "signals_present": [
+        "burst",
+        "card_prior_fraud",
+        "recurring",
+        "home_region",
+        "amount_normal",
+        "product_known",
+        "stable_history",
+        "prior_region_known"
+      ]
+    },
+    {
+      "step": 5,
+      "name": "XAI",
+      "detail": "SHAP local explanation over 6 features",
+      "model_explanation": [
+        {
+          "feature": "device_distinct_cards",
+          "value": 0.0,
+          "shap_value": 0.08638
+        },
+        {
+          "feature": "device_shared_txn_degree",
+          "value": 0.0,
+          "shap_value": 0.07582
+        },
+        {
+          "feature": "card_historical_cases",
+          "value": 0.0,
+          "shap_value": -0.06559
+        },
+        {
+          "feature": "dt_seconds",
+          "value": 13463728.0,
+          "shap_value": 0.06156
+        },
+        {
+          "feature": "device_has_edge",
+          "value": 0.0,
+          "shap_value": 0.05685
+        },
+        {
+          "feature": "log_amount",
+          "value": 4.3576,
+          "shap_value": 0.04547
+        }
+      ],
+      "graph_evidence": [
+        "burst",
+        "card_prior_fraud",
+        "recurring",
+        "home_region",
+        "amount_normal",
+        "product_known",
+        "stable_history",
+        "prior_region_known"
+      ],
+      "separation": "MODEL EXPLANATION vs GRAPH EVIDENCE kept distinct"
+    },
+    {
+      "step": 6,
+      "name": "FINDINGS_SUMMARY",
+      "detail": "pattern=none verdict=legitimate p=0.2973->0.0473",
+      "evidence_ids": [
+        "EV-01",
+        "EV-02",
+        "EV-03",
+        "EV-04",
+        "EV-05",
+        "EV-06",
+        "EV-07",
+        "EV-08",
+        "EV-09"
+      ]
+    },
+    {
+      "step": 7,
+      "name": "POLICY_NEXT_BEST_ACTION",
+      "detail": "Assumed response moved fraud probability from 0.30 to 0.05 (verdict legitimate). Added: CLOSE_NO_FRAUD, GENERATE_REPORT; the case opened for the requested evidence is closed by CLOSE_NO_FRAUD; Removed: VERIFY_WITH_CUSTOMER.",
+      "initial_actions": [
+        "VERIFY_WITH_CUSTOMER",
+        "CREATE_CASE",
+        "MONITOR_CARD"
+      ],
+      "final_actions": [
+        "CLOSE_NO_FRAUD",
+        "MONITOR_CARD",
+        "GENERATE_REPORT"
+      ],
+      "routes": [
+        "auto"
+      ],
+      "sar_file": false
+    },
+    {
+      "step": 8,
+      "name": "CASE_RESULT",
+      "detail": "answer written; graph write blocked and documented"
+    }
+  ],
+  "live_gsql_calls": [
+    {
+      "query": "benchmark_case_context",
+      "http_status": 200,
+      "latency_ms": 221.6,
+      "detail": {
+        "status": 200,
+        "ms": 221.6,
+        "counts": {
+          "B": 1,
+          "Flagged": 1,
+          "FlaggedCards": 1,
+          "FlaggedCustomer": 1,
+          "CardHistory": 422,
+          "Devices": 0,
+          "Regions": 1,
+          "PEmails": 0,
+          "REmails": 0,
+          "RelatedViaDevice": 0,
+          "RelatedViaRegion": 12,
+          "RelatedViaCard": 4,
+          "NextTx": 1,
+          "PrevTx": 1
+        },
+        "flagged": [
+          "3514030"
+        ],
+        "card_history": 422,
+        "related_via_device": 0,
+        "related_via_region": 12,
+        "related_via_card": 4,
+        "next": [
+          "3514461"
+        ],
+        "prev": [
+          "3513814"
+        ]
+      }
+    },
+    {
+      "query": "get_transaction",
+      "http_status": 200,
+      "latency_ms": 103.8,
+      "detail": {
+        "status": 200,
+        "ms": 103.8,
+        "counts": {
+          "T": 1,
+          "CardOwners": 1,
+          "Customers": 1,
+          "Devices": 0,
+          "Regions": 1,
+          "PEmails": 0,
+          "REmails": 0,
+          "NextTxns": 1,
+          "PrevTxns": 1
+        },
+        "cards": [
+          "C12382-K1"
+        ],
+        "customers": [
+          "C12382"
+        ],
+        "devices": [],
+        "regions": [
+          "444.0"
+        ],
+        "next": [
+          "3514461"
+        ],
+        "prev": [
+          "3513814"
+        ]
+      }
+    },
+    {
+      "query": "find_related_cases",
+      "http_status": 200,
+      "latency_ms": 32.2,
+      "detail": {
+        "status": 200,
+        "ms": 32.2,
+        "cases": [
+          "CC-1066",
+          "CC-1673",
+          "CC-2964",
+          "CC-3587"
+        ]
+      }
+    }
+  ],
+  "evidence_items": 9,
+  "graph_derived_evidence": 6,
+  "pattern": "none",
+  "verdict": "legitimate",
+  "case_status": "closed_legitimate",
+  "fraud_probability_before": 0.2973,
+  "fraud_probability_after": 0.0473,
+  "model_probability": 0.8333,
+  "exposure_usd": 0.0,
+  "affected_txn_ids": [],
+  "evidence_requests": [
+    {
+      "type": "customer_validation",
+      "asked_after_step": 4,
+      "assumed_response": "Customer confirms they made the $77.07 transaction 3514030 and recognises the purchase"
+    }
+  ],
+  "initial_actions": [
+    {
+      "action": "VERIFY_WITH_CUSTOMER",
+      "route": "auto",
+      "reason": "R1: probability 0.30 on the available signal(s) is below 0.70, confirm with the cardholder before any blocking action"
+    },
+    {
+      "action": "CREATE_CASE",
+      "route": "auto",
+      "reason": "Section 3a: evidence was requested, so an internal case is opened to hold it"
+    },
+    {
+      "action": "MONITOR_CARD",
+      "route": "auto",
+      "reason": "R4: no reply yet, so the card stays active under monitoring while the validation reply is pending"
+    }
+  ],
+  "final_actions": [
+    {
+      "action": "CLOSE_NO_FRAUD",
+      "route": "auto",
+      "reason": "R3: verification confirms the transaction; close the alert as legitimate"
+    },
+    {
+      "action": "MONITOR_CARD",
+      "route": "auto",
+      "reason": "R4: the residual anomaly warrants 72h of raised monitoring sensitivity after the close"
+    },
+    {
+      "action": "GENERATE_REPORT",
+      "route": "auto",
+      "reason": "Section 3a: internal write-up of the investigation for the record, with no case escalation required"
+    }
+  ],
+  "what_changed": "Assumed response moved fraud probability from 0.30 to 0.05 (verdict legitimate). Added: CLOSE_NO_FRAUD, GENERATE_REPORT; the case opened for the requested evidence is closed by CLOSE_NO_FRAUD; Removed: VERIFY_WITH_CUSTOMER.",
+  "sar_file": false,
+  "approval_routes": [
+    "auto"
+  ],
+  "graph_write": {
+    "status": "BLOCKED",
+    "document": "docs/GRAPH_WRITE_BLOCKER.md"
+  },
+  "answer_file": "cases/HHG-001.json",
+  "wall_clock_s": 5.195
+}

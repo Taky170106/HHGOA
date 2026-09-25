@@ -1,0 +1,13 @@
+{
+  "generated": 20,
+  "tool_calls": {
+    "live": 74,
+    "retrieval": 40
+  },
+  "verdicts": {
+    "fraud": 6,
+    "legitimate": 3,
+    "uncertain": 11
+  },
+  "sar_filed": 6
+}

@@ -1,0 +1,91 @@
+# Query A - get_transaction
+# Input: txn_id (STRING) - transaction identifier
+# Return: the transaction plus its directly connected context:
+#         Card, Customer, DeviceProfile, BillingRegion, purchaser/recipient EmailDomain,
+#         next and previous transactions.
+# Read-only: SELECT / PRINT only. No INSERT / UPDATE / DELETE / CSV load.
+#
+# ===========================================================================
+# PHASE 3A REPAIR - TigerGraph Community Edition 4.2.5
+# The LIVE compiler of 4.2.5 is authoritative (see _probe_syntax*.gsql).
+# ===========================================================================
+# F1  Forward hop .............. -(EDGE)-  and  -(EDGE)->  are equivalent
+#                                 (p3f_m1 OK, p3f_m6 OK - mixed dash/arrow also OK)
+# F2  Reverse hop .............. -(<-EDGE)-  is the ONLY reverse spelling that compiles
+#                                 (p3e_f5 OK, p3k_k1 OK)
+#       REJECTED:  <-(EDGE)-   (p3a_r4 "no viable alternative")
+#                  -(EDGE)<-   (p3a_r3 "mismatched input '<-'")
+#                  -(EDGE)-<   (p3b_a8 syntax error)
+#                  -(->EDGE)-  (p3e_f1 "no viable alternative at input 'from S:t -(->'")
+#                  -(<-EDGE)-> (p3f_m2 "no viable alternative")
+# F3  A query may contain ONLY forward hops or ONLY reverse hops.
+#       Mixing them anywhere in one query is rejected with
+#       "The query has mixed usage of v1 and v2 syntax". Confirmed independent of:
+#         statement order     (p3e_f3 reverse-then-forward, p3e_f4 forward-then-reverse)
+#         arrow form          (p3f_m4 -(<-e)- + -(e)-> , p3f_m5 -(<-e)- + -(e)- )
+#         explicit edge alias (p3k_k5)
+#         source-set reuse    (p3k_k7 - different source sets, still rejected)
+# F4  A chained multi-hop path inside one FROM clause is rejected
+#       ("mixed usage of v1 and v2 syntax"); split into single-hop SELECTs.
+#       The vertex set of a split chain is identical to the chained form.
+# F5  SELECT may return the SOURCE alias of a forward hop, so a reverse hop can be
+#       expressed as a forward hop out of the full target-type vertex set with the
+#       target filtered  (p3k_k3 / p3k_k4 - runtime verified, returned C12382-K1).
+# F6  A @@ global accumulator cannot be a FROM source (TYP-152). Re-materialise ids
+#       into a typed local set with  WHERE pk IN @@ids  (runtime verified).
+#
+# REPAIR APPLIED: the three reverse hops (MADE, OWNS, NEXT) were rewritten as
+# forward-only inverted traversals. The resulting vertex sets are identical to the
+# reverse form - a reverse hop X -(<-E)- Y is exactly
+#     SELECT x FROM AllX:x -(E)-> Y:y WHERE y.<pk> IN {ids of X's targets}
+# and every PRINT key is unchanged. Parameters unchanged. Schema/data unchanged.
+# Removed three declared-but-never-used accumulators (@cnt, @hasDevice, @@results);
+# they were never printed and had no effect on any result.
+# ===========================================================================
+USE GRAPH hhg_fraud_graph
+CREATE QUERY get_transaction(STRING txn_id) FOR GRAPH hhg_fraud_graph {
+
+  SetAccum<STRING> @@txnIds;
+  SetAccum<STRING> @@cardIds;
+
+  AllTx = {Transaction.*};
+  T = SELECT t FROM AllTx:t WHERE t.txn_id == txn_id
+       ACCUM @@txnIds += t.txn_id;
+
+  IF T.size() == 0 THEN
+    PRINT "NOT_FOUND";
+    RETURN;
+  END;
+
+  # reverse MADE -> forward-only inverted traversal
+  AllCards = {Card.*};
+  CardOwners = SELECT c FROM AllCards:c -(MADE)- Transaction:t
+                 WHERE t.txn_id IN @@txnIds
+                 ACCUM @@cardIds += c.card_id;
+
+  # reverse OWNS -> forward-only inverted traversal
+  AllCust = {Customer.*};
+  Customers = SELECT cust FROM AllCust:cust -(OWNS)- Card:c
+                WHERE c.card_id IN @@cardIds;
+
+  # declared forward directions - unchanged
+  Devices    = SELECT d FROM T:t -(FROM_DEVICE)- DeviceProfile:d;
+  Regions    = SELECT r FROM T:t -(BILLED_IN)- BillingRegion:r;
+  PEmails    = SELECT e FROM T:t -(PURCHASER_EMAIL)- EmailDomain:e;
+  REmails    = SELECT e FROM T:t -(RECIPIENT_EMAIL)- EmailDomain:e;
+  NextTxns   = SELECT n FROM T:t -(NEXT)- Transaction:n;
+
+  # reverse NEXT -> forward-only inverted traversal
+  PrevTxns   = SELECT p FROM AllTx:p -(NEXT)- Transaction:q
+                 WHERE q.txn_id IN @@txnIds;
+
+  PRINT T;
+  PRINT CardOwners;
+  PRINT Customers;
+  PRINT Devices;
+  PRINT Regions;
+  PRINT PEmails;
+  PRINT REmails;
+  PRINT NextTxns;
+  PRINT PrevTxns;
+}

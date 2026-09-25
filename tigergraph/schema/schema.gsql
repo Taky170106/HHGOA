@@ -1,0 +1,163 @@
+/* ==========================================================
+   TigerGraph Schema - HHGoa 2026 Agentic Fraud Investigation
+   Graph: hhg_fraud_graph
+   Source of truth: phase0/*.md (verified Phase 0 model)
+   8 vertices, 11 edges. No invented entities/relationships.
+   GSQL version: 3.x / Savanna compatible.
+   Card PK resolution for Q1 documented in card_mapping.md
+   ========================================================== */
+
+CREATE VERTEX Customer (
+  PRIMARY_ID customer_id STRING,
+  total_txns UINT,
+  online_txns UINT,
+  in_person_txns UINT,
+  region_count UINT,
+  avg_amount DOUBLE,
+  max_amount DOUBLE,
+  first_ts DATETIME,
+  last_ts DATETIME
+) WITH primary_id_as_attribute="true"
+
+CREATE VERTEX Card (
+  PRIMARY_ID card_id STRING,  // canonical CXXXX-KY form (see card_mapping.md)
+  card1_num UINT,             // numeric card1 from transactions.csv
+  customer_id STRING,
+  network STRING,             // card4: visa/mastercard/amex/discover
+  card_type STRING,           // card6: credit/debit
+  card2 UINT,
+  card3 UINT,
+  card5 UINT
+) WITH primary_id_as_attribute="true"
+
+CREATE VERTEX Transaction (
+  PRIMARY_ID txn_id STRING,   // TransactionID as string for stability
+  txn_num UINT,               // original TransactionID numeric
+  customer_id STRING,
+  card_id STRING,             // canonical CXXXX-KY (join via customer_id)
+  card1_num UINT,
+  ts DATETIME,                // original ts (YYYY-MM-DD HH:MM:SS) - preserves precision
+  dt_seconds UINT,            // TransactionDT (seconds from 2016-07-02)
+  amount DOUBLE,
+  product_cd STRING,          // W,C,H,R,S - W = in_person
+  channel STRING,             // derived: in_person / online
+  risk_score DOUBLE,
+  addr1 STRING,               // region code as string (null -> "")
+  addr2 STRING,               // country code as string
+  dist1 DOUBLE,
+  dist2 DOUBLE,
+  p_emaildomain STRING,
+  r_emaildomain STRING
+  // V1-V339, C1-C14, D1-D15, M1-M9 intentionally NOT loaded as vertex
+  // attributes - kept as evidence-only signals for downstream analysis.
+  // Only core investigation attributes are materialized on the vertex.
+) WITH primary_id_as_attribute="true"
+
+CREATE VERTEX DeviceProfile (
+  PRIMARY_ID device_profile_id STRING, // SHA256(DeviceInfo|id_30|id_31|id_33)[:16]
+  device_type STRING,          // DeviceType mobile/desktop
+  device_info STRING,          // DeviceInfo raw
+  os STRING,                   // id_30
+  browser STRING,              // id_31
+  screen STRING,               // id_33
+  customer_count UINT,
+  card_count UINT,
+  txn_count UINT,
+  specificity DOUBLE           // 1 / customer_count - evidence weight
+) WITH primary_id_as_attribute="true"
+
+CREATE VERTEX EmailDomain (
+  PRIMARY_ID domain STRING,
+  domain_type STRING,          // purchaser / recipient / both
+  customer_count UINT,
+  card_count UINT,
+  txn_count UINT
+) WITH primary_id_as_attribute="true"
+
+CREATE VERTEX BillingRegion (
+  PRIMARY_ID region_code STRING, // addr1 as string
+  country_code STRING,         // most common addr2 for this region
+  is_home_region BOOL,         // country_code == "87"
+  customer_count UINT,
+  card_count UINT,
+  txn_count UINT
+) WITH primary_id_as_attribute="true"
+
+CREATE VERTEX ClosedCase (
+  PRIMARY_ID case_id STRING,   // CC-XXXX
+  customer_id STRING,
+  card_id STRING,
+  opened_at DATETIME,
+  closed_at DATETIME,
+  outcome STRING,              // confirmed_fraud / cleared
+  pattern STRING,              // card_testing, card_not_present_fraud, etc. / none / undocumented
+  first_fraud_txn_id STRING,
+  n_txns UINT,
+  exposure_usd DOUBLE,
+  report_filed BOOL,
+  actions_taken STRING,        // pipe-joined as in source
+  analyst_notes STRING
+) WITH primary_id_as_attribute="true"
+
+CREATE VERTEX BenchmarkCase (
+  PRIMARY_ID case_id STRING,   // HHG-XXX
+  opened_at DATETIME,
+  trigger_type STRING,         // risk_score / customer_report / analyst_request
+  trigger_text STRING,
+  flagged_txn_id STRING,
+  card_id STRING,
+  customer_id STRING,
+  risk_score DOUBLE            // -1 if null (customer_report / analyst_request)
+) WITH primary_id_as_attribute="true"
+
+// ----------------- EDGES -----------------
+
+CREATE DIRECTED EDGE OWNS (FROM Customer, TO Card)
+
+CREATE DIRECTED EDGE MADE (FROM Card, TO Transaction,
+  sequence_num UINT            // position in card's chronological order
+)
+
+CREATE DIRECTED EDGE NEXT (FROM Transaction, TO Transaction,
+  time_delta_hours DOUBLE,
+  amount_ratio DOUBLE,
+  channel_change BOOL
+)
+
+CREATE DIRECTED EDGE BILLED_IN (FROM Transaction, TO BillingRegion,
+  is_home_country BOOL,
+  channel STRING
+)
+
+CREATE DIRECTED EDGE PURCHASER_EMAIL (FROM Transaction, TO EmailDomain)
+CREATE DIRECTED EDGE RECIPIENT_EMAIL (FROM Transaction, TO EmailDomain)
+
+CREATE DIRECTED EDGE FROM_DEVICE (FROM Transaction, TO DeviceProfile,
+  newness STRING,              // id_15: New/Found/Unknown
+  proxy_type STRING,           // id_23: IP_PROXY:*
+  match_status STRING,         // id_34
+  device_type STRING
+)
+
+CREATE DIRECTED EDGE INVOLVES (FROM ClosedCase, TO Transaction,
+  is_first_fraud BOOL,
+  sequence_in_case UINT
+)
+
+CREATE DIRECTED EDGE ON_CARD (FROM ClosedCase, TO Card)
+CREATE DIRECTED EDGE CONNECTED_TO (FROM ClosedCase, TO Card,
+  connection_type STRING       // ring / device / region / email
+)
+
+CREATE DIRECTED EDGE TRIGGERS (FROM BenchmarkCase, TO Transaction,
+  trigger_type STRING,
+  risk_score DOUBLE
+)
+
+// ----------------- GRAPH -----------------
+CREATE GRAPH hhg_fraud_graph (
+  Customer, Card, Transaction, DeviceProfile,
+  EmailDomain, BillingRegion, ClosedCase, BenchmarkCase,
+  OWNS, MADE, NEXT, BILLED_IN, PURCHASER_EMAIL, RECIPIENT_EMAIL,
+  FROM_DEVICE, INVOLVES, ON_CARD, CONNECTED_TO, TRIGGERS
+)

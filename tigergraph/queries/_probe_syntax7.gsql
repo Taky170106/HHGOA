@@ -1,0 +1,26 @@
+USE GRAPH hhg_fraud_graph
+
+/* runtime probe: is -(<-MADE)- really the reverse of MADE? */
+CREATE QUERY p3g_rev(STRING txnid) FOR GRAPH hhg_fraud_graph {
+  AllTx = {Transaction.*};
+  T = SELECT t FROM AllTx:t WHERE t.txn_id == txnid;
+  C = SELECT c FROM T:t -(<-MADE)- Card:c;
+  PRINT T;
+  PRINT C;
+}
+
+/* runtime probe: documented forward form */
+CREATE QUERY p3g_fwd(STRING cardid) FOR GRAPH hhg_fraud_graph {
+  C0 = {Card.*};
+  K = SELECT c FROM C0:c WHERE c.card_id == cardid;
+  T = SELECT t FROM K:c -(MADE)-> Transaction:t LIMIT 5;
+  PRINT K;
+  PRINT T;
+}
+
+/* exact error for the -> -inside marker */
+CREATE QUERY p3h_mark() FOR GRAPH hhg_fraud_graph {
+  S = {Transaction.*};
+  R = SELECT d FROM S:t -(->FROM_DEVICE)- DeviceProfile:d;
+  PRINT R;
+}

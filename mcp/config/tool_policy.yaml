@@ -1,0 +1,103 @@
+# HHGoa 2026 — MCP Tool Policy (Phase 2, read-only investigation layer)
+# Official TigerGraph MCP reference: tigergraph-mcp 0.1.0+ (pyproject version if available; repo requires Python 3.10-3.14, TigerGraph 4.1+)
+# Upstream: https://github.com/tigergraph/tigergraph-mcp
+#   69 tools total (37 read-only), transports: stdio and streamable-http, config via TG_HOST/TG_GRAPHNAME/TG_USERNAME/TG_PASSWORD/TG_API_TOKEN/TG_RESTPP_PORT/TG_GS_PORT/TG_TGCLOUD etc
+#   supports --allowed-tools/--blocked-tools, logging via TG_LOG_TOOL_CALLS
+# Phase 2 is READ-ONLY controlled investigation layer on top of the official MCP — no agent, no GraphRAG, no business logic duplication.
+
+graph: hhg_fraud_graph
+version: "2.0.0"
+upstream_mcp:
+  package: tigergraph-mcp
+  version: "0.1.0+"
+  python: "3.10-3.14"
+  tigergraph: "4.1+"
+  repo: "https://github.com/tigergraph/tigergraph-mcp"
+  transports: ["stdio", "streamable-http"]
+  env_vars: ["TG_HOST","TG_GRAPHNAME","TG_USERNAME","TG_PASSWORD","TG_API_TOKEN","TG_RESTPP_PORT","TG_GS_PORT","TG_TGCLOUD"]
+
+# ---------------------------------------------------------------------------
+# Allowlist — exactly 9 investigation tools (maps to 9 GSQL queries in Phase 1)
+# ---------------------------------------------------------------------------
+allowlist:
+  tools:
+    - get_transaction               # -> get_transaction.gsql
+    - get_customer_history          # -> get_customer_history.gsql
+    - get_card_history              # -> get_card_history.gsql
+    - find_device_connections       # -> find_device_connections.gsql
+    - find_related_transactions     # -> find_related_transactions.gsql
+    - find_related_cases            # -> find_related_cases.gsql
+    - get_temporal_chain            # -> temporal_chain.gsql (alias: temporal_chain)
+    - calculate_exposure            # -> calculate_exposure.gsql / calculate_exposure_list
+    - benchmark_case_context        # -> benchmark_case_context.gsql (alias: get_benchmark_case)
+  aliases:
+    temporal_chain: get_temporal_chain
+    get_benchmark_case: benchmark_case_context
+    list_benchmark_cases: benchmark_case_context  # list wrapper, same query path
+
+# ---------------------------------------------------------------------------
+# Denied capabilities — this layer NEVER exposes write/mutation/policy tools
+# ---------------------------------------------------------------------------
+denied_capabilities:
+  - arbitrary_gsql_write
+  - vertex_insert
+  - vertex_update
+  - vertex_delete
+  - edge_insert
+  - edge_update
+  - edge_delete
+  - schema_mutation
+  - policy_mutation
+  - loading_job_run
+  - token_create
+  - user_management
+# Explicitly block the official MCP write/admin tools when proxying
+blocked_upstream_tools:
+  - create_vertex
+  - update_vertex
+  - delete_vertex
+  - create_edge
+  - update_edge
+  - delete_edge
+  - run_gsql
+  - install_query
+  - create_schema
+
+# ---------------------------------------------------------------------------
+# Resource limits (hard caps enforced in every tool handler)
+# ---------------------------------------------------------------------------
+resource_limits:
+  MAX_HOPS: 5          # max graph traversal depth
+  MAX_RESULTS: 200     # max rows/entities per result set
+  MAX_TX_IDS: 100      # max transaction IDs per calculate_exposure call
+  MAX_TEMPORAL: 200    # max temporal chain length returned
+  TIMEOUT_S: 30        # per-tool timeout seconds (live or file fallback)
+  MAX_DATASET_BYTES_MB: 300  # informational — data/vertices+edges ~300MB
+
+# ---------------------------------------------------------------------------
+# Transport settings (how the official MCP is invoked, if live)
+# ---------------------------------------------------------------------------
+transport:
+  default: stdio
+  options: [stdio, streamable-http]
+  stdio:
+    command: "tigergraph-mcp"
+    args: ["--transport", "stdio", "--allowed-tools", "get_transaction,get_customer_history,get_card_history,find_device_connections,find_related_transactions,find_related_cases,temporal_chain,calculate_exposure,benchmark_case_context"]
+  streamable_http:
+    env: MCP_ENDPOINT
+    path: "/mcp"
+  logging:
+    env: TG_LOG_TOOL_CALLS
+    helper: "mcp.tools.logging"
+
+# ---------------------------------------------------------------------------
+# Policy enforcement notes
+# ---------------------------------------------------------------------------
+policy:
+  mode: allowlist_only
+  on_denied: "return error envelope with error_code=POLICY_DENIED"
+  on_limit_exceeded: "return error envelope with error_code=RESOURCE_LIMIT_EXCEEDED, truncated=false"
+  on_live_unavailable: "fallback to file_fallback (data/vertices/*.csv + data/edges/*.csv) via pandas; mark source.kind=file_fallback; provenance includes file fallback; if requested live-only, return LIVE_TIGERGRAPH_UNAVAILABLE"
+  auditing:
+    log_fields: ["timestamp","tool","request_id","case_id","status","latency_ms","truncated","source_kind"]
+    helper: "mcp.tools.logging.log_tool_call"

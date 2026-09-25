@@ -1,0 +1,571 @@
+{
+  "phase": "2",
+  "scope": "file_level",
+  "vertices": {
+    "Customer": {
+      "file": "data/vertices\\customer.csv",
+      "expected": 13553,
+      "actual": 13553,
+      "diff": 0,
+      "columns": 9,
+      "header": [
+        "customer_id",
+        "total_txns",
+        "online_txns",
+        "in_person_txns",
+        "region_count",
+        "avg_amount",
+        "max_amount",
+        "first_ts",
+        "last_ts"
+      ],
+      "duplicate_pk": 0,
+      "empty_pk": 0,
+      "malformed_rows": 0,
+      "status": "PASS"
+    },
+    "Card": {
+      "file": "data/vertices\\card.csv",
+      "expected": 13553,
+      "actual": 13553,
+      "diff": 0,
+      "columns": 8,
+      "header": [
+        "card_id",
+        "card1_num",
+        "customer_id",
+        "card4",
+        "card6",
+        "card2",
+        "card3",
+        "card5"
+      ],
+      "duplicate_pk": 0,
+      "empty_pk": 0,
+      "malformed_rows": 0,
+      "status": "PASS"
+    },
+    "Transaction": {
+      "file": "data/vertices\\transaction.csv",
+      "expected": 590742,
+      "actual": 590742,
+      "diff": 0,
+      "columns": 17,
+      "header": [
+        "txn_id",
+        "txn_num",
+        "customer_id",
+        "card_id",
+        "card1_num",
+        "ts",
+        "dt_seconds",
+        "amount",
+        "product_cd",
+        "channel",
+        "risk_score",
+        "addr1",
+        "addr2",
+        "dist1",
+        "dist2",
+        "p_emaildomain",
+        "r_emaildomain"
+      ],
+      "duplicate_pk": 0,
+      "empty_pk": 0,
+      "malformed_rows": 0,
+      "status": "PASS"
+    },
+    "DeviceProfile": {
+      "file": "data/vertices\\device_profile.csv",
+      "expected": 9706,
+      "actual": 9706,
+      "diff": 0,
+      "columns": 10,
+      "header": [
+        "device_profile_id",
+        "device_type",
+        "device_info",
+        "os",
+        "browser",
+        "screen",
+        "txn_count",
+        "customer_count",
+        "card_count",
+        "specificity"
+      ],
+      "duplicate_pk": 0,
+      "empty_pk": 0,
+      "malformed_rows": 0,
+      "status": "PASS"
+    },
+    "EmailDomain": {
+      "file": "data/vertices\\email_domain.csv",
+      "expected": 60,
+      "actual": 60,
+      "diff": 0,
+      "columns": 5,
+      "header": [
+        "domain",
+        "domain_type",
+        "customer_count",
+        "card_count",
+        "txn_count"
+      ],
+      "duplicate_pk": 0,
+      "empty_pk": 0,
+      "malformed_rows": 0,
+      "status": "PASS"
+    },
+    "BillingRegion": {
+      "file": "data/vertices\\billing_region.csv",
+      "expected": 332,
+      "actual": 332,
+      "diff": 0,
+      "columns": 6,
+      "header": [
+        "region_code",
+        "country_code",
+        "is_home_region",
+        "customer_count",
+        "card_count",
+        "txn_count"
+      ],
+      "duplicate_pk": 0,
+      "empty_pk": 0,
+      "malformed_rows": 0,
+      "status": "PASS"
+    },
+    "ClosedCase": {
+      "file": "data/vertices\\closed_case.csv",
+      "expected": 5565,
+      "actual": 5565,
+      "diff": 0,
+      "columns": 15,
+      "header": [
+        "case_id",
+        "customer_id",
+        "card_id",
+        "opened_at",
+        "closed_at",
+        "outcome",
+        "pattern",
+        "first_fraud_txn_id",
+        "txn_ids",
+        "n_txns",
+        "exposure_usd",
+        "connected_card_ids",
+        "actions_taken",
+        "report_filed",
+        "analyst_notes"
+      ],
+      "duplicate_pk": 0,
+      "empty_pk": 0,
+      "malformed_rows": 0,
+      "status": "PASS"
+    },
+    "BenchmarkCase": {
+      "file": "data/vertices\\benchmark_case.csv",
+      "expected": 20,
+      "actual": 20,
+      "diff": 0,
+      "columns": 8,
+      "header": [
+        "case_id",
+        "opened_at",
+        "trigger_type",
+        "trigger_text",
+        "flagged_txn_id",
+        "card_id",
+        "customer_id",
+        "risk_score"
+      ],
+      "duplicate_pk": 0,
+      "empty_pk": 0,
+      "malformed_rows": 0,
+      "status": "PASS"
+    }
+  },
+  "edges": {
+    "OWNS": {
+      "file": "data/edges\\owns.csv",
+      "actual": 13553,
+      "source_vertex": "Customer",
+      "target_vertex": "Card",
+      "orphan_source": 0,
+      "orphan_target": 0,
+      "orphan_total": 0,
+      "duplicate_relationships": 0,
+      "malformed_rows": 0,
+      "columns": [
+        "from_customer_id",
+        "to_card_id"
+      ],
+      "status": "PASS"
+    },
+    "MADE": {
+      "file": "data/edges\\made.csv",
+      "actual": 590742,
+      "source_vertex": "Card",
+      "target_vertex": "Transaction",
+      "orphan_source": 0,
+      "orphan_target": 0,
+      "orphan_total": 0,
+      "duplicate_relationships": 0,
+      "malformed_rows": 0,
+      "columns": [
+        "from_card_id",
+        "to_txn_id",
+        "sequence_num"
+      ],
+      "status": "PASS"
+    },
+    "NEXT": {
+      "file": "data/edges\\next.csv",
+      "actual": 577189,
+      "source_vertex": "Transaction",
+      "target_vertex": "Transaction",
+      "orphan_source": 0,
+      "orphan_target": 0,
+      "orphan_total": 0,
+      "duplicate_relationships": 0,
+      "malformed_rows": 0,
+      "columns": [
+        "from_txn_id",
+        "to_txn_id",
+        "time_delta_hours",
+        "amount_ratio",
+        "channel_change"
+      ],
+      "status": "PASS"
+    },
+    "BILLED_IN": {
+      "file": "data/edges\\billed_in.csv",
+      "actual": 525003,
+      "source_vertex": "Transaction",
+      "target_vertex": "BillingRegion",
+      "orphan_source": 0,
+      "orphan_target": 0,
+      "orphan_total": 0,
+      "duplicate_relationships": 0,
+      "malformed_rows": 0,
+      "columns": [
+        "from_txn_id",
+        "to_region_code",
+        "is_home_country",
+        "channel"
+      ],
+      "status": "PASS"
+    },
+    "PURCHASER_EMAIL": {
+      "file": "data/edges\\purchaser_email.csv",
+      "actual": 496262,
+      "source_vertex": "Transaction",
+      "target_vertex": "EmailDomain",
+      "orphan_source": 0,
+      "orphan_target": 0,
+      "orphan_total": 0,
+      "duplicate_relationships": 0,
+      "malformed_rows": 0,
+      "columns": [
+        "from_txn_id",
+        "to_domain"
+      ],
+      "status": "PASS"
+    },
+    "RECIPIENT_EMAIL": {
+      "file": "data/edges\\recipient_email.csv",
+      "actual": 137453,
+      "source_vertex": "Transaction",
+      "target_vertex": "EmailDomain",
+      "orphan_source": 0,
+      "orphan_target": 0,
+      "orphan_total": 0,
+      "duplicate_relationships": 0,
+      "malformed_rows": 0,
+      "columns": [
+        "from_txn_id",
+        "to_domain"
+      ],
+      "status": "PASS"
+    },
+    "FROM_DEVICE": {
+      "file": "data/edges\\from_device.csv",
+      "actual": 144432,
+      "source_vertex": "Transaction",
+      "target_vertex": "DeviceProfile",
+      "orphan_source": 0,
+      "orphan_target": 0,
+      "orphan_total": 0,
+      "duplicate_relationships": 0,
+      "malformed_rows": 0,
+      "columns": [
+        "from_txn_id",
+        "to_device_profile_id",
+        "newness",
+        "proxy_type",
+        "match_status",
+        "device_type"
+      ],
+      "status": "PASS"
+    },
+    "INVOLVES": {
+      "file": "data/edges\\involves.csv",
+      "actual": 14955,
+      "source_vertex": "ClosedCase",
+      "target_vertex": "Transaction",
+      "orphan_source": 0,
+      "orphan_target": 0,
+      "orphan_total": 0,
+      "duplicate_relationships": 0,
+      "malformed_rows": 0,
+      "columns": [
+        "from_case_id",
+        "to_txn_id",
+        "is_first_fraud",
+        "sequence_in_case"
+      ],
+      "status": "PASS"
+    },
+    "ON_CARD": {
+      "file": "data/edges\\on_card.csv",
+      "actual": 5565,
+      "source_vertex": "ClosedCase",
+      "target_vertex": "Card",
+      "orphan_source": 0,
+      "orphan_target": 0,
+      "orphan_total": 0,
+      "duplicate_relationships": 0,
+      "malformed_rows": 0,
+      "columns": [
+        "from_case_id",
+        "to_card_id"
+      ],
+      "status": "PASS"
+    },
+    "CONNECTED_TO": {
+      "file": "data/edges\\connected_to.csv",
+      "actual": 92,
+      "source_vertex": "ClosedCase",
+      "target_vertex": "Card",
+      "orphan_source": 0,
+      "orphan_target": 0,
+      "orphan_total": 0,
+      "duplicate_relationships": 0,
+      "malformed_rows": 0,
+      "columns": [
+        "from_case_id",
+        "to_card_id",
+        "connection_type"
+      ],
+      "status": "PASS"
+    },
+    "TRIGGERS": {
+      "file": "data/edges\\triggers.csv",
+      "actual": 20,
+      "source_vertex": "BenchmarkCase",
+      "target_vertex": "Transaction",
+      "orphan_source": 0,
+      "orphan_target": 0,
+      "orphan_total": 0,
+      "duplicate_relationships": 0,
+      "malformed_rows": 0,
+      "columns": [
+        "from_case_id",
+        "to_txn_id",
+        "trigger_type",
+        "risk_score"
+      ],
+      "status": "PASS"
+    }
+  },
+  "integrity": {
+    "duplicate_ids": 0,
+    "empty_ids": 0,
+    "malformed_rows": 0,
+    "orphan_edges": 0,
+    "orphan_edges_by_type": {
+      "OWNS": 0,
+      "MADE": 0,
+      "NEXT": 0,
+      "BILLED_IN": 0,
+      "PURCHASER_EMAIL": 0,
+      "RECIPIENT_EMAIL": 0,
+      "FROM_DEVICE": 0,
+      "INVOLVES": 0,
+      "ON_CARD": 0,
+      "CONNECTED_TO": 0,
+      "TRIGGERS": 0
+    },
+    "duplicate_relationships": 0
+  },
+  "benchmark_cases": {
+    "expected": 20,
+    "connected": 20,
+    "status": "PASS",
+    "cases": [
+      {
+        "case_id": "HHG-001",
+        "vertex": true,
+        "trigger_txn_id": "3514030",
+        "trigger_txn_exists": true,
+        "triggers_edge": true,
+        "status": "PASS"
+      },
+      {
+        "case_id": "HHG-002",
+        "vertex": true,
+        "trigger_txn_id": "3478782",
+        "trigger_txn_exists": true,
+        "triggers_edge": true,
+        "status": "PASS"
+      },
+      {
+        "case_id": "HHG-003",
+        "vertex": true,
+        "trigger_txn_id": "3530164",
+        "trigger_txn_exists": true,
+        "triggers_edge": true,
+        "status": "PASS"
+      },
+      {
+        "case_id": "HHG-004",
+        "vertex": true,
+        "trigger_txn_id": "3583227",
+        "trigger_txn_exists": true,
+        "triggers_edge": true,
+        "status": "PASS"
+      },
+      {
+        "case_id": "HHG-005",
+        "vertex": true,
+        "trigger_txn_id": "3523199",
+        "trigger_txn_exists": true,
+        "triggers_edge": true,
+        "status": "PASS"
+      },
+      {
+        "case_id": "HHG-006",
+        "vertex": true,
+        "trigger_txn_id": "3476682",
+        "trigger_txn_exists": true,
+        "triggers_edge": true,
+        "status": "PASS"
+      },
+      {
+        "case_id": "HHG-007",
+        "vertex": true,
+        "trigger_txn_id": "3514948",
+        "trigger_txn_exists": true,
+        "triggers_edge": true,
+        "status": "PASS"
+      },
+      {
+        "case_id": "HHG-008",
+        "vertex": true,
+        "trigger_txn_id": "3558054",
+        "trigger_txn_exists": true,
+        "triggers_edge": true,
+        "status": "PASS"
+      },
+      {
+        "case_id": "HHG-009",
+        "vertex": true,
+        "trigger_txn_id": "3581141",
+        "trigger_txn_exists": true,
+        "triggers_edge": true,
+        "status": "PASS"
+      },
+      {
+        "case_id": "HHG-010",
+        "vertex": true,
+        "trigger_txn_id": "3506725",
+        "trigger_txn_exists": true,
+        "triggers_edge": true,
+        "status": "PASS"
+      },
+      {
+        "case_id": "HHG-011",
+        "vertex": true,
+        "trigger_txn_id": "3583368",
+        "trigger_txn_exists": true,
+        "triggers_edge": true,
+        "status": "PASS"
+      },
+      {
+        "case_id": "HHG-012",
+        "vertex": true,
+        "trigger_txn_id": "3553342",
+        "trigger_txn_exists": true,
+        "triggers_edge": true,
+        "status": "PASS"
+      },
+      {
+        "case_id": "HHG-013",
+        "vertex": true,
+        "trigger_txn_id": "3526826",
+        "trigger_txn_exists": true,
+        "triggers_edge": true,
+        "status": "PASS"
+      },
+      {
+        "case_id": "HHG-014",
+        "vertex": true,
+        "trigger_txn_id": "3478561",
+        "trigger_txn_exists": true,
+        "triggers_edge": true,
+        "status": "PASS"
+      },
+      {
+        "case_id": "HHG-015",
+        "vertex": true,
+        "trigger_txn_id": "3464869",
+        "trigger_txn_exists": true,
+        "triggers_edge": true,
+        "status": "PASS"
+      },
+      {
+        "case_id": "HHG-016",
+        "vertex": true,
+        "trigger_txn_id": "3534820",
+        "trigger_txn_exists": true,
+        "triggers_edge": true,
+        "status": "PASS"
+      },
+      {
+        "case_id": "HHG-017",
+        "vertex": true,
+        "trigger_txn_id": "3450629",
+        "trigger_txn_exists": true,
+        "triggers_edge": true,
+        "status": "PASS"
+      },
+      {
+        "case_id": "HHG-018",
+        "vertex": true,
+        "trigger_txn_id": "3491361",
+        "trigger_txn_exists": true,
+        "triggers_edge": true,
+        "status": "PASS"
+      },
+      {
+        "case_id": "HHG-019",
+        "vertex": true,
+        "trigger_txn_id": "3503878",
+        "trigger_txn_exists": true,
+        "triggers_edge": true,
+        "status": "PASS"
+      },
+      {
+        "case_id": "HHG-020",
+        "vertex": true,
+        "trigger_txn_id": "3509359",
+        "trigger_txn_exists": true,
+        "triggers_edge": true,
+        "status": "PASS"
+      }
+    ]
+  },
+  "edges_total": 2505266,
+  "status": "PASS",
+  "failures": []
+}

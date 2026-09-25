@@ -1,0 +1,92 @@
+{
+  "model": "sklearn.ensemble.RandomForestClassifier",
+  "task": "binary transaction-level fraud risk",
+  "label_source": "DATASET/closed_cases_history.csv (outcome)",
+  "features_excluded": [
+    "risk_score (pre-computed dataset score = leakage)"
+  ],
+  "n_samples": 5565,
+  "n_features": 32,
+  "positive_rate_train": 0.8382458662832495,
+  "test": {
+    "roc_auc": 0.9308,
+    "accuracy": 0.8915,
+    "precision": 0.948,
+    "recall": 0.9212,
+    "f1": 0.9344,
+    "confusion_matrix": [
+      [
+        166,
+        59
+      ],
+      [
+        92,
+        1075
+      ]
+    ]
+  },
+  "trained_at": "2026-09-25T03:00:51Z",
+  "train_seconds": 0.78,
+  "feature_importance_top15": [
+    {
+      "feature": "dt_seconds",
+      "importance": 0.1122
+    },
+    {
+      "feature": "log_amount",
+      "importance": 0.0923
+    },
+    {
+      "feature": "amount",
+      "importance": 0.0885
+    },
+    {
+      "feature": "card_historical_cases",
+      "importance": 0.0815
+    },
+    {
+      "feature": "card_on_card_cases",
+      "importance": 0.0773
+    },
+    {
+      "feature": "device_distinct_cards",
+      "importance": 0.0664
+    },
+    {
+      "feature": "device_shared_txn_degree",
+      "importance": 0.0592
+    },
+    {
+      "feature": "product_cd",
+      "importance": 0.0524
+    },
+    {
+      "feature": "prev_amount_ratio",
+      "importance": 0.0462
+    },
+    {
+      "feature": "region_degree",
+      "importance": 0.0423
+    },
+    {
+      "feature": "card_mean_time_delta",
+      "importance": 0.0357
+    },
+    {
+      "feature": "prev_time_delta_hours",
+      "importance": 0.0326
+    },
+    {
+      "feature": "card_txn_degree",
+      "importance": 0.0318
+    },
+    {
+      "feature": "addr2",
+      "importance": 0.03
+    },
+    {
+      "feature": "card_prev_degree",
+      "importance": 0.0284
+    }
+  ]
+}
