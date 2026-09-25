@@ -28,7 +28,7 @@ export const ARCHITECTURE: Layer[] = [
   {
     name: "Next.js",
     status: "live",
-    detail: "This single-page analyst console, reading the repository artifacts over local API routes.",
+    detail: "This multi-module analyst console (overview, cases, run investigation, model & XAI, architecture), reading the repository artifacts over local API routes.",
     evidence: "frontend/ · http://localhost:3000",
   },
   {

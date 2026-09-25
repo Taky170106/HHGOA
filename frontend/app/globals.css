@@ -93,6 +93,29 @@ body {
   }
 }
 
+/* subtle blueprint grid behind hero / empty regions (no gradient wash) */
+.hero-grid {
+  background-image:
+    linear-gradient(to right, rgba(56, 189, 248, 0.055) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(56, 189, 248, 0.055) 1px, transparent 1px);
+  background-size: 52px 52px;
+  background-position: center center;
+}
+
+.fade-up {
+  animation: fade-up 0.4s ease-out both;
+}
+@keyframes fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
 .stage-in {
   animation: stage-in 0.28s ease-out both;
 }

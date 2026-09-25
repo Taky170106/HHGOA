@@ -231,7 +231,9 @@ export interface E2eRun {
   ran_at: string;
   status: string;
   steps: { step: number; name: string; detail: string }[];
-  live_gsql_calls: number;
+  live_gsql_calls:
+    | number
+    | { query: string; http_status: number; latency_ms: number; detail: string }[];
   wall_clock_s: number;
   model_probability: number;
   verdict: string;
@@ -241,5 +243,55 @@ export interface CasePayload {
   caseFile: CaseFile;
   shapLocal: ShapLocalEntry | null;
   shapGlobal: ShapGlobal | null;
+  e2e: E2eRun | null;
+}
+
+/** Full models/metrics.json (superset of SummaryPayload["metrics"]). */
+export interface MetricsFull {
+  model: string;
+  task: string;
+  label_source: string;
+  features_excluded: string[];
+  n_samples: number;
+  n_features: number;
+  positive_rate_train: number;
+  test: {
+    roc_auc: number;
+    accuracy: number;
+    precision: number;
+    recall: number;
+    f1: number;
+    confusion_matrix: number[][];
+  };
+  trained_at: string;
+  train_seconds: number;
+  feature_importance_top15: { feature: string; importance: number }[];
+}
+
+/** models/evidence_weights.json — learned evidence direction. */
+export interface EvidenceWeights {
+  source: string;
+  method: string;
+  labeled_fraud_txns: number;
+  labeled_cleared_txns: number;
+  signal_count: number;
+  weights: Record<string, number>;
+  rates: Record<
+    string,
+    {
+      fraud_rate: number;
+      cleared_rate: number;
+      fraud_hits: number;
+      cleared_hits: number;
+      weight: number;
+    }
+  >;
+  leakage_guard: string;
+}
+
+export interface ModelPayload {
+  metrics: MetricsFull;
+  shapGlobal: ShapGlobal | null;
+  weights: EvidenceWeights | null;
   e2e: E2eRun | null;
 }

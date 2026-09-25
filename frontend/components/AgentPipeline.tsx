@@ -7,14 +7,14 @@ import type {
   ShapLocalEntry,
 } from "@/lib/types";
 
-interface StageDef {
+export interface StageDef {
   key: string;
   ir?: string;
   e2e?: string;
 }
 
 /** The nine stages of the investigation pipeline, in execution order. */
-const STAGES: StageDef[] = [
+export const STAGES: StageDef[] = [
   { key: "TRIGGER", ir: "TRIGGER", e2e: "CASE" },
   { key: "TRIAGE", ir: "CASE" },
   { key: "GRAPH INVESTIGATION", ir: "GRAPH_INVESTIGATION", e2e: "GRAPH_EVIDENCE" },
@@ -25,6 +25,35 @@ const STAGES: StageDef[] = [
   { key: "POLICY", ir: "APPROVAL_ROUTE" },
   { key: "NEXT BEST ACTION", ir: "NEXT_BEST_ACTION" },
 ];
+
+/**
+ * The recorded detail for one pipeline stage: the live E2E step wins, then the
+ * investigation record, then the model/SHAP fallbacks. Nothing is invented.
+ */
+export function stageDetail(
+  cf: CaseFile,
+  shapLocal: ShapLocalEntry | null,
+  e2e: E2eRun | null,
+  s: StageDef,
+): string {
+  const ir = new Map(cf.investigation_record.map((x) => [x.name, x.detail]));
+  const es = new Map((e2e?.steps ?? []).map((x) => [x.name, x.detail]));
+  const modelEvidence = cf.case.evidence.find(
+    (e) => e.evidence_class === "model_analytical",
+  );
+
+  if (s.e2e && es.has(s.e2e)) return es.get(s.e2e)!;
+  if (s.ir && ir.has(s.ir)) return ir.get(s.ir)!;
+  if (s.key === "ML ANALYSIS" && modelEvidence) return modelEvidence.claim;
+  if (s.key === "XAI" && shapLocal) {
+    const top = shapLocal.top_contributing_features
+      .slice(0, 3)
+      .map((f) => `${f.feature} (${f.shap_value >= 0 ? "+" : ""}${f.shap_value})`)
+      .join(", ");
+    return `SHAP contributions for txn ${shapLocal.txn_id}: ${top}.`;
+  }
+  return "recorded in the case file";
+}
 
 export function AgentPipeline({
   cf,
@@ -39,26 +68,8 @@ export function AgentPipeline({
   stage: number;
   replaying: boolean;
 }) {
-  const ir = new Map(cf.investigation_record.map((s) => [s.name, s.detail]));
-  const es = new Map((e2e?.steps ?? []).map((s) => [s.name, s.detail]));
-
-  const modelEvidence = cf.case.evidence.find(
-    (e) => e.evidence_class === "model_analytical",
-  );
-
-  const detailFor = (s: StageDef): string => {
-    if (s.e2e && es.has(s.e2e)) return es.get(s.e2e)!;
-    if (s.ir && ir.has(s.ir)) return ir.get(s.ir)!;
-    if (s.key === "ML ANALYSIS" && modelEvidence) return modelEvidence.claim;
-    if (s.key === "XAI" && shapLocal) {
-      const top = shapLocal.top_contributing_features
-        .slice(0, 3)
-        .map((f) => `${f.feature} (${f.shap_value >= 0 ? "+" : ""}${f.shap_value})`)
-        .join(", ");
-      return `SHAP contributions for txn ${shapLocal.txn_id}: ${top}.`;
-    }
-    return "recorded in the case file";
-  };
+  const detailFor = (s: StageDef): string =>
+    stageDetail(cf, shapLocal, e2e, s);
 
   return (
     <aside className="flex w-[344px] shrink-0 flex-col gap-1 overflow-y-auto">
@@ -138,7 +149,7 @@ export function AgentPipeline({
   );
 }
 
-function Sufficiency({ cf }: { cf: CaseFile }) {
+export function Sufficiency({ cf }: { cf: CaseFile }) {
   const requests = cf.evidence_requests ?? [];
   const received =
     cf.post_additional_evidence_state?.additional_evidence_received === true;
@@ -209,7 +220,7 @@ function Sufficiency({ cf }: { cf: CaseFile }) {
   );
 }
 
-function Counterfactual({ cf }: { cf: CaseFile }) {
+export function Counterfactual({ cf }: { cf: CaseFile }) {
   const fin = cf.next_best_actions.final;
   const request = cf.evidence_requests[0];
   const exposure = cf.case.exposure_usd;

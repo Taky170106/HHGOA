@@ -154,19 +154,27 @@ export function CaseDrawer({
   onClose,
   tab,
   setTab,
+  variant = "modal",
 }: {
   cf: CaseFile;
   shapLocal: ShapLocalEntry | null;
-  open: boolean;
-  onClose: () => void;
+  open?: boolean;
+  onClose?: () => void;
   tab: number;
   setTab: (n: number) => void;
+  variant?: "modal" | "inline";
 }) {
-  if (!open) return null;
+  const inline = variant === "inline";
+  if (!inline && !open) return null;
 
-  return (
-    <div className="fixed inset-0 z-40 flex flex-col bg-ink-950/80">
-      <div className="mx-auto mt-8 flex h-[calc(100vh-90px)] w-[1440px] max-w-[96vw] flex-col border border-line bg-ink-900 shadow-2xl">
+  const panel = (
+    <div
+      className={
+        inline
+          ? "flex min-h-0 flex-1 flex-col border border-line bg-ink-900"
+          : "mx-auto mt-8 flex h-[calc(100vh-90px)] w-[1440px] max-w-[96vw] flex-col border border-line bg-ink-900 shadow-2xl"
+      }
+    >
         <header className="flex items-center gap-3 border-b border-line bg-ink-850 px-4 py-2.5">
           <span className="text-[12px] font-bold tracking-[0.16em] text-fg">
             CASE RECORD
@@ -181,13 +189,15 @@ export function CaseDrawer({
           <span className="ml-auto text-[10px] text-dim">
             cases/{cf.case_id}.json
           </span>
-          <button
-            type="button"
-            onClick={onClose}
-            className="h-7 border border-line px-2.5 text-[11px] text-fg-2 hover:bg-ink-700"
-          >
-            CLOSE ✕
-          </button>
+          {inline ? null : (
+            <button
+              type="button"
+              onClick={() => onClose?.()}
+              className="h-7 border border-line px-2.5 text-[11px] text-fg-2 hover:bg-ink-700"
+            >
+              CLOSE ✕
+            </button>
+          )}
         </header>
 
         <nav className="flex gap-1 border-b border-line bg-ink-850 px-3 py-1.5">
@@ -218,7 +228,12 @@ export function CaseDrawer({
           {tab === 7 && <TabAudit cf={cf} />}
         </div>
       </div>
-    </div>
+  );
+
+  if (inline) return panel;
+
+  return (
+    <div className="fixed inset-0 z-40 flex flex-col bg-ink-950/80">{panel}</div>
   );
 }
 

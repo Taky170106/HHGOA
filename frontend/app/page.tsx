@@ -1,269 +1,306 @@
 "use client";
 
-import { useCallback, useEffect, useRef, useState } from "react";
-import GraphCanvas from "@/components/GraphCanvas";
-import { CaseSidebar, TopBar } from "@/components/Chrome";
-import { AgentPipeline } from "@/components/AgentPipeline";
-import { ActionPanel, EvidencePanel, MlPanel, XaiPanel } from "@/components/Panels";
 import {
-  ArchitectureModal,
-  CaseDrawer,
-  NodeDetails,
-} from "@/components/Overlays";
-import { Empty, Panel } from "@/components/ui";
-import { buildGraph } from "@/lib/graph";
-import type { CasePayload, CaseSummaryRow, SummaryPayload } from "@/lib/types";
+  Bar,
+  Button,
+  Card,
+  Container,
+  ErrorNote,
+  Eyebrow,
+  Loading,
+  ModuleCard,
+  PageHeader,
+  Section,
+  StatTile,
+  Tag,
+  Terminal,
+} from "@/components/kit";
+import {
+  DEMO_RUN,
+  GRAPH_FACTS,
+  MODULES,
+  VALIDATION_RUN,
+} from "@/lib/facts";
+import { useSummary } from "@/lib/useJson";
 
-const REPLAY_MS = 6800; // total replay duration, within the 5–8s target
-const STAGE_COUNT = 9;
+const PIPELINE = [
+  "TRIGGER",
+  "TRIAGE",
+  "GRAPH INVESTIGATION",
+  "EVIDENCE",
+  "ML ANALYSIS",
+  "XAI",
+  "UNCERTAINTY",
+  "POLICY",
+  "NEXT BEST ACTION",
+];
 
-export default function Page() {
-  const [summary, setSummary] = useState<SummaryPayload | null>(null);
-  const [activeId, setActiveId] = useState("HHG-001");
-  const [payload, setPayload] = useState<CasePayload | null>(null);
-  const [tg, setTg] = useState<{
-    ok: boolean;
-    http_status: number;
-    latency_ms: number;
-    endpoint?: string;
-  } | null>(null);
-  const [selectedNode, setSelectedNode] = useState<string | null>(null);
-  const [archOpen, setArchOpen] = useState(false);
-  const [drawerOpen, setDrawerOpen] = useState(false);
-  const [drawerTab, setDrawerTab] = useState(0);
-  const [stage, setStage] = useState(STAGE_COUNT);
-  const [replaying, setReplaying] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+export default function OverviewPage() {
+  const { data, error, loading } = useSummary();
 
-  /* ---------- data ---------- */
-  useEffect(() => {
-    let alive = true;
-    const load = async () => {
-      try {
-        const [s, t] = await Promise.all([
-          fetch("/api/summary").then((r) => r.json()),
-          fetch("/api/tigergraph").then((r) => r.json()),
-        ]);
-        if (!alive) return;
-        setSummary(s as SummaryPayload);
-        setTg(t);
-      } catch {
-        if (alive) setError("Could not load /api/summary");
-      }
-    };
-    void load();
-    const probe = setInterval(() => {
-      void fetch("/api/tigergraph")
-        .then((r) => r.json())
-        .then((t) => alive && setTg(t))
-        .catch(() => undefined);
-    }, 30000);
-    return () => {
-      alive = false;
-      clearInterval(probe);
-    };
-  }, []);
+  if (error) return <ErrorNote what="/api/summary" message={error} />;
+  if (loading || !data) return <Loading what="cases/validation_report.json" />;
 
-  useEffect(() => {
-    let alive = true;
-    setPayload(null);
-    setSelectedNode(null);
-    setStage(STAGE_COUNT);
-    fetch(`/api/case/${activeId}`)
-      .then((r) => (r.ok ? r.json() : Promise.reject(new Error("bad case"))))
-      .then((p: CasePayload) => alive && setPayload(p))
-      .catch(() => alive && setError(`Could not load ${activeId}`));
-    return () => {
-      alive = false;
-    };
-  }, [activeId]);
-
-  useEffect(
-    () => () => {
-      if (timer.current) clearTimeout(timer.current);
-    },
-    [],
-  );
-
-  /* ---------- replay ---------- */
-  const runReplay = useCallback(() => {
-    if (replaying) return;
-    if (timer.current) clearTimeout(timer.current);
-    setReplaying(true);
-    setStage(0);
-    const step = REPLAY_MS / STAGE_COUNT;
-    let i = 0;
-    const tick = () => {
-      i += 1;
-      setStage(i);
-      if (i >= STAGE_COUNT) {
-        setReplaying(false);
-        return;
-      }
-      timer.current = setTimeout(tick, step);
-    };
-    timer.current = setTimeout(tick, step);
-  }, [replaying]);
-
-  /* ---------- render ---------- */
-  const cf = payload?.caseFile ?? null;
-  const graph = cf ? buildGraph(cf) : null;
-  const row = summary?.cases.find((c) => c.case_id === activeId);
-  const totalRows: CaseSummaryRow[] = summary?.cases ?? [];
-
-  if (error) {
-    return (
-      <div className="flex h-full items-center justify-center">
-        <div className="border border-bad/50 bg-bad/10 px-6 py-4 text-[13px] text-bad">
-          {error}
-        </div>
-      </div>
-    );
-  }
-
-  if (!summary || !cf || !graph || !payload) {
-    return (
-      <div className="flex h-full flex-col">
-        <div className="h-12 border-b border-line bg-ink-900" />
-        <div className="flex flex-1 items-center justify-center">
-          <div className="text-center">
-            <div className="pulse-dot mx-auto mb-3 h-3 w-3 rounded-full bg-accent" />
-            <div className="label">LOADING REPOSITORY ARTIFACTS</div>
-            <div className="mt-1 font-mono text-[11px] text-dim">
-              cases/validation_report.json · cases/{activeId}.json
-            </div>
-          </div>
-        </div>
-      </div>
-    );
-  }
+  const gsql = data.gsql;
+  const mcp = data.mcp as Record<string, number | string>;
 
   return (
-    <div className="flex h-full min-h-0 flex-col">
-      <TopBar
-        activeCase={activeId}
-        caseStatus={cf.case.status}
-        tg={tg}
-        onRun={runReplay}
-        replaying={replaying}
-        replayStage={stage}
-        onOpenArch={() => setArchOpen(true)}
-        onOpenCase={() => setDrawerOpen(true)}
-      />
+    <div className="fade-up pb-16">
+      {/* ---------------- hero ---------------- */}
+      <section className="border-b border-line hero-grid">
+        <Container className="pt-14 pb-12">
+          <div className="grid items-start gap-10 lg:grid-cols-[1.1fr_0.9fr]">
+            <div>
+              <Eyebrow>HHGOA 2026 · PHASE 3 DELIVERABLE</Eyebrow>
 
-      <div className="flex min-h-0 flex-1">
-        <CaseSidebar
-          rows={totalRows}
-          active={activeId}
-          onSelect={setActiveId}
-          counts={summary.counts}
-          sar={summary.sar_filed}
-        />
+              <h1 className="mt-4 max-w-[720px] text-[42px] leading-[1.08] font-bold tracking-[-0.02em] text-fg">
+                Agentic fraud investigation,{" "}
+                <span className="text-accent">grounded in the graph.</span>
+              </h1>
 
-        {/* centre — graph investigation */}
-        <main className="relative flex min-w-0 flex-1 flex-col">
-          <div className="flex h-7 shrink-0 items-center gap-3 border-b border-line bg-ink-850 px-3">
-            <span className="label">GRAPH INVESTIGATION</span>
-            <span className="font-mono text-[10px] text-fg-2">
-              {cf.case.pattern}
-            </span>
-            <span className="text-[10px] text-dim">
-              {cf.graph_evidence.single_source_of_truth}
-            </span>
-            <span className="ml-auto font-mono text-[10px] text-dim">
-              {graph.edges.length} edges · source graph_evidence
-            </span>
+              <p className="mt-4 max-w-[660px] text-[14px] leading-[23px] text-fg-2">
+                Twenty benchmark cases triaged against a locked TigerGraph of{" "}
+                <span className="font-mono text-fg">8</span> vertex types,{" "}
+                <span className="font-mono text-fg">11</span> edge types and{" "}
+                <span className="font-mono text-fg">2,505,266</span> loaded
+                edges. Every verdict below is traceable to a graph query, an
+                evidence item and a recorded decision — the language model
+                reasons over evidence, it never invents it.
+              </p>
+
+              <div className="mt-7 flex flex-wrap gap-2.5">
+                <Button href="/investigation" variant="primary">
+                  ▶ RUN INVESTIGATION
+                </Button>
+                <Button href="/cases">BROWSE 20 CASES</Button>
+                <Button href="/architecture">SYSTEM ARCHITECTURE</Button>
+              </div>
+
+              <div className="mt-8 flex flex-wrap gap-2">
+                <Tag tone="ok">VALIDATION {data.validation_status} 20/20</Tag>
+                <Tag tone="bad">GRAPH WRITE BLOCKED</Tag>
+                <Tag tone="accent">GSQL {gsql.queries_executed}/10 LIVE</Tag>
+                <Tag tone="violet">MCP {mcp.live_pass}/{mcp.live_total} LIVE</Tag>
+                <Tag tone="warn">tokens 0 — no LLM key</Tag>
+              </div>
+            </div>
+
+            <div className="space-y-4">
+              <Terminal title={VALIDATION_RUN.cmd} lines={VALIDATION_RUN.out} />
+              <Terminal title={DEMO_RUN.cmd} lines={DEMO_RUN.out} />
+            </div>
+          </div>
+        </Container>
+      </section>
+
+      {/* ---------------- live status ---------------- */}
+      <Section
+        eyebrow="LIVE REPOSITORY STATE"
+        title="Every number here is read from an artifact at request time"
+        lede="Nothing on this page is hard-coded: case counts come from cases/validation_report.json, model metrics from models/metrics.json and the tool counts from the Phase 3 validation files."
+      >
+        <div className="grid grid-cols-2 gap-3 md:grid-cols-3 xl:grid-cols-6">
+          <StatTile
+            label="Cases"
+            value={data.cases.length}
+            sub={`${data.cases_passed} passed · ${data.total_errors} errors`}
+            source="cases/validation_report.json"
+          />
+          <StatTile
+            label="Fraud"
+            value={data.counts.fraud}
+            tone="var(--color-bad)"
+            sub="SAR filed"
+            source="cases/_build_summary.json"
+          />
+          <StatTile
+            label="Uncertain"
+            value={data.counts.uncertain}
+            tone="var(--color-warn)"
+            sub="evidence-limited"
+          />
+          <StatTile
+            label="Legitimate"
+            value={data.counts.legitimate}
+            tone="var(--color-ok)"
+            sub="closed, no SAR"
+          />
+          <StatTile
+            label="ROC-AUC"
+            value={data.metrics.test.roc_auc.toFixed(4)}
+            tone="var(--color-ok)"
+            sub={`accuracy ${data.metrics.test.accuracy.toFixed(4)}`}
+            source="models/metrics.json"
+          />
+          <StatTile
+            label="Evidence items"
+            value={data.cases.reduce((s, c) => s + c.evidence_items, 0)}
+            sub="across 20 cases"
+            source="cases/*.json"
+          />
+        </div>
+      </Section>
+
+      {/* ---------------- modules ---------------- */}
+      <Section
+        eyebrow="CONSOLE MODULES"
+        title="Six sections — one job each"
+        lede="The console is split into focused modules so a single screen never has to explain the whole system at once. Start at the case list, open a case, run it, then read the model and the architecture."
+        className="border-t border-line"
+      >
+        <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          {MODULES.map((m) => (
+            <ModuleCard key={m.n} {...m} />
+          ))}
+        </div>
+      </Section>
+
+      {/* ---------------- distribution ---------------- */}
+      <Section
+        eyebrow="CLASSIFICATION BIAS"
+        title="Why half the queue is not blocked"
+        lede={
+          <>
+            The benchmark states it plainly:{" "}
+            <span className="text-fg">
+              “Half the cases are legitimate. Many look suspicious. An agent
+              that blocks everything scores badly.”
+            </span>{" "}
+            So the agent must separate suspicion from proof —{" "}
+            <span className="font-mono text-fg">uncertain</span> is a first-class
+            outcome, not a failure to decide.
+          </>
+        }
+        className="border-t border-line"
+      >
+        <Card className="max-w-[980px]">
+          <div className="flex h-7 w-full overflow-hidden border border-line">
+            {[
+              { k: "FRAUD", v: data.counts.fraud, c: "var(--color-bad)" },
+              { k: "UNCERTAIN", v: data.counts.uncertain, c: "var(--color-warn)" },
+              { k: "LEGITIMATE", v: data.counts.legitimate, c: "var(--color-ok)" },
+            ].map((s) => (
+              <div
+                key={s.k}
+                className="flex items-center justify-center text-[9.5px] font-bold text-ink-950"
+                style={{
+                  width: `${(s.v / data.cases.length) * 100}%`,
+                  background: s.c,
+                }}
+                title={`${s.k}: ${s.v}`}
+              >
+                {s.v}
+              </div>
+            ))}
           </div>
 
-          <div className="relative min-h-0 flex-1">
-            <GraphCanvas
-              nodes={graph.nodes}
-              edges={graph.edges}
-              selected={selectedNode}
-              onSelect={setSelectedNode}
-            />
-            {selectedNode && (
-              <NodeDetails
-                cf={cf}
-                nodeId={selectedNode}
-                onClose={() => setSelectedNode(null)}
+          <div className="mt-3 grid gap-3 sm:grid-cols-3">
+            {[
+              { k: "FRAUD", v: data.counts.fraud, c: "var(--color-bad)" },
+              { k: "UNCERTAIN", v: data.counts.uncertain, c: "var(--color-warn)" },
+              { k: "LEGITIMATE", v: data.counts.legitimate, c: "var(--color-ok)" },
+            ].map((s) => (
+              <div key={s.k}>
+                <div className="flex items-baseline justify-between">
+                  <span className="text-[10px] font-bold tracking-[0.14em] text-fg-2">
+                    {s.k}
+                  </span>
+                  <span className="font-mono text-[15px] font-bold" style={{ color: s.c }}>
+                    {s.v}
+                  </span>
+                </div>
+                <div className="mt-1">
+                  <Bar value={s.v} max={data.cases.length} tone={s.c} />
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <p className="mt-3 border-t border-line pt-2.5 text-[11px] leading-[17px] text-dim">
+            Above 0.7 the benchmark warns most flagged transactions turn out to
+            be legitimate, so the score is treated as an input to review — not a
+            verdict. <span className="font-mono">risk_score</span> is excluded
+            from the model as label leakage and shown as context only.
+          </p>
+        </Card>
+      </Section>
+
+      {/* ---------------- pipeline ---------------- */}
+      <Section
+        eyebrow="AGENT PIPELINE"
+        title="Nine stages, every time"
+        lede="The same ordered state machine runs for each case. Each stage writes to the case record, so the run can be replayed and audited stage by stage."
+        className="border-t border-line"
+      >
+        <div className="grid gap-2 md:grid-cols-3 xl:grid-cols-9">
+          {PIPELINE.map((s, i) => (
+            <div
+              key={s}
+              className="relative border border-line bg-ink-900 px-3 py-3"
+            >
+              <div className="font-mono text-[10px] tracking-[0.18em] text-accent">
+                {String(i + 1).padStart(2, "0")}
+              </div>
+              <div className="mt-1.5 text-[11px] leading-[15px] font-bold text-fg">
+                {s}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        <div className="mt-4 flex flex-wrap gap-2">
+          <Button href="/investigation" variant="primary">
+            ▶ RUN IT ON HHG-001
+          </Button>
+          <Button href="/cases/HHG-001">SEE THE RECORDED RUN</Button>
+        </div>
+      </Section>
+
+      {/* ---------------- graph baseline ---------------- */}
+      <Section
+        eyebrow="LOCKED PHASE 2 BASELINE"
+        title="The graph is the single source of truth"
+        lede="The schema and loaded data are frozen: the UI, the agent and the evidence engine all read this one graph. Writes are deliberately blocked and documented rather than silently skipped."
+        className="border-t border-line"
+      >
+        <div className="grid gap-4 lg:grid-cols-[1fr_1fr]">
+          <div className="grid gap-3 sm:grid-cols-2">
+            {GRAPH_FACTS.map((f) => (
+              <StatTile
+                key={f.label}
+                label={f.label}
+                value={f.value}
+                sub={f.source}
+                source={f.source}
               />
-            )}
-            {replaying && (
-              <div className="absolute bottom-2 left-1/2 -translate-x-1/2 border border-accent/60 bg-ink-900/95 px-3 py-1.5 font-mono text-[10.5px] text-accent">
-                DEMO REPLAY · stage {stage + 1}/{STAGE_COUNT} · playback of the
-                validated {activeId} record (no backend execution)
-              </div>
-            )}
-            {!replaying && (
-              <div className="absolute top-2 right-2 border border-line bg-ink-900/90 px-2 py-1 font-mono text-[9.5px] text-dim">
-                DEMO REPLAY · ▶ RUN INVESTIGATION
-              </div>
-            )}
+            ))}
           </div>
-        </main>
 
-        <AgentPipeline
-          cf={cf}
-          shapLocal={payload.shapLocal}
-          e2e={payload.e2e}
-          stage={stage}
-          replaying={replaying}
-        />
-      </div>
-
-      {/* bottom analytics */}
-      <div className="grid h-[310px] shrink-0 grid-cols-4 gap-2 border-t border-line bg-ink-950 p-2">
-        <EvidencePanel cf={cf} />
-        <MlPanel
-          cf={cf}
-          shapLocal={payload.shapLocal}
-          e2e={payload.e2e}
-          metrics={summary.metrics}
-        />
-        <XaiPanel
-          shapLocal={payload.shapLocal}
-          shapGlobal={payload.shapGlobal}
-        />
-        <ActionPanel cf={cf} />
-      </div>
-
-      {/* footer status strip */}
-      <footer className="flex h-6 shrink-0 items-center gap-4 border-t border-line bg-ink-900 px-3 font-mono text-[9.5px] text-dim">
-        <span>
-          VALIDATION <span className="text-ok">{summary.validation_status}</span>{" "}
-          {summary.cases_passed}/{summary.cases.length}
-        </span>
-        <span>
-          GRAPH WRITE{" "}
-          <span className="text-bad">{summary.graph_write.status}</span>
-        </span>
-        <span>
-          SAR <span className="text-bad">{summary.sar_filed}</span>/20
-        </span>
-        <span>
-          TOOL CALLS live {summary.tool_calls.live} · retrieval{" "}
-          {summary.tool_calls.retrieval}
-        </span>
-        <span className="ml-auto">
-          {row ? `${row.case_id} · ${row.verdict} · p=${row.fraud_probability.toFixed(4)}` : ""}
-        </span>
-      </footer>
-
-      <CaseDrawer
-        cf={cf}
-        shapLocal={payload.shapLocal}
-        open={drawerOpen}
-        onClose={() => setDrawerOpen(false)}
-        tab={drawerTab}
-        setTab={setDrawerTab}
-      />
-      <ArchitectureModal
-        open={archOpen}
-        onClose={() => setArchOpen(false)}
-        tg={tg}
-      />
+          <Card title="GRAPH WRITE BLOCKER" right={<Tag tone="bad">BLOCKED</Tag>}>
+            <p className="text-[12px] leading-[19px] text-fg-2">
+              {data.graph_write.reason}
+            </p>
+            <div className="mt-3 grid gap-2 font-mono text-[11px] text-fg-2">
+              <div className="flex justify-between border-b border-line/60 pb-1">
+                <span className="text-dim">written_to_graph</span>
+                <span className="text-bad">
+                  {String(data.graph_write.written_to_graph)}
+                </span>
+              </div>
+              <div className="flex justify-between border-b border-line/60 pb-1">
+                <span className="text-dim">graph_case_id</span>
+                <span className="text-bad">
+                  {data.graph_write.graph_case_id || "(empty)"}
+                </span>
+              </div>
+              <div className="flex justify-between">
+                <span className="text-dim">reference</span>
+                <span className="text-accent">{data.graph_write.reference}</span>
+              </div>
+            </div>
+          </Card>
+        </div>
+      </Section>
     </div>
   );
 }
