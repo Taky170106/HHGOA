@@ -157,5 +157,12 @@ is not a demo.
 - **No `requirements.txt`** is shipped; the install line above lists the
   packages the entrypoints actually import.
 
-- The `data/` graph-load CSVs (~139 MB) are intentionally **not** in this
-  repository. They are regenerable build input, not review material.
+- `data/` (22 files, ~139 MB) **is** included, so the TigerGraph load jobs
+  are reproducible from a plain clone. GitHub flags
+  `data/vertices/transaction.csv` (65 MB) as large; it is under the 100 MB
+  hard limit, so it is committed normally rather than moved to LFS.
+
+- The **700 MB of raw benchmark data** (`DATASET/transactions.csv`,
+  `DATASET/identity.csv`) is **not** here — gitignored from the start, not
+  withheld. Caches and build output (`.next/`, `__pycache__/`, container and
+  OCI strays) are likewise excluded, as is `.env`.
