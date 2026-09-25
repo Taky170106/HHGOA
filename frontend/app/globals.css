@@ -1,0 +1,108 @@
+@import "tailwindcss";
+
+@theme {
+  /* dark enterprise palette (graph investigation) */
+  --color-ink-950: #05070b;
+  --color-ink-900: #080b11;
+  --color-ink-850: #0b0f16;
+  --color-ink-800: #0f141c;
+  --color-ink-750: #131a24;
+  --color-ink-700: #18212d;
+  --color-ink-600: #23303f;
+  --color-line: #1c2634;
+  --color-line-2: #2a374a;
+  --color-fg: #dbe4f0;
+  --color-fg-2: #9aa9bd;
+  --color-dim: #66768c;
+  --color-ok: #34d399;
+  --color-warn: #f59e0b;
+  --color-bad: #f43f5e;
+  --color-accent: #38bdf8;
+  --color-violet: #a78bfa;
+  --color-amber: #fbbf24;
+
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto,
+    Helvetica, Arial, sans-serif;
+  --font-mono: ui-monospace, "Cascadia Mono", "SF Mono", Menlo, Consolas,
+    monospace;
+}
+
+:root {
+  color-scheme: dark;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: var(--color-ink-950);
+  color: var(--color-fg);
+  font-family: var(--font-sans);
+  overflow: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* thin scrollbars for dense panels */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #243044 #0b0f16;
+}
+*::-webkit-scrollbar {
+  width: 9px;
+  height: 9px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+*::-webkit-scrollbar-thumb {
+  background: #243044;
+  border-radius: 999px;
+  border: 2px solid transparent;
+  background-clip: content-box;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: #34435c;
+  background-clip: content-box;
+}
+
+/* small caps section label */
+.label {
+  font-size: 10px;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--color-dim);
+  font-weight: 600;
+}
+
+.hair {
+  border: 1px solid var(--color-line);
+}
+
+.pulse-dot {
+  animation: pulse-dot 2s ease-in-out infinite;
+}
+@keyframes pulse-dot {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+.stage-in {
+  animation: stage-in 0.28s ease-out both;
+}
+@keyframes stage-in {
+  from {
+    opacity: 0;
+    transform: translateY(3px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
