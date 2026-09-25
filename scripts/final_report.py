@@ -117,7 +117,8 @@ def main():
     print("\nGRAPH-WRITE BLOCKER:")
     print("  docs/GRAPH_WRITE_BLOCKER.md - the Phase 2 schema has no vertex/edge for an")
     print("  agent case result; inserting one would mutate the locked, validated counts")
-    print("  (8 vertices / 11 edges / 2,505,266 edges). Recorded as BLOCKED, Phase 2 untouched.")
+    print("  (8 vertex types / 11 edge types / 2,505,266 edges loaded). Recorded as BLOCKED, "
+          "Phase 2 untouched.")
     print("  Every answer file carries the graph reference in `graph_evidence`.")
 
     # ---- calibration evidence --------------------------------------------
