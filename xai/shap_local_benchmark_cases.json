@@ -1,0 +1,1022 @@
+{
+  "HHG-001": {
+    "txn_id": "3514030",
+    "card_id": "C12382-K1",
+    "customer_id": "C12382",
+    "risk_score": 0.61,
+    "model_probability": 0.9813,
+    "model_prediction": "FRAUD",
+    "top_contributing_features": [
+      {
+        "feature": "device_distinct_cards",
+        "value": 0.0,
+        "shap_value": 0.08637
+      },
+      {
+        "feature": "device_shared_txn_degree",
+        "value": 0.0,
+        "shap_value": 0.07604
+      },
+      {
+        "feature": "device_has_edge",
+        "value": 0.0,
+        "shap_value": 0.05929
+      },
+      {
+        "feature": "product_cd",
+        "value": 4.0,
+        "shap_value": 0.05536
+      },
+      {
+        "feature": "dt_seconds",
+        "value": 13463728.0,
+        "shap_value": 0.04667
+      },
+      {
+        "feature": "log_amount",
+        "value": 4.3576,
+        "shap_value": 0.04436
+      },
+      {
+        "feature": "amount",
+        "value": 77.07,
+        "shap_value": 0.04158
+      },
+      {
+        "feature": "card_on_card_cases",
+        "value": 4.0,
+        "shap_value": 0.02419
+      }
+    ],
+    "note": "MODEL EXPLANATION: contribution of each feature to this model score. GRAPH EVIDENCE is reported separately by the agent from TigerGraph queries."
+  },
+  "HHG-002": {
+    "txn_id": "3478782",
+    "card_id": "C11891-K1",
+    "customer_id": "C11891",
+    "risk_score": 0.79,
+    "model_probability": 0.7646,
+    "model_prediction": "FRAUD",
+    "top_contributing_features": [
+      {
+        "feature": "card_historical_cases",
+        "value": 1.0,
+        "shap_value": -0.06586
+      },
+      {
+        "feature": "card_on_card_cases",
+        "value": 1.0,
+        "shap_value": -0.06206
+      },
+      {
+        "feature": "dt_seconds",
+        "value": 12418027.0,
+        "shap_value": 0.06097
+      },
+      {
+        "feature": "log_amount",
+        "value": 5.6814,
+        "shap_value": 0.05668
+      },
+      {
+        "feature": "amount",
+        "value": 292.36,
+        "shap_value": 0.05419
+      },
+      {
+        "feature": "region_degree",
+        "value": 0.0,
+        "shap_value": 0.03871
+      },
+      {
+        "feature": "device_distinct_cards",
+        "value": 0.0,
+        "shap_value": 0.03568
+      },
+      {
+        "feature": "device_shared_txn_degree",
+        "value": 0.0,
+        "shap_value": 0.03428
+      }
+    ],
+    "note": "MODEL EXPLANATION: contribution of each feature to this model score. GRAPH EVIDENCE is reported separately by the agent from TigerGraph queries."
+  },
+  "HHG-003": {
+    "txn_id": "3530164",
+    "card_id": "C08623-K2",
+    "customer_id": "C08623",
+    "risk_score": -1.0,
+    "model_probability": 0.99,
+    "model_prediction": "FRAUD",
+    "top_contributing_features": [
+      {
+        "feature": "device_distinct_cards",
+        "value": 0.0,
+        "shap_value": 0.08189
+      },
+      {
+        "feature": "device_shared_txn_degree",
+        "value": 0.0,
+        "shap_value": 0.07125
+      },
+      {
+        "feature": "device_has_edge",
+        "value": 0.0,
+        "shap_value": 0.05725
+      },
+      {
+        "feature": "product_cd",
+        "value": 4.0,
+        "shap_value": 0.05154
+      },
+      {
+        "feature": "dt_seconds",
+        "value": 13957281.0,
+        "shap_value": 0.04276
+      },
+      {
+        "feature": "log_amount",
+        "value": 3.912,
+        "shap_value": 0.04261
+      },
+      {
+        "feature": "amount",
+        "value": 49.0,
+        "shap_value": 0.04122
+      },
+      {
+        "feature": "card_historical_cases",
+        "value": 6.0,
+        "shap_value": 0.03928
+      }
+    ],
+    "note": "MODEL EXPLANATION: contribution of each feature to this model score. GRAPH EVIDENCE is reported separately by the agent from TigerGraph queries."
+  },
+  "HHG-004": {
+    "txn_id": "3583227",
+    "card_id": "C08106-K1",
+    "customer_id": "C08106",
+    "risk_score": -1.0,
+    "model_probability": 0.8768,
+    "model_prediction": "FRAUD",
+    "top_contributing_features": [
+      {
+        "feature": "addr2",
+        "value": -1.0,
+        "shap_value": 0.06282
+      },
+      {
+        "feature": "dt_seconds",
+        "value": 15558834.0,
+        "shap_value": 0.06055
+      },
+      {
+        "feature": "region_degree",
+        "value": 0.0,
+        "shap_value": 0.05649
+      },
+      {
+        "feature": "product_cd",
+        "value": 0.0,
+        "shap_value": 0.02952
+      },
+      {
+        "feature": "device_distinct_cards",
+        "value": 6.0,
+        "shap_value": 0.02519
+      },
+      {
+        "feature": "card_historical_cases",
+        "value": 4.0,
+        "shap_value": 0.02043
+      },
+      {
+        "feature": "card_on_card_cases",
+        "value": 4.0,
+        "shap_value": 0.02019
+      },
+      {
+        "feature": "amount",
+        "value": 128.33,
+        "shap_value": 0.01949
+      }
+    ],
+    "note": "MODEL EXPLANATION: contribution of each feature to this model score. GRAPH EVIDENCE is reported separately by the agent from TigerGraph queries."
+  },
+  "HHG-005": {
+    "txn_id": "3523199",
+    "card_id": "C02923-K1",
+    "customer_id": "C02923",
+    "risk_score": 0.54,
+    "model_probability": 0.4527,
+    "model_prediction": "NOT_FRAUD",
+    "top_contributing_features": [
+      {
+        "feature": "dt_seconds",
+        "value": 13729117.0,
+        "shap_value": 0.10678
+      },
+      {
+        "feature": "product_cd",
+        "value": 2.0,
+        "shap_value": -0.05732
+      },
+      {
+        "feature": "device_distinct_cards",
+        "value": 112.0,
+        "shap_value": -0.04942
+      },
+      {
+        "feature": "device_shared_txn_degree",
+        "value": 168.0,
+        "shap_value": -0.03414
+      },
+      {
+        "feature": "purchaser_domain_degree",
+        "value": 6270.0,
+        "shap_value": -0.03274
+      },
+      {
+        "feature": "device_has_edge",
+        "value": 1.0,
+        "shap_value": -0.02678
+      },
+      {
+        "feature": "addr2",
+        "value": 87.0,
+        "shap_value": -0.02586
+      },
+      {
+        "feature": "prev_time_delta_hours",
+        "value": 106.5464,
+        "shap_value": 0.02282
+      }
+    ],
+    "note": "MODEL EXPLANATION: contribution of each feature to this model score. GRAPH EVIDENCE is reported separately by the agent from TigerGraph queries."
+  },
+  "HHG-006": {
+    "txn_id": "3476682",
+    "card_id": "C07297-K1",
+    "customer_id": "C07297",
+    "risk_score": -1.0,
+    "model_probability": 0.5557,
+    "model_prediction": "FRAUD",
+    "top_contributing_features": [
+      {
+        "feature": "dt_seconds",
+        "value": 12342600.0,
+        "shap_value": 0.10793
+      },
+      {
+        "feature": "card_on_card_cases",
+        "value": 0.0,
+        "shap_value": -0.06
+      },
+      {
+        "feature": "card_historical_cases",
+        "value": 0.0,
+        "shap_value": -0.05952
+      },
+      {
+        "feature": "amount",
+        "value": 482.12,
+        "shap_value": 0.05293
+      },
+      {
+        "feature": "log_amount",
+        "value": 6.1803,
+        "shap_value": 0.0509
+      },
+      {
+        "feature": "purchaser_domain_degree",
+        "value": 228436.0,
+        "shap_value": 0.03216
+      },
+      {
+        "feature": "prev_time_delta_hours",
+        "value": 0.1,
+        "shap_value": -0.02504
+      },
+      {
+        "feature": "recipient_domain_degree",
+        "value": 0.0,
+        "shap_value": -0.01955
+      }
+    ],
+    "note": "MODEL EXPLANATION: contribution of each feature to this model score. GRAPH EVIDENCE is reported separately by the agent from TigerGraph queries."
+  },
+  "HHG-007": {
+    "txn_id": "3514948",
+    "card_id": "C09933-K2",
+    "customer_id": "C09933",
+    "risk_score": 0.87,
+    "model_probability": 0.9856,
+    "model_prediction": "FRAUD",
+    "top_contributing_features": [
+      {
+        "feature": "device_distinct_cards",
+        "value": 0.0,
+        "shap_value": 0.06831
+      },
+      {
+        "feature": "device_shared_txn_degree",
+        "value": 0.0,
+        "shap_value": 0.06063
+      },
+      {
+        "feature": "card_historical_cases",
+        "value": 19.0,
+        "shap_value": 0.05622
+      },
+      {
+        "feature": "card_on_card_cases",
+        "value": 19.0,
+        "shap_value": 0.05175
+      },
+      {
+        "feature": "device_has_edge",
+        "value": 0.0,
+        "shap_value": 0.04865
+      },
+      {
+        "feature": "product_cd",
+        "value": 4.0,
+        "shap_value": 0.04103
+      },
+      {
+        "feature": "amount",
+        "value": 111.92,
+        "shap_value": 0.03874
+      },
+      {
+        "feature": "log_amount",
+        "value": 4.7267,
+        "shap_value": 0.03835
+      }
+    ],
+    "note": "MODEL EXPLANATION: contribution of each feature to this model score. GRAPH EVIDENCE is reported separately by the agent from TigerGraph queries."
+  },
+  "HHG-008": {
+    "txn_id": "3558054",
+    "card_id": "C13171-K2",
+    "customer_id": "C13171",
+    "risk_score": -1.0,
+    "model_probability": 0.6451,
+    "model_prediction": "FRAUD",
+    "top_contributing_features": [
+      {
+        "feature": "addr2",
+        "value": -1.0,
+        "shap_value": 0.05851
+      },
+      {
+        "feature": "region_degree",
+        "value": 0.0,
+        "shap_value": 0.05601
+      },
+      {
+        "feature": "card_historical_cases",
+        "value": 19.0,
+        "shap_value": 0.05512
+      },
+      {
+        "feature": "card_on_card_cases",
+        "value": 19.0,
+        "shap_value": 0.04807
+      },
+      {
+        "feature": "device_distinct_cards",
+        "value": 171.0,
+        "shap_value": -0.04296
+      },
+      {
+        "feature": "device_shared_txn_degree",
+        "value": 663.0,
+        "shap_value": -0.03454
+      },
+      {
+        "feature": "prev_time_delta_hours",
+        "value": 0.3006,
+        "shap_value": -0.02384
+      },
+      {
+        "feature": "device_has_edge",
+        "value": 1.0,
+        "shap_value": -0.01921
+      }
+    ],
+    "note": "MODEL EXPLANATION: contribution of each feature to this model score. GRAPH EVIDENCE is reported separately by the agent from TigerGraph queries."
+  },
+  "HHG-009": {
+    "txn_id": "3581141",
+    "card_id": "C08299-K1",
+    "customer_id": "C08299",
+    "risk_score": -1.0,
+    "model_probability": 0.3038,
+    "model_prediction": "NOT_FRAUD",
+    "top_contributing_features": [
+      {
+        "feature": "card_historical_cases",
+        "value": 0.0,
+        "shap_value": -0.08757
+      },
+      {
+        "feature": "dt_seconds",
+        "value": 15509453.0,
+        "shap_value": 0.08234
+      },
+      {
+        "feature": "card_on_card_cases",
+        "value": 0.0,
+        "shap_value": -0.0819
+      },
+      {
+        "feature": "product_cd",
+        "value": 3.0,
+        "shap_value": -0.04948
+      },
+      {
+        "feature": "device_has_edge",
+        "value": 1.0,
+        "shap_value": -0.02539
+      },
+      {
+        "feature": "purchaser_domain_degree",
+        "value": 0.0,
+        "shap_value": -0.02037
+      },
+      {
+        "feature": "device_shared_txn_degree",
+        "value": 3648.0,
+        "shap_value": 0.01723
+      },
+      {
+        "feature": "recipient_domain_degree",
+        "value": 57225.0,
+        "shap_value": 0.01449
+      }
+    ],
+    "note": "MODEL EXPLANATION: contribution of each feature to this model score. GRAPH EVIDENCE is reported separately by the agent from TigerGraph queries."
+  },
+  "HHG-010": {
+    "txn_id": "3506725",
+    "card_id": "C10434-K1",
+    "customer_id": "C10434",
+    "risk_score": 0.9,
+    "model_probability": 0.3914,
+    "model_prediction": "NOT_FRAUD",
+    "top_contributing_features": [
+      {
+        "feature": "dt_seconds",
+        "value": 13274307.0,
+        "shap_value": 0.12054
+      },
+      {
+        "feature": "card_historical_cases",
+        "value": 1.0,
+        "shap_value": -0.07217
+      },
+      {
+        "feature": "card_on_card_cases",
+        "value": 1.0,
+        "shap_value": -0.06503
+      },
+      {
+        "feature": "prev_amount_ratio",
+        "value": 9.9963,
+        "shap_value": 0.04381
+      },
+      {
+        "feature": "purchaser_domain_degree",
+        "value": 37018.0,
+        "shap_value": -0.04117
+      },
+      {
+        "feature": "product_cd",
+        "value": 2.0,
+        "shap_value": -0.03399
+      },
+      {
+        "feature": "recipient_domain_degree",
+        "value": 20554.0,
+        "shap_value": -0.03032
+      },
+      {
+        "feature": "device_distinct_cards",
+        "value": 208.0,
+        "shap_value": -0.02035
+      }
+    ],
+    "note": "MODEL EXPLANATION: contribution of each feature to this model score. GRAPH EVIDENCE is reported separately by the agent from TigerGraph queries."
+  },
+  "HHG-011": {
+    "txn_id": "3583368",
+    "card_id": "C11923-K2",
+    "customer_id": "C11923",
+    "risk_score": -1.0,
+    "model_probability": 0.7606,
+    "model_prediction": "FRAUD",
+    "top_contributing_features": [
+      {
+        "feature": "card_historical_cases",
+        "value": 11.0,
+        "shap_value": 0.04337
+      },
+      {
+        "feature": "dt_seconds",
+        "value": 15564464.0,
+        "shap_value": 0.04047
+      },
+      {
+        "feature": "card_on_card_cases",
+        "value": 11.0,
+        "shap_value": 0.03584
+      },
+      {
+        "feature": "device_distinct_cards",
+        "value": 4.0,
+        "shap_value": 0.03278
+      },
+      {
+        "feature": "addr2",
+        "value": -1.0,
+        "shap_value": 0.03095
+      },
+      {
+        "feature": "region_degree",
+        "value": 0.0,
+        "shap_value": 0.0284
+      },
+      {
+        "feature": "prev_amount_ratio",
+        "value": 3.7981,
+        "shap_value": 0.01895
+      },
+      {
+        "feature": "device_has_edge",
+        "value": 1.0,
+        "shap_value": -0.01827
+      }
+    ],
+    "note": "MODEL EXPLANATION: contribution of each feature to this model score. GRAPH EVIDENCE is reported separately by the agent from TigerGraph queries."
+  },
+  "HHG-012": {
+    "txn_id": "3553342",
+    "card_id": "C05876-K2",
+    "customer_id": "C05876",
+    "risk_score": 0.55,
+    "model_probability": 0.8577,
+    "model_prediction": "FRAUD",
+    "top_contributing_features": [
+      {
+        "feature": "device_distinct_cards",
+        "value": 0.0,
+        "shap_value": 0.08214
+      },
+      {
+        "feature": "device_shared_txn_degree",
+        "value": 0.0,
+        "shap_value": 0.0736
+      },
+      {
+        "feature": "device_has_edge",
+        "value": 0.0,
+        "shap_value": 0.05709
+      },
+      {
+        "feature": "dt_seconds",
+        "value": 14616031.0,
+        "shap_value": 0.05509
+      },
+      {
+        "feature": "log_amount",
+        "value": 3.4629,
+        "shap_value": 0.05476
+      },
+      {
+        "feature": "amount",
+        "value": 30.91,
+        "shap_value": 0.05267
+      },
+      {
+        "feature": "product_cd",
+        "value": 4.0,
+        "shap_value": 0.05176
+      },
+      {
+        "feature": "card_historical_cases",
+        "value": 2.0,
+        "shap_value": -0.03777
+      }
+    ],
+    "note": "MODEL EXPLANATION: contribution of each feature to this model score. GRAPH EVIDENCE is reported separately by the agent from TigerGraph queries."
+  },
+  "HHG-013": {
+    "txn_id": "3526826",
+    "card_id": "C07671-K2",
+    "customer_id": "C07671",
+    "risk_score": 0.76,
+    "model_probability": 0.7971,
+    "model_prediction": "FRAUD",
+    "top_contributing_features": [
+      {
+        "feature": "addr2",
+        "value": -1.0,
+        "shap_value": 0.07412
+      },
+      {
+        "feature": "region_degree",
+        "value": 0.0,
+        "shap_value": 0.06457
+      },
+      {
+        "feature": "dt_seconds",
+        "value": 13833569.0,
+        "shap_value": 0.04339
+      },
+      {
+        "feature": "card_historical_cases",
+        "value": 4.0,
+        "shap_value": 0.03107
+      },
+      {
+        "feature": "card_on_card_cases",
+        "value": 4.0,
+        "shap_value": 0.03077
+      },
+      {
+        "feature": "device_distinct_cards",
+        "value": 253.0,
+        "shap_value": -0.02747
+      },
+      {
+        "feature": "product_cd",
+        "value": 0.0,
+        "shap_value": 0.02539
+      },
+      {
+        "feature": "purchaser_domain_degree",
+        "value": 228436.0,
+        "shap_value": 0.01831
+      }
+    ],
+    "note": "MODEL EXPLANATION: contribution of each feature to this model score. GRAPH EVIDENCE is reported separately by the agent from TigerGraph queries."
+  },
+  "HHG-014": {
+    "txn_id": "3478561",
+    "card_id": "C13487-K1",
+    "customer_id": "C13487",
+    "risk_score": -1.0,
+    "model_probability": 0.4513,
+    "model_prediction": "NOT_FRAUD",
+    "top_contributing_features": [
+      {
+        "feature": "dt_seconds",
+        "value": 12413460.0,
+        "shap_value": 0.11734
+      },
+      {
+        "feature": "card_on_card_cases",
+        "value": 0.0,
+        "shap_value": -0.07548
+      },
+      {
+        "feature": "card_historical_cases",
+        "value": 0.0,
+        "shap_value": -0.0721
+      },
+      {
+        "feature": "device_distinct_cards",
+        "value": 52.0,
+        "shap_value": -0.0475
+      },
+      {
+        "feature": "product_cd",
+        "value": 0.0,
+        "shap_value": 0.03494
+      },
+      {
+        "feature": "device_shared_txn_degree",
+        "value": 114.0,
+        "shap_value": -0.03231
+      },
+      {
+        "feature": "device_has_edge",
+        "value": 1.0,
+        "shap_value": -0.02393
+      },
+      {
+        "feature": "addr2",
+        "value": 87.0,
+        "shap_value": -0.02214
+      }
+    ],
+    "note": "MODEL EXPLANATION: contribution of each feature to this model score. GRAPH EVIDENCE is reported separately by the agent from TigerGraph queries."
+  },
+  "HHG-015": {
+    "txn_id": "3464869",
+    "card_id": "C03042-K1",
+    "customer_id": "C03042",
+    "risk_score": 0.77,
+    "model_probability": 0.608,
+    "model_prediction": "FRAUD",
+    "top_contributing_features": [
+      {
+        "feature": "dt_seconds",
+        "value": 11973816.0,
+        "shap_value": 0.12736
+      },
+      {
+        "feature": "purchaser_domain_degree",
+        "value": 37018.0,
+        "shap_value": -0.04015
+      },
+      {
+        "feature": "product_cd",
+        "value": 2.0,
+        "shap_value": -0.03128
+      },
+      {
+        "feature": "device_distinct_cards",
+        "value": 8.0,
+        "shap_value": 0.03034
+      },
+      {
+        "feature": "recipient_domain_degree",
+        "value": 20554.0,
+        "shap_value": -0.02072
+      },
+      {
+        "feature": "addr2",
+        "value": 87.0,
+        "shap_value": -0.01554
+      },
+      {
+        "feature": "device_has_edge",
+        "value": 1.0,
+        "shap_value": -0.01494
+      },
+      {
+        "feature": "log_amount",
+        "value": 6.3985,
+        "shap_value": 0.01472
+      }
+    ],
+    "note": "MODEL EXPLANATION: contribution of each feature to this model score. GRAPH EVIDENCE is reported separately by the agent from TigerGraph queries."
+  },
+  "HHG-016": {
+    "txn_id": "3534820",
+    "card_id": "C09988-K1",
+    "customer_id": "C09988",
+    "risk_score": -1.0,
+    "model_probability": 0.631,
+    "model_prediction": "FRAUD",
+    "top_contributing_features": [
+      {
+        "feature": "card_historical_cases",
+        "value": 0.0,
+        "shap_value": -0.08745
+      },
+      {
+        "feature": "card_on_card_cases",
+        "value": 0.0,
+        "shap_value": -0.07791
+      },
+      {
+        "feature": "addr2",
+        "value": -1.0,
+        "shap_value": 0.07169
+      },
+      {
+        "feature": "region_degree",
+        "value": 0.0,
+        "shap_value": 0.06762
+      },
+      {
+        "feature": "dt_seconds",
+        "value": 14078348.0,
+        "shap_value": 0.06592
+      },
+      {
+        "feature": "product_cd",
+        "value": 0.0,
+        "shap_value": 0.03764
+      },
+      {
+        "feature": "prev_time_delta_hours",
+        "value": 505.5631,
+        "shap_value": 0.0275
+      },
+      {
+        "feature": "device_distinct_cards",
+        "value": 158.0,
+        "shap_value": -0.02245
+      }
+    ],
+    "note": "MODEL EXPLANATION: contribution of each feature to this model score. GRAPH EVIDENCE is reported separately by the agent from TigerGraph queries."
+  },
+  "HHG-017": {
+    "txn_id": "3450629",
+    "card_id": "C04570-K1",
+    "customer_id": "C04570",
+    "risk_score": 0.57,
+    "model_probability": 0.1681,
+    "model_prediction": "NOT_FRAUD",
+    "top_contributing_features": [
+      {
+        "feature": "dt_seconds",
+        "value": 11490384.0,
+        "shap_value": 0.09969
+      },
+      {
+        "feature": "card_historical_cases",
+        "value": 1.0,
+        "shap_value": -0.07975
+      },
+      {
+        "feature": "card_on_card_cases",
+        "value": 1.0,
+        "shap_value": -0.07097
+      },
+      {
+        "feature": "product_cd",
+        "value": 2.0,
+        "shap_value": -0.05899
+      },
+      {
+        "feature": "device_distinct_cards",
+        "value": 299.0,
+        "shap_value": -0.04845
+      },
+      {
+        "feature": "device_shared_txn_degree",
+        "value": 621.0,
+        "shap_value": -0.03437
+      },
+      {
+        "feature": "recipient_domain_degree",
+        "value": 20554.0,
+        "shap_value": -0.02861
+      },
+      {
+        "feature": "purchaser_domain_degree",
+        "value": 37018.0,
+        "shap_value": -0.028
+      }
+    ],
+    "note": "MODEL EXPLANATION: contribution of each feature to this model score. GRAPH EVIDENCE is reported separately by the agent from TigerGraph queries."
+  },
+  "HHG-018": {
+    "txn_id": "3491361",
+    "card_id": "C02354-K2",
+    "customer_id": "C02354",
+    "risk_score": -1.0,
+    "model_probability": 0.9961,
+    "model_prediction": "FRAUD",
+    "top_contributing_features": [
+      {
+        "feature": "device_distinct_cards",
+        "value": 0.0,
+        "shap_value": 0.06989
+      },
+      {
+        "feature": "device_shared_txn_degree",
+        "value": 0.0,
+        "shap_value": 0.06447
+      },
+      {
+        "feature": "card_historical_cases",
+        "value": 20.0,
+        "shap_value": 0.05916
+      },
+      {
+        "feature": "card_on_card_cases",
+        "value": 20.0,
+        "shap_value": 0.05592
+      },
+      {
+        "feature": "device_has_edge",
+        "value": 0.0,
+        "shap_value": 0.05074
+      },
+      {
+        "feature": "product_cd",
+        "value": 4.0,
+        "shap_value": 0.04443
+      },
+      {
+        "feature": "dt_seconds",
+        "value": 12836486.0,
+        "shap_value": 0.04002
+      },
+      {
+        "feature": "log_amount",
+        "value": 3.6909,
+        "shap_value": 0.02859
+      }
+    ],
+    "note": "MODEL EXPLANATION: contribution of each feature to this model score. GRAPH EVIDENCE is reported separately by the agent from TigerGraph queries."
+  },
+  "HHG-019": {
+    "txn_id": "3503878",
+    "card_id": "C07987-K2",
+    "customer_id": "C07987",
+    "risk_score": 0.9,
+    "model_probability": 0.5254,
+    "model_prediction": "FRAUD",
+    "top_contributing_features": [
+      {
+        "feature": "dt_seconds",
+        "value": 13195733.0,
+        "shap_value": 0.08461
+      },
+      {
+        "feature": "product_cd",
+        "value": 2.0,
+        "shap_value": -0.05547
+      },
+      {
+        "feature": "device_has_edge",
+        "value": 1.0,
+        "shap_value": -0.0317
+      },
+      {
+        "feature": "purchaser_domain_degree",
+        "value": 2705.0,
+        "shap_value": -0.0312
+      },
+      {
+        "feature": "device_distinct_cards",
+        "value": 5.0,
+        "shap_value": 0.03048
+      },
+      {
+        "feature": "addr2",
+        "value": 87.0,
+        "shap_value": -0.02305
+      },
+      {
+        "feature": "prev_time_delta_hours",
+        "value": 40.3953,
+        "shap_value": 0.02269
+      },
+      {
+        "feature": "region_degree",
+        "value": 39876.0,
+        "shap_value": -0.01618
+      }
+    ],
+    "note": "MODEL EXPLANATION: contribution of each feature to this model score. GRAPH EVIDENCE is reported separately by the agent from TigerGraph queries."
+  },
+  "HHG-020": {
+    "txn_id": "3509359",
+    "card_id": "C12265-K2",
+    "customer_id": "C12265",
+    "risk_score": 0.52,
+    "model_probability": 0.4645,
+    "model_prediction": "NOT_FRAUD",
+    "top_contributing_features": [
+      {
+        "feature": "dt_seconds",
+        "value": 13327466.0,
+        "shap_value": 0.12605
+      },
+      {
+        "feature": "product_cd",
+        "value": 2.0,
+        "shap_value": -0.05362
+      },
+      {
+        "feature": "device_distinct_cards",
+        "value": 253.0,
+        "shap_value": -0.04099
+      },
+      {
+        "feature": "device_shared_txn_degree",
+        "value": 462.0,
+        "shap_value": -0.03144
+      },
+      {
+        "feature": "purchaser_domain_degree",
+        "value": 100969.0,
+        "shap_value": 0.02686
+      },
+      {
+        "feature": "recipient_domain_degree",
+        "value": 459.0,
+        "shap_value": -0.02603
+      },
+      {
+        "feature": "device_has_edge",
+        "value": 1.0,
+        "shap_value": -0.02596
+      },
+      {
+        "feature": "card_historical_cases",
+        "value": 2.0,
+        "shap_value": -0.02027
+      }
+    ],
+    "note": "MODEL EXPLANATION: contribution of each feature to this model score. GRAPH EVIDENCE is reported separately by the agent from TigerGraph queries."
+  }
+}

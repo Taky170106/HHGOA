@@ -1,0 +1,22 @@
+# Query G - temporal_chain
+# Input: card_id
+# Return: ordered transaction sequence and NEXT relationships for that card
+# Supports: previous/subsequent txns, velocity, repeated activity, sequences
+# NEXT edges preserve ts precision; this query returns the chain in order.
+USE GRAPH hhg_fraud_graph
+CREATE QUERY temporal_chain(STRING card_id) FOR GRAPH hhg_fraud_graph {
+  CardS = {Card.*};
+  K = SELECT c FROM CardS:c WHERE c.card_id == card_id;
+  IF K.size() == 0 THEN PRINT "CARD_NOT_FOUND"; RETURN; END;
+
+  Txns = SELECT t FROM K:c -(MADE)- Transaction:t;
+  Chains = SELECT t FROM Txns:t -(NEXT)- Transaction:n;
+
+  // For ordered output, TigerGraph returns unsorted; caller sorts by Transaction.ts
+  // Also return directed NEXT edges explicitly
+  NextEdges = SELECT t FROM Txns:t -(NEXT:e)- Transaction:n;
+
+  PRINT K;
+  PRINT Txns;
+  PRINT NextEdges;
+}

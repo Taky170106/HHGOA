@@ -1,0 +1,180 @@
+{
+  "source": "DATASET/closed_cases_history.csv + data/edges/involves.csv",
+  "method": "log-likelihood ratio with Laplace smoothing, per evidence signal",
+  "labeled_fraud_txns": 14055,
+  "labeled_cleared_txns": 900,
+  "signal_count": 21,
+  "weights": {
+    "card_testing": 1.6,
+    "out_of_region": -1.6,
+    "new_device": -1.6,
+    "proxy": -1.1145,
+    "match_anomaly": -1.4245,
+    "amount_outlier": -0.2648,
+    "new_product": -1.6,
+    "burst": 0.1857,
+    "device_ring": -0.4257,
+    "device_prior_fraud": -0.079,
+    "card_prior_fraud": 0.6476,
+    "domain_new": -1.6,
+    "channel_change": -0.8179,
+    "recurring": 1.1136,
+    "device_on_file": 1.6,
+    "home_region": -0.3535,
+    "amount_normal": 0.0158,
+    "product_known": 0.1944,
+    "prior_cleared": 1.6,
+    "stable_history": 0.6586,
+    "prior_region_known": 0.2367
+  },
+  "rates": {
+    "card_testing": {
+      "fraud_rate": 0.14626,
+      "cleared_rate": 0.01441,
+      "fraud_hits": 2055,
+      "cleared_hits": 12,
+      "weight": 1.6
+    },
+    "out_of_region": {
+      "fraud_rate": 7e-05,
+      "cleared_rate": 0.00111,
+      "fraud_hits": 0,
+      "cleared_hits": 0,
+      "weight": -1.6
+    },
+    "new_device": {
+      "fraud_rate": 0.15786,
+      "cleared_rate": 0.83149,
+      "fraud_hits": 2218,
+      "cleared_hits": 749,
+      "weight": -1.6
+    },
+    "proxy": {
+      "fraud_rate": 0.02255,
+      "cleared_rate": 0.06874,
+      "fraud_hits": 316,
+      "cleared_hits": 61,
+      "weight": -1.1145
+    },
+    "match_anomaly": {
+      "fraud_rate": 0.00107,
+      "cleared_rate": 0.00443,
+      "fraud_hits": 14,
+      "cleared_hits": 3,
+      "weight": -1.4245
+    },
+    "amount_outlier": {
+      "fraud_rate": 0.16333,
+      "cleared_rate": 0.21286,
+      "fraud_hits": 2295,
+      "cleared_hits": 191,
+      "weight": -0.2648
+    },
+    "new_product": {
+      "fraud_rate": 0.01686,
+      "cleared_rate": 0.14302,
+      "fraud_hits": 236,
+      "cleared_hits": 128,
+      "weight": -1.6
+    },
+    "burst": {
+      "fraud_rate": 0.90375,
+      "cleared_rate": 0.75055,
+      "fraud_hits": 12703,
+      "cleared_hits": 676,
+      "weight": 0.1857
+    },
+    "device_ring": {
+      "fraud_rate": 0.5302,
+      "cleared_rate": 0.81153,
+      "fraud_hits": 7452,
+      "cleared_hits": 731,
+      "weight": -0.4257
+    },
+    "device_prior_fraud": {
+      "fraud_rate": 0.50196,
+      "cleared_rate": 0.54324,
+      "fraud_hits": 7055,
+      "cleared_hits": 489,
+      "weight": -0.079
+    },
+    "card_prior_fraud": {
+      "fraud_rate": 0.91307,
+      "cleared_rate": 0.47783,
+      "fraud_hits": 12834,
+      "cleared_hits": 430,
+      "weight": 0.6476
+    },
+    "domain_new": {
+      "fraud_rate": 0.03528,
+      "cleared_rate": 0.22506,
+      "fraud_hits": 495,
+      "cleared_hits": 202,
+      "weight": -1.6
+    },
+    "channel_change": {
+      "fraud_rate": 0.12428,
+      "cleared_rate": 0.2816,
+      "fraud_hits": 1746,
+      "cleared_hits": 253,
+      "weight": -0.8179
+    },
+    "recurring": {
+      "fraud_rate": 0.65498,
+      "cleared_rate": 0.21508,
+      "fraud_hits": 9206,
+      "cleared_hits": 193,
+      "weight": 1.1136
+    },
+    "device_on_file": {
+      "fraud_rate": 0.33763,
+      "cleared_rate": 0.01552,
+      "fraud_hits": 4745,
+      "cleared_hits": 13,
+      "weight": 1.6
+    },
+    "home_region": {
+      "fraud_rate": 0.62595,
+      "cleared_rate": 0.89135,
+      "fraud_hits": 8798,
+      "cleared_hits": 803,
+      "weight": -0.3535
+    },
+    "amount_normal": {
+      "fraud_rate": 0.58227,
+      "cleared_rate": 0.57317,
+      "fraud_hits": 8184,
+      "cleared_hits": 516,
+      "weight": 0.0158
+    },
+    "product_known": {
+      "fraud_rate": 0.96279,
+      "cleared_rate": 0.79268,
+      "fraud_hits": 13533,
+      "cleared_hits": 714,
+      "weight": 0.1944
+    },
+    "prior_cleared": {
+      "fraud_rate": 0.71836,
+      "cleared_rate": 0.00111,
+      "fraud_hits": 10097,
+      "cleared_hits": 0,
+      "weight": 1.6
+    },
+    "stable_history": {
+      "fraud_rate": 0.84179,
+      "cleared_rate": 0.4357,
+      "fraud_hits": 11832,
+      "cleared_hits": 392,
+      "weight": 0.6586
+    },
+    "prior_region_known": {
+      "fraud_rate": 0.59422,
+      "cleared_rate": 0.46896,
+      "fraud_hits": 8352,
+      "cleared_hits": 422,
+      "weight": 0.2367
+    }
+  },
+  "leakage_guard": "the containing closed case is excluded from case-memory signals"
+}

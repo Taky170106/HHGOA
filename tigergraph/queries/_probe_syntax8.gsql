@@ -1,0 +1,48 @@
+USE GRAPH hhg_fraud_graph
+
+/* runtime: attribute join via IN @@set (reverse-free txn -> card) */
+CREATE QUERY p3j_in(STRING tid) FOR GRAPH hhg_fraud_graph {
+  SetAccum<STRING> @@ids;
+  A = {Transaction.*};
+  T = SELECT t FROM A:t WHERE t.txn_id == tid ACCUM @@ids += t.txn_id;
+  C0 = {Card.*};
+  C = SELECT c FROM C0:c WHERE c.card_id IN @@ids;
+  PRINT T;
+  PRINT C;
+}
+
+/* runtime: inverted traversal with target filter (device -> txns, forward only) */
+CREATE QUERY p3j_inv(STRING tid) FOR GRAPH hhg_fraud_graph {
+  SetAccum<STRING> @@dev;
+  A = {Transaction.*};
+  T = SELECT t FROM A:t WHERE t.txn_id == tid;
+  D = SELECT d FROM T:t -(FROM_DEVICE)-> DeviceProfile:d ACCUM @@dev += d.device_profile_id;
+  Other = SELECT t2 FROM A:t2 -(FROM_DEVICE)-> DeviceProfile:d2
+            WHERE d2.device_profile_id IN @@dev LIMIT 5;
+  PRINT T;
+  PRINT D;
+  PRINT Other;
+}
+
+/* compile: deterministic ORDER BY + LIMIT */
+CREATE QUERY p3j_order(STRING cardid) FOR GRAPH hhg_fraud_graph {
+  C0 = {Card.*};
+  K = SELECT c FROM C0:c WHERE c.card_id == cardid;
+  T = SELECT t FROM K:c -(MADE)-> Transaction:t ORDER BY t.ts ASC LIMIT 10;
+  PRINT K;
+  PRINT T;
+}
+
+/* compile: string building for path-explanation rows */
+CREATE QUERY p3j_concat() FOR GRAPH hhg_fraud_graph {
+  ListAccum<STRING> @@rows;
+  @@rows += CONCAT("A", "|", "B");
+  PRINT @@rows;
+}
+
+/* compile: string building with + */
+CREATE QUERY p3j_concat2() FOR GRAPH hhg_fraud_graph {
+  ListAccum<STRING> @@rows;
+  @@rows += "A" + "|" + "B";
+  PRINT @@rows;
+}

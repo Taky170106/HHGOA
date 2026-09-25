@@ -1,0 +1,36 @@
+# --- secrets: never commit ---
+.env
+.env.*
+# ...but the empty-placeholder template IS part of the submission
+!.env.example
+*.key
+*.pem
+secrets.*
+
+# --- local container / image strays (not part of the submission) ---
+blobs/
+tigergraph-4.2.5-community/
+DockerDesktopWSL/
+oci-layout
+manifest.json
+repositories
+
+# --- large raw benchmark files (graph-ready data in data/ is the build input) ---
+DATASET/transactions.csv
+DATASET/identity.csv
+data_export/
+
+# --- python / tooling ---
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+*.egg-info/
+.venv/
+venv/
+
+# --- runtime output ---
+*.log
+*.tmp
+~$*

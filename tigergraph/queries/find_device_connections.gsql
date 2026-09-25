@@ -1,0 +1,74 @@
+# Query D - find_device_connections
+# Input: txn_id OR device_profile_id (supply one, other "")
+# Return: other cards/customers/transactions sharing the DeviceProfile
+# Relevance: shared-device connectivity (rule R6, patterns 3/5, card_testing pre-check)
+# Read-only: SELECT / PRINT only.
+#
+# ===========================================================================
+# PHASE 3A REPAIR - TigerGraph Community Edition 4.2.5 (live compiler authoritative)
+# See get_transaction.gsql for the full probe table (F1..F6).
+#   - A @@ global accumulator cannot be a FROM source (TYP-152 "@@devices is
+#     neither a vertex set variable nor a vertex type"). The device ids are
+#     therefore ALSO collected in SetAccum<STRING> @@device_ids and re-materialised
+#     into the typed local set SeedDevs via  WHERE pk IN @@device_ids (F6, runtime
+#     verified by p3k_k4). @@devices is kept and still printed.
+#   - Reverse traversal cannot be mixed with forward traversal in one query (F3).
+#     The three reverse hops FROM_DEVICE, MADE and OWNS are rewritten as
+#     forward-only inverted traversals (F5).
+# Parameters, purpose and printed result keys (@@devices, LinkedTxns, LinkedCards,
+# LinkedCustomers) are unchanged.
+# ===========================================================================
+USE GRAPH hhg_fraud_graph
+CREATE QUERY find_device_connections(STRING txn_id, STRING device_profile_id) FOR GRAPH hhg_fraud_graph {
+
+  SetAccum<VERTEX> @@devices;
+  SetAccum<STRING> @@device_ids;
+  SetAccum<STRING> @@txn_ids;
+  SetAccum<STRING> @@card_ids;
+
+  IF txn_id != "" THEN
+    StartTx = {Transaction.*};
+    T = SELECT t FROM StartTx:t WHERE t.txn_id == txn_id;
+    Devs = SELECT d FROM T:t -(FROM_DEVICE)- DeviceProfile:d
+             ACCUM @@device_ids += d.device_profile_id,
+                    @@devices += d;
+  END;
+
+  IF device_profile_id != "" THEN
+    DevSet = {DeviceProfile.*};
+    D = SELECT d FROM DevSet:d WHERE d.device_profile_id == device_profile_id
+         ACCUM @@device_ids += d.device_profile_id,
+                @@devices += d;
+  END;
+
+  IF @@devices.size() == 0 THEN
+    PRINT "NO_DEVICE_FOUND";
+    RETURN;
+  END;
+
+  # re-materialise a typed local vertex set (a @@ accumulator cannot be a FROM source)
+  DevAll = {DeviceProfile.*};
+  SeedDevs = SELECT d FROM DevAll:d WHERE d.device_profile_id IN @@device_ids;
+
+  # DeviceProfile -> Transaction : reverse FROM_DEVICE expressed forward-only
+  AllTx = {Transaction.*};
+  LinkedTxns = SELECT t FROM AllTx:t -(FROM_DEVICE)- DeviceProfile:d
+                 WHERE d.device_profile_id IN @@device_ids
+                 ACCUM @@txn_ids += t.txn_id;
+
+  # Transaction -> Card : reverse MADE expressed forward-only
+  AllCards = {Card.*};
+  LinkedCards = SELECT c FROM AllCards:c -(MADE)- Transaction:t
+                  WHERE t.txn_id IN @@txn_ids
+                  ACCUM @@card_ids += c.card_id;
+
+  # Card -> Customer : reverse OWNS expressed forward-only
+  AllCust = {Customer.*};
+  LinkedCustomers = SELECT cust FROM AllCust:cust -(OWNS)- Card:c
+                      WHERE c.card_id IN @@card_ids;
+
+  PRINT @@devices;
+  PRINT LinkedTxns;
+  PRINT LinkedCards;
+  PRINT LinkedCustomers;
+}

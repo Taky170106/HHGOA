@@ -1,0 +1,13 @@
+USE GRAPH hhg_fraud_graph
+
+CREATE QUERY p3d_alias1() FOR GRAPH hhg_fraud_graph {
+  S = {Transaction.*};
+  R = SELECT c FROM S:t -(<-MADE:e1)- Card:c;
+  PRINT R;
+}
+
+CREATE QUERY p3d_alias2() FOR GRAPH hhg_fraud_graph {
+  S = {Transaction.*};
+  R = SELECT p FROM S:t -(<-NEXT:e2)- Transaction:p;
+  PRINT R;
+}

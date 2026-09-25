@@ -1,0 +1,1136 @@
+{
+  "case_id": "HHG-016",
+  "case": {
+    "status": "closed_fraud",
+    "verdict": "fraud",
+    "fraud_probability": 0.8705,
+    "pattern": "card_not_present_new_device",
+    "pattern_description": "",
+    "affected_txn_ids": [
+      "3534820",
+      "3571514"
+    ],
+    "first_suspicious_txn_id": "3534820",
+    "connected_card_ids": [
+      "C00005-K1",
+      "C00045-K1",
+      "C00294-K2",
+      "C00426-K2",
+      "C00466-K1",
+      "C00573-K1",
+      "C00854-K2",
+      "C01002-K1",
+      "C01109-K2",
+      "C01154-K1",
+      "C01351-K1",
+      "C01377-K1",
+      "C01439-K1",
+      "C01521-K2",
+      "C01525-K2",
+      "C01659-K1",
+      "C01810-K1",
+      "C01836-K1",
+      "C02147-K2",
+      "C02181-K2",
+      "C02222-K1",
+      "C02250-K2",
+      "C02266-K2",
+      "C02277-K1",
+      "C02358-K1",
+      "C02456-K1",
+      "C02545-K2",
+      "C02585-K1",
+      "C02702-K2",
+      "C02782-K2",
+      "C02881-K1",
+      "C03026-K1",
+      "C03040-K2",
+      "C03047-K2",
+      "C03095-K2",
+      "C03488-K2",
+      "C03694-K1",
+      "C03841-K1",
+      "C04004-K1",
+      "C04015-K1",
+      "C04021-K1",
+      "C04033-K1",
+      "C04034-K2",
+      "C04046-K2",
+      "C04058-K1",
+      "C04108-K2",
+      "C04248-K2",
+      "C04341-K1",
+      "C04386-K1",
+      "C04536-K1",
+      "C04597-K2",
+      "C04743-K1",
+      "C04965-K2",
+      "C05031-K2",
+      "C05307-K2",
+      "C05381-K2",
+      "C05423-K1",
+      "C05426-K1",
+      "C05630-K1",
+      "C05638-K1",
+      "C05690-K1",
+      "C05704-K2",
+      "C05791-K2",
+      "C05793-K1",
+      "C05944-K1",
+      "C05996-K1",
+      "C05998-K1",
+      "C06224-K2",
+      "C06298-K1",
+      "C06351-K1",
+      "C06464-K1",
+      "C06630-K2",
+      "C06663-K2",
+      "C06731-K1",
+      "C06744-K2",
+      "C06899-K1",
+      "C06906-K1",
+      "C06940-K1",
+      "C07167-K1",
+      "C07187-K1",
+      "C07196-K2",
+      "C07204-K1",
+      "C07371-K1",
+      "C07391-K1",
+      "C07438-K1",
+      "C07508-K2",
+      "C07562-K2",
+      "C07981-K1",
+      "C07990-K1",
+      "C08106-K1",
+      "C08168-K1",
+      "C08217-K1",
+      "C08281-K2",
+      "C08374-K1",
+      "C08391-K2",
+      "C08491-K1",
+      "C08601-K1",
+      "C08610-K1",
+      "C08832-K1",
+      "C08918-K2",
+      "C08924-K1",
+      "C08944-K1",
+      "C08962-K2",
+      "C09241-K2",
+      "C09246-K1",
+      "C09251-K1",
+      "C09363-K2",
+      "C09365-K2",
+      "C09487-K1",
+      "C09533-K1",
+      "C09616-K1",
+      "C09657-K2",
+      "C09663-K1",
+      "C09722-K1",
+      "C09791-K1",
+      "C09873-K1",
+      "C09939-K1",
+      "C09940-K1",
+      "C09975-K1",
+      "C10010-K1",
+      "C10019-K1",
+      "C10114-K1",
+      "C10131-K1",
+      "C10553-K1",
+      "C10631-K1",
+      "C10644-K1",
+      "C10757-K2",
+      "C10760-K2",
+      "C10837-K2",
+      "C11101-K1",
+      "C11137-K1",
+      "C11413-K1",
+      "C11444-K1",
+      "C11509-K2",
+      "C11595-K1",
+      "C11597-K2",
+      "C11642-K1",
+      "C11799-K1",
+      "C11808-K1",
+      "C11847-K2",
+      "C11919-K2",
+      "C11923-K2",
+      "C11952-K1",
+      "C11995-K1",
+      "C12028-K2",
+      "C12098-K1",
+      "C12212-K1",
+      "C12340-K1",
+      "C12645-K1",
+      "C12897-K1",
+      "C12966-K1",
+      "C12987-K1",
+      "C13166-K1",
+      "C13171-K2",
+      "C13364-K1",
+      "C13407-K1",
+      "C13447-K1"
+    ],
+    "connected_device_profiles": [
+      "Windows | nan | edge 16.0 | nan"
+    ],
+    "exposure_usd": 194.64,
+    "evidence": [
+      {
+        "evidence_id": "EV-01",
+        "claim": "Case HHG-016 opened 2016-12-12 01:39:08 from customer_report trigger: Customer C09988 message: 'I never made this $59.67 purchase. Please check my card.' Refers to 3534820.",
+        "source": "document",
+        "ref": "case_pack.csv#HHG-016",
+        "entity_ids": [
+          "HHG-016",
+          "3534820"
+        ],
+        "evidence_class": "direct"
+      },
+      {
+        "evidence_id": "EV-02",
+        "claim": "Cardholder states the 3534820 transaction of $59.67 was not made by them (denial recorded in the trigger).",
+        "source": "customer",
+        "ref": "trigger:case_pack.csv#HHG-016",
+        "entity_ids": [
+          "C09988",
+          "C09988-K1",
+          "3534820"
+        ],
+        "evidence_class": "direct"
+      },
+      {
+        "evidence_id": "EV-03",
+        "claim": "Transaction 3534820 of $59.67 on card C09988-K1 is a online transaction in billing region n/a (region NOT the cardholder's home country).",
+        "source": "graph",
+        "ref": "query:get_transaction(txn_id=3534820)",
+        "entity_ids": [
+          "3534820",
+          "C09988-K1"
+        ],
+        "evidence_class": "derived_graph"
+      },
+      {
+        "evidence_id": "EV-04",
+        "claim": "Transaction 3534820 came from device profile DP-c388f53a1a0021d6 marked New, linked to 158 card(s) across 158 customer(s).",
+        "source": "graph",
+        "ref": "query:find_device_connections(txn_id=3534820)",
+        "entity_ids": [
+          "DP-c388f53a1a0021d6",
+          "3534820",
+          "C00005-K1",
+          "C00045-K1",
+          "C00294-K2",
+          "C00426-K2",
+          "C00466-K1",
+          "C00573-K1"
+        ],
+        "evidence_class": "derived_graph"
+      },
+      {
+        "evidence_id": "EV-05",
+        "claim": "Card C09988-K1 shows 48 online authorisation(s) in the 48 hours before 3534820.",
+        "source": "graph",
+        "ref": "query:get_card_history(card_id=C09988-K1)",
+        "entity_ids": [
+          "3015139",
+          "3032208",
+          "3036519",
+          "3099865",
+          "3105149",
+          "3128905"
+        ],
+        "evidence_class": "derived_graph"
+      },
+      {
+        "evidence_id": "EV-06",
+        "claim": "Device profile DP-c388f53a1a0021d6 is also recorded on confirmed-fraud closed case(s) CC-0014, CC-0031, CC-0033, CC-0052, CC-0055 on other cards.",
+        "source": "graph",
+        "ref": "query:find_device_connections(txn_id=3534820)",
+        "entity_ids": [
+          "CC-0014",
+          "CC-0031",
+          "CC-0033",
+          "CC-0052",
+          "CC-0055",
+          "DP-c388f53a1a0021d6"
+        ],
+        "evidence_class": "derived_graph"
+      },
+      {
+        "evidence_id": "EV-07",
+        "claim": "Card C09988-K1 has 2 earlier transaction(s) with the same amount ($59.67), channel and product code - a repeating charge rather than an anomalous purchase.",
+        "source": "graph",
+        "ref": "query:get_card_history(card_id=C09988-K1)",
+        "entity_ids": [
+          "3368735",
+          "3368763",
+          "3534820"
+        ],
+        "evidence_class": "derived_graph"
+      },
+      {
+        "evidence_id": "EV-08",
+        "claim": "Retrieved prior case memory CC-0014, CC-0031, CC-0033 for pattern similarity.",
+        "source": "graph",
+        "ref": "query:find_related_cases(card_id=C09988-K1)",
+        "entity_ids": [
+          "CC-0014",
+          "CC-0031",
+          "CC-0033"
+        ],
+        "evidence_class": "derived_graph"
+      },
+      {
+        "evidence_id": "EV-09",
+        "claim": "Model score for transaction 3534820 is 0.6310 (32 features); largest SHAP contributions: card_historical_cases (-0.0874), card_on_card_cases (-0.0779), addr2 (+0.0717).",
+        "source": "external",
+        "ref": "model:models/fraud_model.pkl + xai/shap_local_benchmark_cases.json",
+        "entity_ids": [
+          "3534820"
+        ],
+        "evidence_class": "model_analytical"
+      },
+      {
+        "evidence_id": "EV-10",
+        "claim": "The bank's input risk_score runs opposite to confirmed outcome in this graph: the 4665 confirmed-fraud alerts carry a median score of 0.47 against 0.88 for the 900 cleared alerts, and only 64.7% of alerts scoring 0.90 or above were confirmed fraud. Case HHG-016 carries no risk_score, so the score was used in neither direction.",
+        "source": "document",
+        "ref": "DATASET/closed_cases_history.csv (outcome) x data/vertices/transaction.csv (risk_score)",
+        "entity_ids": [
+          "3534820"
+        ],
+        "evidence_class": "model_analytical"
+      },
+      {
+        "evidence_id": "EV-11",
+        "claim": "Analyst confirms the device profile and billing region of transaction 3534820 are shared with card(s) C00005-K1, C00045-K1, C00294-K2 recorded on closed case(s) CC-0014, CC-0031, CC-0033.",
+        "source": "external",
+        "ref": "evidence_request:1",
+        "entity_ids": [
+          "3534820"
+        ],
+        "evidence_class": "direct"
+      }
+    ],
+    "similar_prior_cases": [
+      "CC-0014",
+      "CC-0031",
+      "CC-0033"
+    ],
+    "summary": "Case HHG-016 covers a online $59.67 transaction 3534820 on card C09988-K1 raised by a customer_report trigger. Graph investigation found 4 corroborating signal(s) - new device, 48h burst, shared-device ring, device linked to prior fraud. Pattern assessed as card not present new device; fraud probability 0.72 before additional evidence and 0.87 after, giving a verdict of fraud. Exposure across 2 transaction(s) is $194.64. Independent graph signals corroborate the finding, so the actions below follow from the policy routes shown with each one.",
+    "written_to_graph": false,
+    "graph_case_id": ""
+  },
+  "evidence_requests": [
+    {
+      "type": "analyst_info",
+      "asked_after_step": 4,
+      "assumed_response": "Analyst confirms the device profile and billing region of transaction 3534820 are shared with card(s) C00005-K1, C00045-K1, C00294-K2 recorded on closed case(s) CC-0014, CC-0031, CC-0033."
+    }
+  ],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "Section 3a: evidence was requested, so an internal case is opened to hold it at probability 0.72"
+      },
+      {
+        "action": "MONITOR_CARD",
+        "route": "auto",
+        "reason": "R4: no reply yet, so the card stays active under monitoring while the analyst checks device and region linkage"
+      }
+    ],
+    "final": [
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "R2: customer denial and graph evidence confirm unauthorised use; exposure $194.64 is under $2,500"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "Section 3a: fraud probability >= 0.30, open an internal case with evidence"
+      },
+      {
+        "action": "FILE_REPORT",
+        "route": "L2",
+        "reason": "Section 3a: confirmed fraud with exposure $194.64 and a shared device/region link to other fraud; report requires L2 fraud manager approval"
+      },
+      {
+        "action": "MONITOR_CONNECTED_CARDS",
+        "route": "auto",
+        "reason": "R6: card(s) C00005-K1, C00045-K1, C00294-K2, C00426-K2 share the device profile with the flagged transaction"
+      },
+      {
+        "action": "MONITOR_CARD",
+        "route": "auto",
+        "reason": "R4: the blocked card is reissued, so it stays under 72h of raised monitoring while the report is prepared"
+      }
+    ],
+    "what_changed": "Assumed response moved fraud probability from 0.72 to 0.87 (verdict fraud). Added: BLOCK_CARD, FILE_REPORT, MONITOR_CONNECTED_CARDS."
+  },
+  "sar": {
+    "file": true,
+    "reason": "Confirmed fraud: Section 3a and R6: shared device profile with card(s) C00005-K1, C00045-K1, C00294-K2",
+    "narrative": "On 1970-01-18 at 03:31:35, card C09988-K1 held by customer C09988 was used for a online transaction of $59.67 in billing region unknown. The cardholder reported the purchase as unauthorised in the customer_report trigger for case HHG-016, stating they did not make it. It arrived from device profile DP-c388f53a1a0021d6, recorded as New and serving 158 card(s) across 158 customer(s). Card C09988-K1 already had 48 online authorisation(s) in the preceding 48 hours. Device profile DP-c388f53a1a0021d6 also appears on confirmed-fraud case(s) CC-0014, CC-0031, CC-0033 involving other cards, indicating a common actor. Card(s) C00005-K1, C00045-K1, C00294-K2, C00426-K2 share that device profile and are placed under monitoring. The activity is assessed as card not present new device under policy R6. Total unauthorised amount across 2 transaction(s) is $194.64 between 1970-01-18 and 1970-01-18. Card C09988-K1 is recommended for blocking and reissue, an internal case is opened, and the report awaits fraud-manager approval.",
+    "subjects": [
+      "C00005-K1",
+      "C00045-K1",
+      "C00294-K2",
+      "C00426-K2",
+      "C00466-K1",
+      "C00573-K1",
+      "C00854-K2",
+      "C01002-K1",
+      "C01109-K2",
+      "C01154-K1",
+      "C01351-K1",
+      "C01377-K1",
+      "C01439-K1",
+      "C01521-K2",
+      "C01525-K2",
+      "C01659-K1",
+      "C01810-K1",
+      "C01836-K1",
+      "C02147-K2",
+      "C02181-K2",
+      "C02222-K1",
+      "C02250-K2",
+      "C02266-K2",
+      "C02277-K1",
+      "C02358-K1",
+      "C02456-K1",
+      "C02545-K2",
+      "C02585-K1",
+      "C02702-K2",
+      "C02782-K2",
+      "C02881-K1",
+      "C03026-K1",
+      "C03040-K2",
+      "C03047-K2",
+      "C03095-K2",
+      "C03488-K2",
+      "C03694-K1",
+      "C03841-K1",
+      "C04004-K1",
+      "C04015-K1",
+      "C04021-K1",
+      "C04033-K1",
+      "C04034-K2",
+      "C04046-K2",
+      "C04058-K1",
+      "C04108-K2",
+      "C04248-K2",
+      "C04341-K1",
+      "C04386-K1",
+      "C04536-K1",
+      "C04597-K2",
+      "C04743-K1",
+      "C04965-K2",
+      "C05031-K2",
+      "C05307-K2",
+      "C05381-K2",
+      "C05423-K1",
+      "C05426-K1",
+      "C05630-K1",
+      "C05638-K1",
+      "C05690-K1",
+      "C05704-K2",
+      "C05791-K2",
+      "C05793-K1",
+      "C05944-K1",
+      "C05996-K1",
+      "C05998-K1",
+      "C06224-K2",
+      "C06298-K1",
+      "C06351-K1",
+      "C06464-K1",
+      "C06630-K2",
+      "C06663-K2",
+      "C06731-K1",
+      "C06744-K2",
+      "C06899-K1",
+      "C06906-K1",
+      "C06940-K1",
+      "C07167-K1",
+      "C07187-K1",
+      "C07196-K2",
+      "C07204-K1",
+      "C07371-K1",
+      "C07391-K1",
+      "C07438-K1",
+      "C07508-K2",
+      "C07562-K2",
+      "C07981-K1",
+      "C07990-K1",
+      "C08106-K1",
+      "C08168-K1",
+      "C08217-K1",
+      "C08281-K2",
+      "C08374-K1",
+      "C08391-K2",
+      "C08491-K1",
+      "C08601-K1",
+      "C08610-K1",
+      "C08832-K1",
+      "C08918-K2",
+      "C08924-K1",
+      "C08944-K1",
+      "C08962-K2",
+      "C09241-K2",
+      "C09246-K1",
+      "C09251-K1",
+      "C09363-K2",
+      "C09365-K2",
+      "C09487-K1",
+      "C09533-K1",
+      "C09616-K1",
+      "C09657-K2",
+      "C09663-K1",
+      "C09722-K1",
+      "C09791-K1",
+      "C09873-K1",
+      "C09939-K1",
+      "C09940-K1",
+      "C09975-K1",
+      "C09988",
+      "C09988-K1",
+      "C10010-K1",
+      "C10019-K1",
+      "C10114-K1",
+      "C10131-K1",
+      "C10553-K1",
+      "C10631-K1",
+      "C10644-K1",
+      "C10757-K2",
+      "C10760-K2",
+      "C10837-K2",
+      "C11101-K1",
+      "C11137-K1",
+      "C11413-K1",
+      "C11444-K1",
+      "C11509-K2",
+      "C11595-K1",
+      "C11597-K2",
+      "C11642-K1",
+      "C11799-K1",
+      "C11808-K1",
+      "C11847-K2",
+      "C11919-K2",
+      "C11923-K2",
+      "C11952-K1",
+      "C11995-K1",
+      "C12028-K2",
+      "C12098-K1",
+      "C12212-K1",
+      "C12340-K1",
+      "C12645-K1",
+      "C12897-K1",
+      "C12966-K1",
+      "C12987-K1",
+      "C13166-K1",
+      "C13171-K2",
+      "C13364-K1",
+      "C13407-K1",
+      "C13447-K1",
+      "DP-c388f53a1a0021d6",
+      "hotmail.com"
+    ],
+    "total_amount_usd": 194.64,
+    "activity_dates": [
+      "1970-01-18",
+      "1970-01-18"
+    ]
+  },
+  "stop_reason": "Section 6: the assumed analyst_info response settled the verdict (probability 0.72 -> 0.87). The remaining graph evidence is recorded; further steps would not change the actions below.",
+  "tool_calls": 6,
+  "tokens": 0,
+  "latency_s": 5.162,
+  "investigation_record": [
+    {
+      "step": 1,
+      "name": "CASE",
+      "detail": "HHG-016 opened 2016-12-12 01:39:08 (customer_report trigger)."
+    },
+    {
+      "step": 2,
+      "name": "TRIGGER",
+      "detail": "Customer C09988 message: 'I never made this $59.67 purchase. Please check my card.' Refers to 3534820."
+    },
+    {
+      "step": 3,
+      "name": "EVIDENCE_COLLECTION",
+      "detail": "11 evidence item(s) gathered: 6 graph-derived, 3 direct, 2 model."
+    },
+    {
+      "step": 4,
+      "name": "GRAPH_INVESTIGATION",
+      "detail": "TigerGraph queries benchmark_case_context, get_transaction, find_related_cases, find_device_connections returned 6 relationship(s)."
+    },
+    {
+      "step": 5,
+      "name": "FINDINGS",
+      "detail": "Case HHG-016 opened from a customer_report trigger on transaction 3534820.; Customer C09988 denies the transaction.; 4 graph-derived signal(s) support the alert (pattern card_not_present_new_device).; Transaction matches a repeating amount/channel/product on this card (policy R7)."
+    },
+    {
+      "step": 6,
+      "name": "DECISION",
+      "detail": "verdict=fraud, fraud_probability=0.8705, pattern=card_not_present_new_device, status=closed_fraud"
+    },
+    {
+      "step": 7,
+      "name": "ACTION",
+      "detail": "BLOCK_CARD, CREATE_CASE, FILE_REPORT, MONITOR_CONNECTED_CARDS, MONITOR_CARD"
+    },
+    {
+      "step": 8,
+      "name": "NEXT_BEST_ACTION",
+      "detail": "BLOCK_CARD (L1) - R2: customer denial and graph evidence confirm unauthorised use; exposure $194.64 is under $2,500"
+    },
+    {
+      "step": 9,
+      "name": "APPROVAL_ROUTE",
+      "detail": "L1, L2, auto"
+    }
+  ],
+  "findings": [
+    {
+      "finding_id": "F-01",
+      "title": "Trigger",
+      "statement": "Case HHG-016 opened from a customer_report trigger on transaction 3534820.",
+      "evidence_ids": [
+        "EV-01"
+      ],
+      "type": "direct"
+    },
+    {
+      "finding_id": "F-02",
+      "title": "Cardholder position",
+      "statement": "Customer C09988 denies the transaction.",
+      "evidence_ids": [
+        "EV-02"
+      ],
+      "type": "direct"
+    },
+    {
+      "finding_id": "F-03",
+      "title": "Graph corroboration",
+      "statement": "4 graph-derived signal(s) support the alert (pattern card_not_present_new_device).",
+      "evidence_ids": [
+        "EV-03",
+        "EV-04",
+        "EV-05",
+        "EV-06",
+        "EV-07",
+        "EV-08"
+      ],
+      "type": "derived_graph"
+    },
+    {
+      "finding_id": "F-04",
+      "title": "Recurring charge",
+      "statement": "Transaction matches a repeating amount/channel/product on this card (policy R7).",
+      "evidence_ids": [],
+      "type": "derived_graph"
+    },
+    {
+      "finding_id": "F-05",
+      "title": "Connected cards",
+      "statement": "Card(s) C00005-K1, C00045-K1, C00294-K2, C00426-K2 share the device profile with the flagged transaction.",
+      "evidence_ids": [
+        "EV-04",
+        "EV-11"
+      ],
+      "type": "derived_graph"
+    },
+    {
+      "finding_id": "F-06",
+      "title": "Prior case memory",
+      "statement": "Retrieved closed case(s) CC-0014, CC-0031, CC-0033 as similar prior activity.",
+      "evidence_ids": [
+        "EV-08"
+      ],
+      "type": "derived_graph"
+    },
+    {
+      "finding_id": "F-07",
+      "title": "Model evidence",
+      "statement": "Model probability 0.6310; largest SHAP contributions card_historical_cases, card_on_card_cases, addr2.",
+      "evidence_ids": [
+        "EV-09",
+        "EV-10"
+      ],
+      "type": "model_analytical"
+    }
+  ],
+  "decision": {
+    "decision": "fraud",
+    "status": "closed_fraud",
+    "rationale": "Section 6: the assumed analyst_info response settled the verdict (probability 0.72 -> 0.87). The remaining graph evidence is recorded; further steps would not change the actions below. Pattern card_not_present_new_device. Fraud probability 0.7205 (before) -> 0.8705 (after additional evidence). Evidence used: EV-01, EV-02, EV-03, EV-04, EV-05, EV-06, EV-07, EV-08, EV-09, EV-10, EV-11.",
+    "supporting_evidence_ids": [
+      "EV-01",
+      "EV-02",
+      "EV-03",
+      "EV-04",
+      "EV-05",
+      "EV-06",
+      "EV-07",
+      "EV-08",
+      "EV-09",
+      "EV-10",
+      "EV-11"
+    ],
+    "policy_rules": [
+      "R2",
+      "R6",
+      "Section 3a"
+    ]
+  },
+  "actions_taken": [
+    {
+      "action": "CREATE_CASE",
+      "route": "auto",
+      "reason": "Section 3a: fraud probability >= 0.30, open an internal case with evidence"
+    },
+    {
+      "action": "MONITOR_CONNECTED_CARDS",
+      "route": "auto",
+      "reason": "R6: card(s) C00005-K1, C00045-K1, C00294-K2, C00426-K2 share the device profile with the flagged transaction"
+    },
+    {
+      "action": "MONITOR_CARD",
+      "route": "auto",
+      "reason": "R4: the blocked card is reissued, so it stays under 72h of raised monitoring while the report is prepared"
+    }
+  ],
+  "actions_recommended_awaiting_approval": [
+    {
+      "action": "BLOCK_CARD",
+      "route": "L1",
+      "reason": "R2: customer denial and graph evidence confirm unauthorised use; exposure $194.64 is under $2,500"
+    },
+    {
+      "action": "FILE_REPORT",
+      "route": "L2",
+      "reason": "Section 3a: confirmed fraud with exposure $194.64 and a shared device/region link to other fraud; report requires L2 fraud manager approval"
+    }
+  ],
+  "graph_evidence": {
+    "single_source_of_truth": "TigerGraph hhg_fraud_graph (Community Edition 4.2.5)",
+    "phase_2_baseline": "8 vertex types / 11 edge types / 2,505,266 edges (unchanged)",
+    "queries": [
+      {
+        "name": "benchmark_case_context",
+        "params": {
+          "case_id": "HHG-016"
+        },
+        "http_status": 200,
+        "latency_ms": 159.5
+      },
+      {
+        "name": "get_transaction",
+        "params": {
+          "txn_id": "3534820"
+        },
+        "http_status": 200,
+        "latency_ms": 91.7
+      },
+      {
+        "name": "find_related_cases",
+        "params": {
+          "card_id": "C09988-K1"
+        },
+        "http_status": 200,
+        "latency_ms": 32.7
+      },
+      {
+        "name": "find_device_connections",
+        "params": {
+          "txn_id": "3534820"
+        },
+        "http_status": 200,
+        "latency_ms": 106.4
+      }
+    ],
+    "entities": {
+      "BenchmarkCase": [
+        "HHG-016"
+      ],
+      "Transaction": [
+        "3534820"
+      ],
+      "Card": [
+        "C09988-K1"
+      ],
+      "Customer": [
+        "C09988"
+      ],
+      "DeviceProfile": [
+        "DP-c388f53a1a0021d6"
+      ],
+      "BillingRegion": [],
+      "EmailDomain": [
+        "hotmail.com",
+        "hotmail.com"
+      ],
+      "ClosedCase": [],
+      "connected_card_ids": [
+        "C00005-K1",
+        "C00045-K1",
+        "C00294-K2",
+        "C00426-K2",
+        "C00466-K1",
+        "C00573-K1",
+        "C00854-K2",
+        "C01002-K1",
+        "C01109-K2",
+        "C01154-K1",
+        "C01351-K1",
+        "C01377-K1",
+        "C01439-K1",
+        "C01521-K2",
+        "C01525-K2",
+        "C01659-K1",
+        "C01810-K1",
+        "C01836-K1",
+        "C02147-K2",
+        "C02181-K2",
+        "C02222-K1",
+        "C02250-K2",
+        "C02266-K2",
+        "C02277-K1",
+        "C02358-K1",
+        "C02456-K1",
+        "C02545-K2",
+        "C02585-K1",
+        "C02702-K2",
+        "C02782-K2",
+        "C02881-K1",
+        "C03026-K1",
+        "C03040-K2",
+        "C03047-K2",
+        "C03095-K2",
+        "C03488-K2",
+        "C03694-K1",
+        "C03841-K1",
+        "C04004-K1",
+        "C04015-K1",
+        "C04021-K1",
+        "C04033-K1",
+        "C04034-K2",
+        "C04046-K2",
+        "C04058-K1",
+        "C04108-K2",
+        "C04248-K2",
+        "C04341-K1",
+        "C04386-K1",
+        "C04536-K1",
+        "C04597-K2",
+        "C04743-K1",
+        "C04965-K2",
+        "C05031-K2",
+        "C05307-K2",
+        "C05381-K2",
+        "C05423-K1",
+        "C05426-K1",
+        "C05630-K1",
+        "C05638-K1",
+        "C05690-K1",
+        "C05704-K2",
+        "C05791-K2",
+        "C05793-K1",
+        "C05944-K1",
+        "C05996-K1",
+        "C05998-K1",
+        "C06224-K2",
+        "C06298-K1",
+        "C06351-K1",
+        "C06464-K1",
+        "C06630-K2",
+        "C06663-K2",
+        "C06731-K1",
+        "C06744-K2",
+        "C06899-K1",
+        "C06906-K1",
+        "C06940-K1",
+        "C07167-K1",
+        "C07187-K1",
+        "C07196-K2",
+        "C07204-K1",
+        "C07371-K1",
+        "C07391-K1",
+        "C07438-K1",
+        "C07508-K2",
+        "C07562-K2",
+        "C07981-K1",
+        "C07990-K1",
+        "C08106-K1",
+        "C08168-K1",
+        "C08217-K1",
+        "C08281-K2",
+        "C08374-K1",
+        "C08391-K2",
+        "C08491-K1",
+        "C08601-K1",
+        "C08610-K1",
+        "C08832-K1",
+        "C08918-K2",
+        "C08924-K1",
+        "C08944-K1",
+        "C08962-K2",
+        "C09241-K2",
+        "C09246-K1",
+        "C09251-K1",
+        "C09363-K2",
+        "C09365-K2",
+        "C09487-K1",
+        "C09533-K1",
+        "C09616-K1",
+        "C09657-K2",
+        "C09663-K1",
+        "C09722-K1",
+        "C09791-K1",
+        "C09873-K1",
+        "C09939-K1",
+        "C09940-K1",
+        "C09975-K1",
+        "C10010-K1",
+        "C10019-K1",
+        "C10114-K1",
+        "C10131-K1",
+        "C10553-K1",
+        "C10631-K1",
+        "C10644-K1",
+        "C10757-K2",
+        "C10760-K2",
+        "C10837-K2",
+        "C11101-K1",
+        "C11137-K1",
+        "C11413-K1",
+        "C11444-K1",
+        "C11509-K2",
+        "C11595-K1",
+        "C11597-K2",
+        "C11642-K1",
+        "C11799-K1",
+        "C11808-K1",
+        "C11847-K2",
+        "C11919-K2",
+        "C11923-K2",
+        "C11952-K1",
+        "C11995-K1",
+        "C12028-K2",
+        "C12098-K1",
+        "C12212-K1",
+        "C12340-K1",
+        "C12645-K1",
+        "C12897-K1",
+        "C12966-K1",
+        "C12987-K1",
+        "C13166-K1",
+        "C13171-K2",
+        "C13364-K1",
+        "C13407-K1",
+        "C13447-K1"
+      ]
+    },
+    "edges": [
+      {
+        "edge": "TRIGGERS",
+        "from": "HHG-016",
+        "to": "3534820",
+        "from_type": "BenchmarkCase",
+        "to_type": "Transaction"
+      },
+      {
+        "edge": "MADE",
+        "from": "C09988-K1",
+        "to": "3534820",
+        "from_type": "Card",
+        "to_type": "Transaction"
+      },
+      {
+        "edge": "OWNS",
+        "from": "C09988",
+        "to": "C09988-K1",
+        "from_type": "Customer",
+        "to_type": "Card"
+      },
+      {
+        "edge": "FROM_DEVICE",
+        "from": "3534820",
+        "to": "DP-c388f53a1a0021d6",
+        "from_type": "Transaction",
+        "to_type": "DeviceProfile"
+      },
+      {
+        "edge": "NEXT",
+        "from": "3534820",
+        "to": "3549903",
+        "from_type": "Transaction",
+        "to_type": "Transaction"
+      },
+      {
+        "edge": "NEXT",
+        "from": "3474173",
+        "to": "3534820",
+        "from_type": "Transaction",
+        "to_type": "Transaction"
+      }
+    ],
+    "graph_facts": [
+      "Transaction 3534820 of $59.67 on card C09988-K1 is a online transaction in billing region n/a (region NOT the cardholder's home country).",
+      "Transaction 3534820 came from device profile DP-c388f53a1a0021d6 marked New, linked to 158 card(s) across 158 customer(s).",
+      "Card C09988-K1 shows 48 online authorisation(s) in the 48 hours before 3534820.",
+      "Device profile DP-c388f53a1a0021d6 is also recorded on confirmed-fraud closed case(s) CC-0014, CC-0031, CC-0033, CC-0052, CC-0055 on other cards.",
+      "Card C09988-K1 has 2 earlier transaction(s) with the same amount ($59.67), channel and product code - a repeating charge rather than an anomalous purchase.",
+      "Retrieved prior case memory CC-0014, CC-0031, CC-0033 for pattern similarity."
+    ],
+    "investigation_interpretation": [
+      "pattern=card_not_present_new_device",
+      "verdict=fraud",
+      "fraud_probability=0.7205 (before) -> 0.8705 (after additional evidence)",
+      "anomaly_signals=4"
+    ],
+    "graph_fact_vs_interpretation": "Every entry under graph_facts is returned by a live GSQL query or computed from the loaded edge set; entries under investigation_interpretation are the agent's reading of those facts under the published policy."
+  },
+  "sar_status": {
+    "file": true,
+    "reason": "Confirmed fraud: Section 3a and R6: shared device profile with card(s) C00005-K1, C00045-K1, C00294-K2",
+    "required_approval_route": "L2"
+  },
+  "required_approval_route": [
+    "L1",
+    "L2",
+    "auto"
+  ],
+  "pre_additional_evidence_state": {
+    "stage": "before_additional_evidence",
+    "current_evidence": [
+      "EV-01",
+      "EV-02",
+      "EV-03",
+      "EV-04",
+      "EV-05",
+      "EV-06",
+      "EV-07",
+      "EV-08",
+      "EV-09",
+      "EV-10"
+    ],
+    "current_findings": [
+      "F-01",
+      "F-02",
+      "F-03",
+      "F-04",
+      "F-05",
+      "F-06",
+      "F-07"
+    ],
+    "preliminary_decision": {
+      "verdict": "fraud",
+      "fraud_probability": 0.7205,
+      "pattern": "card_not_present_new_device",
+      "status": "open"
+    },
+    "preliminary_next_best_action": [
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "Section 3a: evidence was requested, so an internal case is opened to hold it at probability 0.72"
+      },
+      {
+        "action": "MONITOR_CARD",
+        "route": "auto",
+        "reason": "R4: no reply yet, so the card stays active under monitoring while the analyst checks device and region linkage"
+      }
+    ],
+    "required_approval_route": [
+      "auto"
+    ],
+    "additional_evidence_requested": true,
+    "evidence_requested": [
+      {
+        "type": "analyst_info",
+        "asked_after_step": 4,
+        "assumed_response": "Analyst confirms the device profile and billing region of transaction 3534820 are shared with card(s) C00005-K1, C00045-K1, C00294-K2 recorded on closed case(s) CC-0014, CC-0031, CC-0033."
+      }
+    ]
+  },
+  "post_additional_evidence_state": {
+    "stage": "after_additional_evidence",
+    "additional_evidence_received": true,
+    "additional_evidence": [
+      "Analyst confirms the device profile and billing region of transaction 3534820 are shared with card(s) C00005-K1, C00045-K1, C00294-K2 recorded on closed case(s) CC-0014, CC-0031, CC-0033."
+    ],
+    "updated_evidence": [
+      "EV-01",
+      "EV-02",
+      "EV-03",
+      "EV-04",
+      "EV-05",
+      "EV-06",
+      "EV-07",
+      "EV-08",
+      "EV-09",
+      "EV-10",
+      "EV-11"
+    ],
+    "updated_findings": [
+      "F-01",
+      "F-02",
+      "F-03",
+      "F-04",
+      "F-05",
+      "F-06",
+      "F-07"
+    ],
+    "updated_decision": {
+      "verdict": "fraud",
+      "fraud_probability": 0.8705,
+      "pattern": "card_not_present_new_device",
+      "status": "closed_fraud"
+    },
+    "updated_next_best_action": [
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "R2: customer denial and graph evidence confirm unauthorised use; exposure $194.64 is under $2,500"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "Section 3a: fraud probability >= 0.30, open an internal case with evidence"
+      },
+      {
+        "action": "FILE_REPORT",
+        "route": "L2",
+        "reason": "Section 3a: confirmed fraud with exposure $194.64 and a shared device/region link to other fraud; report requires L2 fraud manager approval"
+      },
+      {
+        "action": "MONITOR_CONNECTED_CARDS",
+        "route": "auto",
+        "reason": "R6: card(s) C00005-K1, C00045-K1, C00294-K2, C00426-K2 share the device profile with the flagged transaction"
+      },
+      {
+        "action": "MONITOR_CARD",
+        "route": "auto",
+        "reason": "R4: the blocked card is reissued, so it stays under 72h of raised monitoring while the report is prepared"
+      }
+    ],
+    "updated_approval_route": [
+      "L1",
+      "L2",
+      "auto"
+    ],
+    "what_changed": "Assumed response moved fraud probability from 0.72 to 0.87 (verdict fraud). Added: BLOCK_CARD, FILE_REPORT, MONITOR_CONNECTED_CARDS.",
+    "note": "Stage B reflects the assumed response recorded in evidence_requests."
+  },
+  "graph_write": {
+    "status": "BLOCKED",
+    "written_to_graph": false,
+    "graph_case_id": "",
+    "reason": "Phase 2 graph is locked at its validated 8-vertex/11-edge/2,505,266-edge state; inserting a case vertex would mutate validated counts. Recorded in docs/GRAPH_WRITE_BLOCKER.md with the ready-to-run GSQL.",
+    "reference": "graph reference for this answer is the entity/edge block in graph_evidence above"
+  }
+}

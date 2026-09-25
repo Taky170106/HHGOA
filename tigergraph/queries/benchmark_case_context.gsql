@@ -1,0 +1,117 @@
+# Query I - benchmark_case_context
+# Input: case_id (STRING, HHG-001 .. HHG-020)
+# Return: full graph context required to begin an investigation:
+#         BenchmarkCase -TRIGGERS-> flagged Transaction -> Card -> Customer ->
+#         connected entities (device, region, email) -> related ClosedCases ->
+#         temporal neighbours (next / previous transaction).
+# Read-only: SELECT / PRINT only. Benchmark records are never modified.
+#
+# ===========================================================================
+# PHASE 3A REPAIR - TigerGraph Community Edition 4.2.5 (live compiler authoritative)
+# See get_transaction.gsql for the full probe table (F1..F6).
+#   1. Forward and reverse traversal cannot be mixed inside one query (F3). The
+#      reverse hops (MADE, OWNS, FROM_DEVICE, BILLED_IN, INVOLVES, ON_CARD, NEXT)
+#      are rewritten as forward-only inverted traversals (F5), each of which returns
+#      exactly the same vertex set:
+#          X -(<-E)- Y   ==   SELECT x FROM AllX:x -(E)-> Y:y WHERE y.pk IN @@ids
+#   2. The local set variables "Card" and "Customer" shadowed the vertex types of the
+#      same name (GSQL reported "mixed usage of v1 and v2 syntax"). They are now
+#      AllCards / AllCust; the printed result keys follow the RESULT variable names
+#      and are unchanged (FlaggedCards, FlaggedCustomer).
+#   3. A @@ accumulator cannot be a FROM source (TYP-152); ids are re-materialised
+#      with  WHERE pk IN @@ids (F6, runtime verified).
+#   4. Chained multi-hop paths inside one FROM clause are rejected (F4); each path is
+#      split into single-hop SELECTs - identical vertex set.
+#   5. PrevTx used a *variable* (Flagged) in the target slot of the hop; rewritten as
+#      the forward-only inverted traversal over NEXT.
+# The BenchmarkCase -> TRIGGERS -> Transaction relationship itself is a declared
+# forward edge and is untouched.
+# Parameters, purpose and every printed result key are unchanged.
+# ===========================================================================
+USE GRAPH hhg_fraud_graph
+CREATE QUERY benchmark_case_context(STRING case_id) FOR GRAPH hhg_fraud_graph {
+
+  SetAccum<STRING> @@flagged_ids;
+  SetAccum<STRING> @@flagged_card_ids;
+  SetAccum<STRING> @@dev_ids;
+  SetAccum<STRING> @@region_codes;
+  SetAccum<STRING> @@pdom;
+  SetAccum<STRING> @@rdom;
+  SetAccum<STRING> @@rvd_ids;
+  SetAccum<STRING> @@rvr_ids;
+
+  BSet = {BenchmarkCase.*};
+  B = SELECT b FROM BSet:b WHERE b.case_id == case_id;
+  IF B.size() == 0 THEN
+    PRINT "BENCHMARK_NOT_FOUND";
+    RETURN;
+  END;
+
+  # BenchmarkCase -TRIGGERS-> Transaction   (declared forward edge, unchanged)
+  Flagged = SELECT t FROM B:b -(TRIGGERS)- Transaction:t
+              ACCUM @@flagged_ids += t.txn_id,
+                     @@flagged_card_ids += t.card_id;
+
+  # reverse MADE -> forward-only inverted traversal
+  AllCards = {Card.*};
+  FlaggedCards = SELECT c FROM AllCards:c -(MADE)- Transaction:t
+                   WHERE t.txn_id IN @@flagged_ids;
+
+  # reverse OWNS -> forward-only inverted traversal
+  AllCust = {Customer.*};
+  FlaggedCustomer = SELECT cust FROM AllCust:cust -(OWNS)- Card:c
+                      WHERE c.card_id IN @@flagged_card_ids;
+
+  # card history (peer transactions on the same card) - declared forward, unchanged
+  CardHistory = SELECT t FROM FlaggedCards:c -(MADE)- Transaction:t;
+
+  # device / region / email context for the flagged transaction - declared forward
+  Devices = SELECT d FROM Flagged:t -(FROM_DEVICE)- DeviceProfile:d
+              ACCUM @@dev_ids += d.device_profile_id;
+  Regions = SELECT r FROM Flagged:t -(BILLED_IN)- BillingRegion:r
+              ACCUM @@region_codes += r.region_code;
+  PEmails = SELECT e FROM Flagged:t -(PURCHASER_EMAIL)- EmailDomain:e
+              ACCUM @@pdom += e.domain;
+  REmails = SELECT e FROM Flagged:t -(RECIPIENT_EMAIL)- EmailDomain:e
+              ACCUM @@rdom += e.domain;
+
+  # historical cases via shared device (2 hops, split into single hops)
+  AllTx = {Transaction.*};
+  RvdTxns = SELECT ot FROM AllTx:ot -(FROM_DEVICE)- DeviceProfile:d2
+              WHERE d2.device_profile_id IN @@dev_ids
+              ACCUM @@rvd_ids += ot.txn_id;
+  AllCases = {ClosedCase.*};
+  RelatedViaDevice = SELECT cc FROM AllCases:cc -(INVOLVES)- Transaction:t2
+                       WHERE t2.txn_id IN @@rvd_ids;
+
+  # historical cases via shared billing region (2 hops, split into single hops)
+  RvrTxns = SELECT ot2 FROM AllTx:ot2 -(BILLED_IN)- BillingRegion:r2
+              WHERE r2.region_code IN @@region_codes
+              ACCUM @@rvr_ids += ot2.txn_id;
+  RelatedViaRegion = SELECT cc2 FROM AllCases:cc2 -(INVOLVES)- Transaction:t3
+                       WHERE t3.txn_id IN @@rvr_ids;
+
+  # historical cases on the flagged card (ON_CARD inverted)
+  RelatedViaCard = SELECT cc3 FROM AllCases:cc3 -(ON_CARD)- Card:c2
+                     WHERE c2.card_id IN @@flagged_card_ids;
+
+  # temporal neighbours
+  NextTx = SELECT n FROM Flagged:t -(NEXT)- Transaction:n;
+  PrevTx = SELECT p FROM AllTx:p -(NEXT)- Transaction:q
+             WHERE q.txn_id IN @@flagged_ids;
+
+  PRINT B;
+  PRINT Flagged;
+  PRINT FlaggedCards;
+  PRINT FlaggedCustomer;
+  PRINT CardHistory;
+  PRINT Devices;
+  PRINT Regions;
+  PRINT PEmails;
+  PRINT REmails;
+  PRINT RelatedViaDevice;
+  PRINT RelatedViaRegion;
+  PRINT RelatedViaCard;
+  PRINT NextTx;
+  PRINT PrevTx;
+}

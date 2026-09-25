@@ -1,0 +1,1 @@
+{"schemaVersion":2,"mediaType":"application/vnd.oci.image.index.v1+json","manifests":[{"mediaType":"application/vnd.oci.image.manifest.v1+json","digest":"sha256:ec7abcf005bc8f1c5a1bbf25268736ee21c01e46982340db10b76af19ad28ffe","size":1314,"annotations":{"io.containerd.image.name":"docker.io/tigergraph/community:4.2.5","org.opencontainers.image.ref.name":"4.2.5"}}]}

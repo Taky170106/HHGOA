@@ -1,0 +1,1148 @@
+{
+  "install": {
+    "get_transaction": {
+      "http_status": 400,
+      "elapsed_ms": 82.5,
+      "message": "Runtime Error: Parameter txn_id is NULL.",
+      "installed": true
+    },
+    "find_related_transactions": {
+      "http_status": 400,
+      "elapsed_ms": 9.6,
+      "message": "Runtime Error: Parameter txn_id is NULL.",
+      "installed": true
+    },
+    "find_device_connections": {
+      "http_status": 400,
+      "elapsed_ms": 9.5,
+      "message": "Runtime Error: Parameter txn_id is NULL.",
+      "installed": true
+    },
+    "find_related_cases": {
+      "http_status": 400,
+      "elapsed_ms": 7.2,
+      "message": "Runtime Error: Parameter txn_id is NULL.",
+      "installed": true
+    },
+    "benchmark_case_context": {
+      "http_status": 400,
+      "elapsed_ms": 32.7,
+      "message": "Runtime Error: Parameter case_id is NULL.",
+      "installed": true
+    },
+    "get_card_history": {
+      "http_status": 400,
+      "elapsed_ms": 7.5,
+      "message": "Runtime Error: Parameter card_id is NULL.",
+      "installed": true
+    },
+    "get_customer_history": {
+      "http_status": 400,
+      "elapsed_ms": 7.1,
+      "message": "Runtime Error: Parameter customer_id is NULL.",
+      "installed": true
+    },
+    "temporal_chain": {
+      "http_status": 400,
+      "elapsed_ms": 9.4,
+      "message": "Runtime Error: Parameter card_id is NULL.",
+      "installed": true
+    },
+    "calculate_exposure": {
+      "http_status": 200,
+      "elapsed_ms": 20.3,
+      "message": "",
+      "installed": true
+    },
+    "calculate_exposure_list": {
+      "http_status": 400,
+      "elapsed_ms": 10.4,
+      "message": "Runtime Error: Parameter txn_ids is NULL.",
+      "installed": true
+    }
+  },
+  "execution": {
+    "get_transaction :: valid txn": {
+      "params": {
+        "txn_id": "3000120"
+      },
+      "http_status": 200,
+      "ok": true,
+      "elapsed_ms": 93.3,
+      "error": "",
+      "result_structure": {
+        "T": 1,
+        "CardOwners": 1,
+        "Customers": 1,
+        "Devices": 1,
+        "Regions": 0,
+        "PEmails": 1,
+        "REmails": 1,
+        "NextTxns": 1,
+        "PrevTxns": 0
+      }
+    },
+    "get_transaction :: valid txn w/ device": {
+      "params": {
+        "txn_id": "3000001"
+      },
+      "http_status": 200,
+      "ok": true,
+      "elapsed_ms": 88.4,
+      "error": "",
+      "result_structure": {
+        "T": 1,
+        "CardOwners": 1,
+        "Customers": 1,
+        "Devices": 1,
+        "Regions": 0,
+        "PEmails": 1,
+        "REmails": 0,
+        "NextTxns": 1,
+        "PrevTxns": 0
+      }
+    },
+    "find_related_transactions :: txn depth2 limit50": {
+      "params": {
+        "txn_id": "3000120",
+        "card_id": "",
+        "customer_id": "",
+        "max_depth": 2,
+        "max_results": 50
+      },
+      "http_status": 200,
+      "ok": true,
+      "elapsed_ms": 149.4,
+      "error": "",
+      "result_structure": {
+        "@@seedTxns": 1,
+        "ViaCard": 50,
+        "ViaRegion": 0,
+        "ViaDevice": 23,
+        "ViaPEmail": 50,
+        "ViaREmail": 50
+      }
+    },
+    "find_related_transactions :: card depth2 limit50": {
+      "params": {
+        "txn_id": "",
+        "card_id": "C00259-K1",
+        "customer_id": "",
+        "max_depth": 2,
+        "max_results": 50
+      },
+      "http_status": 200,
+      "ok": true,
+      "elapsed_ms": 164.4,
+      "error": "",
+      "result_structure": {
+        "@@seedTxns": 60,
+        "ViaCard": 50,
+        "ViaRegion": 50,
+        "ViaDevice": 50,
+        "ViaPEmail": 50,
+        "ViaREmail": 50
+      }
+    },
+    "find_related_transactions :: customer depth2 limit50": {
+      "params": {
+        "txn_id": "",
+        "card_id": "",
+        "customer_id": "C00259",
+        "max_depth": 2,
+        "max_results": 50
+      },
+      "http_status": 200,
+      "ok": true,
+      "elapsed_ms": 159.7,
+      "error": "",
+      "result_structure": {
+        "@@seedTxns": 60,
+        "ViaCard": 50,
+        "ViaRegion": 50,
+        "ViaDevice": 50,
+        "ViaPEmail": 50,
+        "ViaREmail": 50
+      }
+    },
+    "find_related_transactions :: depth1 bounded": {
+      "params": {
+        "txn_id": "3000120",
+        "card_id": "",
+        "customer_id": "",
+        "max_depth": 1,
+        "max_results": 50
+      },
+      "http_status": 200,
+      "ok": true,
+      "elapsed_ms": 26.7,
+      "error": "",
+      "result_structure": {
+        "@@seedTxns": 1,
+        "\"DEPTH_LIMITED\"": "DEPTH_LIMITED"
+      }
+    },
+    "find_device_connections :: valid txn": {
+      "params": {
+        "txn_id": "3000001",
+        "device_profile_id": ""
+      },
+      "http_status": 200,
+      "ok": true,
+      "elapsed_ms": 86.2,
+      "error": "",
+      "result_structure": {
+        "@@devices": 1,
+        "LinkedTxns": 5,
+        "LinkedCards": 5,
+        "LinkedCustomers": 5
+      }
+    },
+    "find_device_connections :: valid device": {
+      "params": {
+        "txn_id": "",
+        "device_profile_id": "DP-2be871a3adbe7b2d"
+      },
+      "http_status": 200,
+      "ok": true,
+      "elapsed_ms": 62.5,
+      "error": "",
+      "result_structure": {
+        "@@devices": 1,
+        "LinkedTxns": 5,
+        "LinkedCards": 5,
+        "LinkedCustomers": 5
+      }
+    },
+    "find_related_cases :: valid txn": {
+      "params": {
+        "txn_id": "3000120",
+        "card_id": "",
+        "customer_id": "",
+        "device_profile_id": "",
+        "region_code": "",
+        "domain": ""
+      },
+      "http_status": 200,
+      "ok": true,
+      "elapsed_ms": 59.1,
+      "error": "",
+      "result_structure": {
+        "@@seedCases": 1
+      }
+    },
+    "find_related_cases :: valid card": {
+      "params": {
+        "txn_id": "",
+        "card_id": "C00259-K1",
+        "customer_id": "",
+        "device_profile_id": "",
+        "region_code": "",
+        "domain": ""
+      },
+      "http_status": 200,
+      "ok": true,
+      "elapsed_ms": 18.3,
+      "error": "",
+      "result_structure": {
+        "@@seedCases": 7
+      }
+    },
+    "find_related_cases :: valid customer": {
+      "params": {
+        "txn_id": "",
+        "card_id": "",
+        "customer_id": "C00259",
+        "device_profile_id": "",
+        "region_code": "",
+        "domain": ""
+      },
+      "http_status": 200,
+      "ok": true,
+      "elapsed_ms": 10.1,
+      "error": "",
+      "result_structure": {
+        "@@seedCases": 7
+      }
+    },
+    "find_related_cases :: valid device": {
+      "params": {
+        "txn_id": "",
+        "card_id": "",
+        "customer_id": "",
+        "device_profile_id": "DP-2be871a3adbe7b2d",
+        "region_code": "",
+        "domain": ""
+      },
+      "http_status": 200,
+      "ok": true,
+      "elapsed_ms": 28.5,
+      "error": "",
+      "result_structure": {
+        "@@seedCases": 0
+      }
+    },
+    "get_card_history :: valid card": {
+      "params": {
+        "card_id": "C00259-K1"
+      },
+      "http_status": 200,
+      "ok": true,
+      "elapsed_ms": 18.8,
+      "error": "",
+      "result_structure": {
+        "K": 1,
+        "Txns": 60,
+        "NextEdges": 59
+      }
+    },
+    "get_customer_history :: valid customer": {
+      "params": {
+        "customer_id": "C00259"
+      },
+      "http_status": 200,
+      "ok": true,
+      "elapsed_ms": 13.0,
+      "error": "",
+      "result_structure": {
+        "C": 1,
+        "Cards": 1,
+        "Txns": 60
+      }
+    },
+    "temporal_chain :: valid card": {
+      "params": {
+        "card_id": "C00259-K1"
+      },
+      "http_status": 200,
+      "ok": true,
+      "elapsed_ms": 18.9,
+      "error": "",
+      "result_structure": {
+        "K": 1,
+        "Txns": 60,
+        "NextEdges": 59
+      }
+    },
+    "calculate_exposure :: valid txns": {
+      "params": {
+        "txn_ids_csv": "3000120"
+      },
+      "http_status": 200,
+      "ok": true,
+      "elapsed_ms": 5.7,
+      "error": "",
+      "result_structure": {
+        "@@exposure": 0
+      }
+    }
+  },
+  "invalid": {
+    "get_transaction :: invalid id": {
+      "params": {
+        "txn_id": "999999999"
+      },
+      "http_status": 200,
+      "ok": true,
+      "error": "",
+      "result_structure": {
+        "\"NOT_FOUND\"": "NOT_FOUND"
+      }
+    },
+    "get_transaction :: empty input": {
+      "params": {
+        "txn_id": ""
+      },
+      "http_status": 200,
+      "ok": true,
+      "error": "",
+      "result_structure": {
+        "\"NOT_FOUND\"": "NOT_FOUND"
+      }
+    },
+    "find_related_transactions :: empty input": {
+      "params": {
+        "txn_id": "",
+        "card_id": "",
+        "customer_id": "",
+        "max_depth": 2,
+        "max_results": 50
+      },
+      "http_status": 200,
+      "ok": true,
+      "error": "",
+      "result_structure": {
+        "\"NO_SEED\"": "NO_SEED"
+      }
+    },
+    "find_device_connections :: invalid id": {
+      "params": {
+        "txn_id": "NOPE",
+        "device_profile_id": ""
+      },
+      "http_status": 200,
+      "ok": true,
+      "error": "",
+      "result_structure": {
+        "\"NO_DEVICE_FOUND\"": "NO_DEVICE_FOUND"
+      }
+    },
+    "benchmark_case_context :: invalid case": {
+      "params": {
+        "case_id": "HHG-999"
+      },
+      "http_status": 200,
+      "ok": true,
+      "error": "",
+      "result_structure": {
+        "\"BENCHMARK_NOT_FOUND\"": "BENCHMARK_NOT_FOUND"
+      }
+    }
+  },
+  "benchmark": [
+    {
+      "case_id": "HHG-001",
+      "http_status": 200,
+      "expected_txn": "3514030",
+      "returned_txn": [
+        "3514030"
+      ],
+      "expected_card": "C12382-K1",
+      "ok": true,
+      "trigger_match": true,
+      "elapsed_ms": 144.6,
+      "result_structure": {
+        "B": 1,
+        "Flagged": 1,
+        "FlaggedCards": 1,
+        "FlaggedCustomer": 1,
+        "CardHistory": 422,
+        "Devices": 0,
+        "Regions": 1,
+        "PEmails": 0,
+        "REmails": 0,
+        "RelatedViaDevice": 0,
+        "RelatedViaRegion": 12,
+        "RelatedViaCard": 4,
+        "NextTx": 1,
+        "PrevTx": 1
+      }
+    },
+    {
+      "case_id": "HHG-002",
+      "http_status": 200,
+      "expected_txn": "3478782",
+      "returned_txn": [
+        "3478782"
+      ],
+      "expected_card": "C11891-K1",
+      "ok": true,
+      "trigger_match": true,
+      "elapsed_ms": 129.2,
+      "result_structure": {
+        "B": 1,
+        "Flagged": 1,
+        "FlaggedCards": 1,
+        "FlaggedCustomer": 1,
+        "CardHistory": 44,
+        "Devices": 0,
+        "Regions": 0,
+        "PEmails": 1,
+        "REmails": 1,
+        "RelatedViaDevice": 0,
+        "RelatedViaRegion": 0,
+        "RelatedViaCard": 1,
+        "NextTx": 1,
+        "PrevTx": 1
+      }
+    },
+    {
+      "case_id": "HHG-003",
+      "http_status": 200,
+      "expected_txn": "3530164",
+      "returned_txn": [
+        "3530164"
+      ],
+      "expected_card": "C08623-K2",
+      "ok": true,
+      "trigger_match": true,
+      "elapsed_ms": 196.3,
+      "result_structure": {
+        "B": 1,
+        "Flagged": 1,
+        "FlaggedCards": 1,
+        "FlaggedCustomer": 1,
+        "CardHistory": 1140,
+        "Devices": 0,
+        "Regions": 1,
+        "PEmails": 1,
+        "REmails": 0,
+        "RelatedViaDevice": 0,
+        "RelatedViaRegion": 272,
+        "RelatedViaCard": 6,
+        "NextTx": 1,
+        "PrevTx": 1
+      }
+    },
+    {
+      "case_id": "HHG-004",
+      "http_status": 200,
+      "expected_txn": "3583227",
+      "returned_txn": [
+        "3583227"
+      ],
+      "expected_card": "C08106-K1",
+      "ok": true,
+      "trigger_match": true,
+      "elapsed_ms": 139.8,
+      "result_structure": {
+        "B": 1,
+        "Flagged": 1,
+        "FlaggedCards": 1,
+        "FlaggedCustomer": 1,
+        "CardHistory": 216,
+        "Devices": 1,
+        "Regions": 0,
+        "PEmails": 1,
+        "REmails": 1,
+        "RelatedViaDevice": 0,
+        "RelatedViaRegion": 0,
+        "RelatedViaCard": 4,
+        "NextTx": 1,
+        "PrevTx": 1
+      }
+    },
+    {
+      "case_id": "HHG-005",
+      "http_status": 200,
+      "expected_txn": "3523199",
+      "returned_txn": [
+        "3523199"
+      ],
+      "expected_card": "C02923-K1",
+      "ok": true,
+      "trigger_match": true,
+      "elapsed_ms": 168.2,
+      "result_structure": {
+        "B": 1,
+        "Flagged": 1,
+        "FlaggedCards": 1,
+        "FlaggedCustomer": 1,
+        "CardHistory": 92,
+        "Devices": 1,
+        "Regions": 1,
+        "PEmails": 1,
+        "REmails": 1,
+        "RelatedViaDevice": 5,
+        "RelatedViaRegion": 272,
+        "RelatedViaCard": 3,
+        "NextTx": 1,
+        "PrevTx": 1
+      }
+    },
+    {
+      "case_id": "HHG-006",
+      "http_status": 200,
+      "expected_txn": "3476682",
+      "returned_txn": [
+        "3476682"
+      ],
+      "expected_card": "C07297-K1",
+      "ok": true,
+      "trigger_match": true,
+      "elapsed_ms": 173.8,
+      "result_structure": {
+        "B": 1,
+        "Flagged": 1,
+        "FlaggedCards": 1,
+        "FlaggedCustomer": 1,
+        "CardHistory": 261,
+        "Devices": 1,
+        "Regions": 1,
+        "PEmails": 1,
+        "REmails": 0,
+        "RelatedViaDevice": 25,
+        "RelatedViaRegion": 306,
+        "RelatedViaCard": 0,
+        "NextTx": 1,
+        "PrevTx": 1
+      }
+    },
+    {
+      "case_id": "HHG-007",
+      "http_status": 200,
+      "expected_txn": "3514948",
+      "returned_txn": [
+        "3514948"
+      ],
+      "expected_card": "C09933-K2",
+      "ok": true,
+      "trigger_match": true,
+      "elapsed_ms": 237.7,
+      "result_structure": {
+        "B": 1,
+        "Flagged": 1,
+        "FlaggedCards": 1,
+        "FlaggedCustomer": 1,
+        "CardHistory": 2792,
+        "Devices": 0,
+        "Regions": 1,
+        "PEmails": 1,
+        "REmails": 0,
+        "RelatedViaDevice": 0,
+        "RelatedViaRegion": 306,
+        "RelatedViaCard": 19,
+        "NextTx": 1,
+        "PrevTx": 1
+      }
+    },
+    {
+      "case_id": "HHG-008",
+      "http_status": 200,
+      "expected_txn": "3558054",
+      "returned_txn": [
+        "3558054"
+      ],
+      "expected_card": "C13171-K2",
+      "ok": true,
+      "trigger_match": true,
+      "elapsed_ms": 149.3,
+      "result_structure": {
+        "B": 1,
+        "Flagged": 1,
+        "FlaggedCards": 1,
+        "FlaggedCustomer": 1,
+        "CardHistory": 928,
+        "Devices": 1,
+        "Regions": 0,
+        "PEmails": 1,
+        "REmails": 1,
+        "RelatedViaDevice": 0,
+        "RelatedViaRegion": 0,
+        "RelatedViaCard": 19,
+        "NextTx": 1,
+        "PrevTx": 1
+      }
+    },
+    {
+      "case_id": "HHG-009",
+      "http_status": 200,
+      "expected_txn": "3581141",
+      "returned_txn": [
+        "3581141"
+      ],
+      "expected_card": "C08299-K1",
+      "ok": true,
+      "trigger_match": true,
+      "elapsed_ms": 138.7,
+      "result_structure": {
+        "B": 1,
+        "Flagged": 1,
+        "FlaggedCards": 1,
+        "FlaggedCustomer": 1,
+        "CardHistory": 56,
+        "Devices": 1,
+        "Regions": 1,
+        "PEmails": 0,
+        "REmails": 1,
+        "RelatedViaDevice": 37,
+        "RelatedViaRegion": 51,
+        "RelatedViaCard": 0,
+        "NextTx": 1,
+        "PrevTx": 1
+      }
+    },
+    {
+      "case_id": "HHG-010",
+      "http_status": 200,
+      "expected_txn": "3506725",
+      "returned_txn": [
+        "3506725"
+      ],
+      "expected_card": "C10434-K1",
+      "ok": true,
+      "trigger_match": true,
+      "elapsed_ms": 134.9,
+      "result_structure": {
+        "B": 1,
+        "Flagged": 1,
+        "FlaggedCards": 1,
+        "FlaggedCustomer": 1,
+        "CardHistory": 36,
+        "Devices": 1,
+        "Regions": 1,
+        "PEmails": 1,
+        "REmails": 1,
+        "RelatedViaDevice": 12,
+        "RelatedViaRegion": 44,
+        "RelatedViaCard": 1,
+        "NextTx": 1,
+        "PrevTx": 1
+      }
+    },
+    {
+      "case_id": "HHG-011",
+      "http_status": 200,
+      "expected_txn": "3583368",
+      "returned_txn": [
+        "3583368"
+      ],
+      "expected_card": "C11923-K2",
+      "ok": true,
+      "trigger_match": true,
+      "elapsed_ms": 432.6,
+      "result_structure": {
+        "B": 1,
+        "Flagged": 1,
+        "FlaggedCards": 1,
+        "FlaggedCustomer": 1,
+        "CardHistory": 10361,
+        "Devices": 1,
+        "Regions": 0,
+        "PEmails": 1,
+        "REmails": 1,
+        "RelatedViaDevice": 0,
+        "RelatedViaRegion": 0,
+        "RelatedViaCard": 11,
+        "NextTx": 1,
+        "PrevTx": 1
+      }
+    },
+    {
+      "case_id": "HHG-012",
+      "http_status": 200,
+      "expected_txn": "3553342",
+      "returned_txn": [
+        "3553342"
+      ],
+      "expected_card": "C05876-K2",
+      "ok": true,
+      "trigger_match": true,
+      "elapsed_ms": 165.4,
+      "result_structure": {
+        "B": 1,
+        "Flagged": 1,
+        "FlaggedCards": 1,
+        "FlaggedCustomer": 1,
+        "CardHistory": 991,
+        "Devices": 0,
+        "Regions": 1,
+        "PEmails": 1,
+        "REmails": 0,
+        "RelatedViaDevice": 0,
+        "RelatedViaRegion": 14,
+        "RelatedViaCard": 2,
+        "NextTx": 1,
+        "PrevTx": 1
+      }
+    },
+    {
+      "case_id": "HHG-013",
+      "http_status": 200,
+      "expected_txn": "3526826",
+      "returned_txn": [
+        "3526826"
+      ],
+      "expected_card": "C07671-K2",
+      "ok": true,
+      "trigger_match": true,
+      "elapsed_ms": 170.2,
+      "result_structure": {
+        "B": 1,
+        "Flagged": 1,
+        "FlaggedCards": 1,
+        "FlaggedCustomer": 1,
+        "CardHistory": 1569,
+        "Devices": 1,
+        "Regions": 0,
+        "PEmails": 1,
+        "REmails": 1,
+        "RelatedViaDevice": 0,
+        "RelatedViaRegion": 0,
+        "RelatedViaCard": 4,
+        "NextTx": 1,
+        "PrevTx": 1
+      }
+    },
+    {
+      "case_id": "HHG-014",
+      "http_status": 200,
+      "expected_txn": "3478561",
+      "returned_txn": [
+        "3478561"
+      ],
+      "expected_card": "C13487-K1",
+      "ok": true,
+      "trigger_match": true,
+      "elapsed_ms": 141.5,
+      "result_structure": {
+        "B": 1,
+        "Flagged": 1,
+        "FlaggedCards": 1,
+        "FlaggedCustomer": 1,
+        "CardHistory": 85,
+        "Devices": 1,
+        "Regions": 1,
+        "PEmails": 1,
+        "REmails": 1,
+        "RelatedViaDevice": 4,
+        "RelatedViaRegion": 124,
+        "RelatedViaCard": 0,
+        "NextTx": 1,
+        "PrevTx": 1
+      }
+    },
+    {
+      "case_id": "HHG-015",
+      "http_status": 200,
+      "expected_txn": "3464869",
+      "returned_txn": [
+        "3464869"
+      ],
+      "expected_card": "C03042-K1",
+      "ok": true,
+      "trigger_match": true,
+      "elapsed_ms": 137.1,
+      "result_structure": {
+        "B": 1,
+        "Flagged": 1,
+        "FlaggedCards": 1,
+        "FlaggedCustomer": 1,
+        "CardHistory": 79,
+        "Devices": 1,
+        "Regions": 1,
+        "PEmails": 1,
+        "REmails": 1,
+        "RelatedViaDevice": 0,
+        "RelatedViaRegion": 77,
+        "RelatedViaCard": 3,
+        "NextTx": 1,
+        "PrevTx": 1
+      }
+    },
+    {
+      "case_id": "HHG-016",
+      "http_status": 200,
+      "expected_txn": "3534820",
+      "returned_txn": [
+        "3534820"
+      ],
+      "expected_card": "C09988-K1",
+      "ok": true,
+      "trigger_match": true,
+      "elapsed_ms": 138.6,
+      "result_structure": {
+        "B": 1,
+        "Flagged": 1,
+        "FlaggedCards": 1,
+        "FlaggedCustomer": 1,
+        "CardHistory": 61,
+        "Devices": 1,
+        "Regions": 0,
+        "PEmails": 1,
+        "REmails": 1,
+        "RelatedViaDevice": 10,
+        "RelatedViaRegion": 0,
+        "RelatedViaCard": 0,
+        "NextTx": 1,
+        "PrevTx": 1
+      }
+    },
+    {
+      "case_id": "HHG-017",
+      "http_status": 200,
+      "expected_txn": "3450629",
+      "returned_txn": [
+        "3450629"
+      ],
+      "expected_card": "C04570-K1",
+      "ok": true,
+      "trigger_match": true,
+      "elapsed_ms": 160.6,
+      "result_structure": {
+        "B": 1,
+        "Flagged": 1,
+        "FlaggedCards": 1,
+        "FlaggedCustomer": 1,
+        "CardHistory": 59,
+        "Devices": 1,
+        "Regions": 1,
+        "PEmails": 1,
+        "REmails": 1,
+        "RelatedViaDevice": 8,
+        "RelatedViaRegion": 411,
+        "RelatedViaCard": 1,
+        "NextTx": 1,
+        "PrevTx": 1
+      }
+    },
+    {
+      "case_id": "HHG-018",
+      "http_status": 200,
+      "expected_txn": "3491361",
+      "returned_txn": [
+        "3491361"
+      ],
+      "expected_card": "C02354-K2",
+      "ok": true,
+      "trigger_match": true,
+      "elapsed_ms": 297.2,
+      "result_structure": {
+        "B": 1,
+        "Flagged": 1,
+        "FlaggedCards": 1,
+        "FlaggedCustomer": 1,
+        "CardHistory": 7091,
+        "Devices": 0,
+        "Regions": 1,
+        "PEmails": 0,
+        "REmails": 0,
+        "RelatedViaDevice": 0,
+        "RelatedViaRegion": 171,
+        "RelatedViaCard": 20,
+        "NextTx": 1,
+        "PrevTx": 1
+      }
+    },
+    {
+      "case_id": "HHG-019",
+      "http_status": 200,
+      "expected_txn": "3503878",
+      "returned_txn": [
+        "3503878"
+      ],
+      "expected_card": "C07987-K2",
+      "ok": true,
+      "trigger_match": true,
+      "elapsed_ms": 183.6,
+      "result_structure": {
+        "B": 1,
+        "Flagged": 1,
+        "FlaggedCards": 1,
+        "FlaggedCustomer": 1,
+        "CardHistory": 248,
+        "Devices": 1,
+        "Regions": 1,
+        "PEmails": 1,
+        "REmails": 1,
+        "RelatedViaDevice": 0,
+        "RelatedViaRegion": 306,
+        "RelatedViaCard": 4,
+        "NextTx": 1,
+        "PrevTx": 1
+      }
+    },
+    {
+      "case_id": "HHG-020",
+      "http_status": 200,
+      "expected_txn": "3509359",
+      "returned_txn": [
+        "3509359"
+      ],
+      "expected_card": "C12265-K2",
+      "ok": true,
+      "trigger_match": true,
+      "elapsed_ms": 156.6,
+      "result_structure": {
+        "B": 1,
+        "Flagged": 1,
+        "FlaggedCards": 1,
+        "FlaggedCustomer": 1,
+        "CardHistory": 112,
+        "Devices": 1,
+        "Regions": 1,
+        "PEmails": 1,
+        "REmails": 1,
+        "RelatedViaDevice": 2,
+        "RelatedViaRegion": 306,
+        "RelatedViaCard": 2,
+        "NextTx": 1,
+        "PrevTx": 1
+      }
+    }
+  ],
+  "e2e": {
+    "case_id": "HHG-001",
+    "benchmark__flagged_txn": 1,
+    "step1_benchmark_triggers_txn": {
+      "ids": [
+        "3514030"
+      ],
+      "expected": "3514030",
+      "match": true
+    },
+    "step2_txn_to_card": {
+      "ids": [
+        "C12382-K1"
+      ],
+      "expected": "C12382-K1",
+      "match": true
+    },
+    "step3_card_to_customer": {
+      "ids": [
+        "C12382"
+      ],
+      "expected": "C12382",
+      "match": true
+    },
+    "step4_txn_to_device": {
+      "ids": [
+        [],
+        {
+          "http_status": 200,
+          "elapsed_ms": 103.1,
+          "ok": true,
+          "result_structure": {
+            "T": 1,
+            "CardOwners": 1,
+            "Customers": 1,
+            "Devices": 0,
+            "Regions": 1,
+            "PEmails": 0,
+            "REmails": 0,
+            "NextTxns": 1,
+            "PrevTxns": 1
+          }
+        }
+      ]
+    },
+    "step5_device_to_related_txns": {
+      "count": 2,
+      "sample": [
+        [],
+        {
+          "http_status": 200,
+          "elapsed_ms": 20.7,
+          "ok": true,
+          "result_structure": {
+            "\"NO_DEVICE_FOUND\"": "NO_DEVICE_FOUND"
+          }
+        }
+      ]
+    },
+    "step6_historical_cases": {
+      "via_txn": [],
+      "via_card": [
+        [],
+        {
+          "http_status": 200,
+          "elapsed_ms": 22.6,
+          "ok": true,
+          "result_structure": {
+            "@@seedCases": 4
+          }
+        }
+      ],
+      "case_expected": "CC-0001"
+    },
+    "card_history": {
+      "K": 1,
+      "Txns": 60,
+      "NextEdges": 59
+    },
+    "all_steps_ok": true
+  },
+  "determinism": {
+    "run1": {
+      "T": 1,
+      "CardOwners": 1,
+      "Customers": 1,
+      "Devices": 0,
+      "Regions": 1,
+      "PEmails": 0,
+      "REmails": 0,
+      "NextTxns": 1,
+      "PrevTxns": 1
+    },
+    "run2": {
+      "T": 1,
+      "CardOwners": 1,
+      "Customers": 1,
+      "Devices": 0,
+      "Regions": 1,
+      "PEmails": 0,
+      "REmails": 0,
+      "NextTxns": 1,
+      "PrevTxns": 1
+    },
+    "equivalent": true
+  },
+  "performance": [
+    {
+      "query": "get_transaction",
+      "elapsed_ms": 93.3
+    },
+    {
+      "query": "get_transaction",
+      "elapsed_ms": 88.4
+    },
+    {
+      "query": "find_related_transactions",
+      "elapsed_ms": 149.4
+    },
+    {
+      "query": "find_related_transactions",
+      "elapsed_ms": 164.4
+    },
+    {
+      "query": "find_related_transactions",
+      "elapsed_ms": 159.7
+    },
+    {
+      "query": "find_related_transactions",
+      "elapsed_ms": 26.7
+    },
+    {
+      "query": "find_device_connections",
+      "elapsed_ms": 86.2
+    },
+    {
+      "query": "find_device_connections",
+      "elapsed_ms": 62.5
+    },
+    {
+      "query": "find_related_cases",
+      "elapsed_ms": 59.1
+    },
+    {
+      "query": "find_related_cases",
+      "elapsed_ms": 18.3
+    },
+    {
+      "query": "find_related_cases",
+      "elapsed_ms": 10.1
+    },
+    {
+      "query": "find_related_cases",
+      "elapsed_ms": 28.5
+    },
+    {
+      "query": "get_card_history",
+      "elapsed_ms": 18.8
+    },
+    {
+      "query": "get_customer_history",
+      "elapsed_ms": 13.0
+    },
+    {
+      "query": "temporal_chain",
+      "elapsed_ms": 18.9
+    },
+    {
+      "query": "calculate_exposure",
+      "elapsed_ms": 5.7
+    }
+  ],
+  "benchmark_pass": 20,
+  "inputs_used": {
+    "txn_id": "3514030",
+    "txn_with_device": "3000001",
+    "card_id": "C00259-K1",
+    "customer_id": "C00259",
+    "device_profile_id": "DP-2be871a3adbe7b2d",
+    "closed_case": "CC-0001"
+  },
+  "http_404_count": 0,
+  "execution_failures": [],
+  "invalid_failures": []
+}

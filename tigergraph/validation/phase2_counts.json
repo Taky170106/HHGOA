@@ -1,0 +1,34 @@
+{
+  "version": {
+    "edition": "community",
+    "api": "v2",
+    "schema": 0
+  },
+  "error": false,
+  "message": "",
+  "results": [
+    {
+      "@@c_customer": 13553,
+      "@@c_card": 13553,
+      "@@c_txn": 590742,
+      "@@c_device": 9706,
+      "@@c_email": 60,
+      "@@c_region": 332,
+      "@@c_closed": 5565,
+      "@@c_bench": 20
+    },
+    {
+      "@@e_owns": 13553,
+      "@@e_made": 590742,
+      "@@e_next": 577189,
+      "@@e_billed": 525003,
+      "@@e_purch": 496262,
+      "@@e_recip": 137453,
+      "@@e_dev": 144432,
+      "@@e_inv": 14955,
+      "@@e_oncard": 5565,
+      "@@e_conn": 92,
+      "@@e_trig": 20
+    }
+  ]
+}

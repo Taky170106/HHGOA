@@ -1,0 +1,835 @@
+{
+  "case_id": "HHG-011",
+  "case": {
+    "status": "closed_fraud",
+    "verdict": "fraud",
+    "fraud_probability": 0.8767,
+    "pattern": "card_testing",
+    "pattern_description": "",
+    "affected_txn_ids": [
+      "3467907",
+      "3477386",
+      "3488077",
+      "3488132",
+      "3494567",
+      "3498132",
+      "3498332",
+      "3502612",
+      "3505830",
+      "3505844",
+      "3509282",
+      "3511613"
+    ],
+    "first_suspicious_txn_id": "3467907",
+    "connected_card_ids": [
+      "C03938-K1",
+      "C05595-K1",
+      "C05678-K1"
+    ],
+    "connected_device_profiles": [
+      "SM-G610F Build/NRD90M | nan | chrome 66.0 for android | nan"
+    ],
+    "exposure_usd": 50.14,
+    "evidence": [
+      {
+        "evidence_id": "EV-01",
+        "claim": "Case HHG-011 opened 2016-12-29 06:27:44 from customer_report trigger: Customer C11923 message: 'I never made this $131.30 purchase. Please check my card.' Refers to 3583368.",
+        "source": "document",
+        "ref": "case_pack.csv#HHG-011",
+        "entity_ids": [
+          "HHG-011",
+          "3583368"
+        ],
+        "evidence_class": "direct"
+      },
+      {
+        "evidence_id": "EV-02",
+        "claim": "Cardholder states the 3583368 transaction of $131.30 was not made by them (denial recorded in the trigger).",
+        "source": "customer",
+        "ref": "trigger:case_pack.csv#HHG-011",
+        "entity_ids": [
+          "C11923",
+          "C11923-K2",
+          "3583368"
+        ],
+        "evidence_class": "direct"
+      },
+      {
+        "evidence_id": "EV-03",
+        "claim": "Transaction 3583368 of $131.30 on card C11923-K2 is a online transaction in billing region n/a (region NOT the cardholder's home country).",
+        "source": "graph",
+        "ref": "query:get_transaction(txn_id=3583368)",
+        "entity_ids": [
+          "3583368",
+          "C11923-K2"
+        ],
+        "evidence_class": "derived_graph"
+      },
+      {
+        "evidence_id": "EV-04",
+        "claim": "Transaction 3583368 came from device profile DP-953c249d8833aa69 marked New, linked to 4 card(s) across 4 customer(s).",
+        "source": "graph",
+        "ref": "query:find_device_connections(txn_id=3583368)",
+        "entity_ids": [
+          "DP-953c249d8833aa69",
+          "3583368",
+          "C03938-K1",
+          "C05595-K1",
+          "C05678-K1",
+          "C11923-K2"
+        ],
+        "evidence_class": "derived_graph"
+      },
+      {
+        "evidence_id": "EV-05",
+        "claim": "Three or more online authorisations under $5 (4.84, 3.24, 4.23, 4.56, 2.30, 4.36, 3.64, 4.98, 4.59, 4.52, 4.66, 4.22, 4.10, 4.11, 3.97, 0.75, 0.82, 1.03, 1.03, 2.59, 2.69, 4.33, 2.68, 3.86, 2.60, 2.62, 2.63, 1.27, 1.29, 1.24, 1.23, 1.37, 4.12, 2.45, 2.62, 2.60, 1.01, 0.94, 2.46, 3.26, 4.23, 3.89, 2.24, 2.22, 2.30, 2.29, 4.13, 3.18, 4.96, 4.46, 4.69, 4.64, 2.62, 4.53, 3.99, 4.70, 4.63, 2.15, 4.96, 4.88, 4.15, 4.01, 0.93) landed on card C11923-K2 within the hour before the $131.30 transaction 3583368.",
+        "source": "graph",
+        "ref": "query:get_card_history(card_id=C11923-K2)",
+        "entity_ids": [
+          "3467907",
+          "3477386",
+          "3488077",
+          "3488132",
+          "3494567",
+          "3498132",
+          "3583368"
+        ],
+        "evidence_class": "derived_graph"
+      },
+      {
+        "evidence_id": "EV-06",
+        "claim": "Transaction 3583368 deviates from card C11923-K2 history: $131.30 is more than 3x the card median of $28.58.",
+        "source": "graph",
+        "ref": "query:get_card_history(card_id=C11923-K2)",
+        "entity_ids": [
+          "3583368",
+          "C11923-K2"
+        ],
+        "evidence_class": "derived_graph"
+      },
+      {
+        "evidence_id": "EV-07",
+        "claim": "Card C11923-K2 already appears in confirmed-fraud closed case(s) CC-0031, CC-0290, CC-1056, CC-2247, CC-2673.",
+        "source": "graph",
+        "ref": "query:find_related_cases(card_id=C11923-K2)",
+        "entity_ids": [
+          "CC-0031",
+          "CC-0290",
+          "CC-1056",
+          "CC-2247",
+          "CC-2673",
+          "C11923-K2"
+        ],
+        "evidence_class": "derived_graph"
+      },
+      {
+        "evidence_id": "EV-08",
+        "claim": "Device profile DP-953c249d8833aa69 is also recorded on confirmed-fraud closed case(s) CC-0031, CC-0290, CC-0592, CC-1056, CC-1497 on other cards.",
+        "source": "graph",
+        "ref": "query:find_device_connections(txn_id=3583368)",
+        "entity_ids": [
+          "CC-0031",
+          "CC-0290",
+          "CC-0592",
+          "CC-1056",
+          "CC-1497",
+          "DP-953c249d8833aa69"
+        ],
+        "evidence_class": "derived_graph"
+      },
+      {
+        "evidence_id": "EV-09",
+        "claim": "Card C11923-K2 has 38 earlier transaction(s) with the same amount ($131.30), channel and product code - a repeating charge rather than an anomalous purchase.",
+        "source": "graph",
+        "ref": "query:get_card_history(card_id=C11923-K2)",
+        "entity_ids": [
+          "3009590",
+          "3009644",
+          "3009652",
+          "3012788",
+          "3066152",
+          "3583368"
+        ],
+        "evidence_class": "derived_graph"
+      },
+      {
+        "evidence_id": "EV-10",
+        "claim": "Retrieved prior case memory CC-0031, CC-0290, CC-0592, CC-1056, CC-2247 for pattern similarity.",
+        "source": "graph",
+        "ref": "query:find_related_cases(card_id=C11923-K2)",
+        "entity_ids": [
+          "CC-0031",
+          "CC-0290",
+          "CC-0592",
+          "CC-1056",
+          "CC-2247"
+        ],
+        "evidence_class": "derived_graph"
+      },
+      {
+        "evidence_id": "EV-11",
+        "claim": "Model score for transaction 3583368 is 0.7302 (32 features); largest SHAP contributions: card_historical_cases (-0.0596), dt_seconds (+0.0561), card_on_card_cases (+0.0411).",
+        "source": "external",
+        "ref": "model:models/fraud_model.pkl + xai/shap_local_benchmark_cases.json",
+        "entity_ids": [
+          "3583368"
+        ],
+        "evidence_class": "model_analytical"
+      },
+      {
+        "evidence_id": "EV-12",
+        "claim": "The bank's input risk_score runs opposite to confirmed outcome in this graph: the 4665 confirmed-fraud alerts carry a median score of 0.47 against 0.88 for the 900 cleared alerts, and only 64.7% of alerts scoring 0.90 or above were confirmed fraud. Case HHG-011 carries no risk_score, so the score was used in neither direction.",
+        "source": "document",
+        "ref": "DATASET/closed_cases_history.csv (outcome) x data/vertices/transaction.csv (risk_score)",
+        "entity_ids": [
+          "3583368"
+        ],
+        "evidence_class": "model_analytical"
+      }
+    ],
+    "similar_prior_cases": [
+      "CC-0031",
+      "CC-0290",
+      "CC-0592",
+      "CC-1056",
+      "CC-2247"
+    ],
+    "summary": "Case HHG-011 covers a online $131.30 transaction 3583368 on card C11923-K2 raised by a customer_report trigger. Graph investigation found 6 corroborating signal(s) - new device, amount outlier, 48h burst, shared-device ring, prior fraud on this card. Pattern assessed as card testing; fraud probability 0.88 before additional evidence and 0.88 after, giving a verdict of fraud. Exposure across 12 transaction(s) is $50.14. Independent graph signals corroborate the finding, so the actions below follow from the policy routes shown with each one.",
+    "written_to_graph": false,
+    "graph_case_id": ""
+  },
+  "evidence_requests": [],
+  "next_best_actions": {
+    "initial": [
+      {
+        "action": "DECLINE_TRANSACTION",
+        "route": "L1",
+        "reason": "R5: testing sequence observed - decline the flagged authorization; team-lead approval required"
+      },
+      {
+        "action": "STEP_UP_AUTH",
+        "route": "auto",
+        "reason": "R5: require a one-time passcode before further activity on the card"
+      },
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "R2 and R5: the customer denied the testing sequence and $50.14 has already cleared, which is under $2,500"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "Section 3a: fraud probability >= 0.30, open an internal case with evidence"
+      },
+      {
+        "action": "FILE_REPORT",
+        "route": "L2",
+        "reason": "Section 3a: confirmed fraud with exposure $50.14 and a shared device/region link to other fraud; report requires L2 fraud manager approval"
+      },
+      {
+        "action": "MONITOR_CONNECTED_CARDS",
+        "route": "auto",
+        "reason": "R6: card(s) C03938-K1, C05595-K1, C05678-K1 share the device profile with the flagged transaction"
+      },
+      {
+        "action": "MONITOR_CARD",
+        "route": "auto",
+        "reason": "R4: the blocked card is reissued, so it stays under 72h of raised monitoring while the report is prepared"
+      }
+    ],
+    "final": [
+      {
+        "action": "DECLINE_TRANSACTION",
+        "route": "L1",
+        "reason": "R5: testing sequence observed - decline the flagged authorization; team-lead approval required"
+      },
+      {
+        "action": "STEP_UP_AUTH",
+        "route": "auto",
+        "reason": "R5: require a one-time passcode before further activity on the card"
+      },
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "R2 and R5: the customer denied the testing sequence and $50.14 has already cleared, which is under $2,500"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "Section 3a: fraud probability >= 0.30, open an internal case with evidence"
+      },
+      {
+        "action": "FILE_REPORT",
+        "route": "L2",
+        "reason": "Section 3a: confirmed fraud with exposure $50.14 and a shared device/region link to other fraud; report requires L2 fraud manager approval"
+      },
+      {
+        "action": "MONITOR_CONNECTED_CARDS",
+        "route": "auto",
+        "reason": "R6: card(s) C03938-K1, C05595-K1, C05678-K1 share the device profile with the flagged transaction"
+      },
+      {
+        "action": "MONITOR_CARD",
+        "route": "auto",
+        "reason": "R4: the blocked card is reissued, so it stays under 72h of raised monitoring while the report is prepared"
+      }
+    ],
+    "what_changed": "No additional evidence was requested: 12 independent graph evidence item(s) put the probability at 0.88, which under Section 6 already settles the verdict, so the next best actions are unchanged."
+  },
+  "sar": {
+    "file": true,
+    "reason": "Confirmed fraud: Section 3a and R6: shared device profile with card(s) C03938-K1, C05595-K1, C05678-K1",
+    "narrative": "On 1970-01-18 at 03:56:22, card C11923-K2 held by customer C11923 was used for a online transaction of $131.30 in billing region unknown. The cardholder reported the purchase as unauthorised in the customer_report trigger for case HHG-011, stating they did not make it. It arrived from device profile DP-953c249d8833aa69, recorded as New and serving 4 card(s) across 4 customer(s). The hour before it contained 63 online authorisation(s) of under $5 ($4.84, $3.24, $4.23, $4.56, $2.30, $4.36, $3.64, $4.98, $4.59, $4.52, $4.66, $4.22, $4.10, $4.11, $3.97, $0.75, $0.82, $1.03, $1.03, $2.59, $2.69, $4.33, $2.68, $3.86, $2.60, $2.62, $2.63, $1.27, $1.29, $1.24, $1.23, $1.37, $4.12, $2.45, $2.62, $2.60, $1.01, $0.94, $2.46, $3.26, $4.23, $3.89, $2.24, $2.22, $2.30, $2.29, $4.13, $3.18, $4.96, $4.46, $4.69, $4.64, $2.62, $4.53, $3.99, $4.70, $4.63, $2.15, $4.96, $4.88, $4.15, $4.01, $0.93) on the same card, the classic test-then-use sequence. The purchase itself is outside the cardholder's normal profile: $131.30 against a card median of $28.58. Card C11923-K2 is already named in confirmed-fraud closed case(s) CC-0031, CC-0290, CC-1056. Device profile DP-953c249d8833aa69 also appears on confirmed-fraud case(s) CC-0031, CC-0290, CC-0592 involving other cards, indicating a common actor. Card(s) C03938-K1, C05595-K1, C05678-K1 share that device profile and are placed under monitoring. The activity is assessed as card testing under policy R5. Total unauthorised amount across 12 transaction(s) is $50.14 between 1970-01-18 and 1970-01-18. Card C11923-K2 is recommended for blocking and reissue, an internal case is opened, and the report awaits fraud-manager approval.",
+    "subjects": [
+      "C03938-K1",
+      "C05595-K1",
+      "C05678-K1",
+      "C11923",
+      "C11923-K2",
+      "DP-953c249d8833aa69",
+      "gmail.com"
+    ],
+    "total_amount_usd": 50.14,
+    "activity_dates": [
+      "1970-01-18",
+      "1970-01-18"
+    ]
+  },
+  "stop_reason": "Section 6: fraud probability 0.88 with 8 independent graph evidence item(s); further steps are unlikely to change the decision.",
+  "tool_calls": 6,
+  "tokens": 0,
+  "latency_s": 7.031,
+  "investigation_record": [
+    {
+      "step": 1,
+      "name": "CASE",
+      "detail": "HHG-011 opened 2016-12-29 06:27:44 (customer_report trigger)."
+    },
+    {
+      "step": 2,
+      "name": "TRIGGER",
+      "detail": "Customer C11923 message: 'I never made this $131.30 purchase. Please check my card.' Refers to 3583368."
+    },
+    {
+      "step": 3,
+      "name": "EVIDENCE_COLLECTION",
+      "detail": "12 evidence item(s) gathered: 8 graph-derived, 2 direct, 2 model."
+    },
+    {
+      "step": 4,
+      "name": "GRAPH_INVESTIGATION",
+      "detail": "TigerGraph queries benchmark_case_context, get_transaction, find_related_cases, find_device_connections returned 12 relationship(s)."
+    },
+    {
+      "step": 5,
+      "name": "FINDINGS",
+      "detail": "Case HHG-011 opened from a customer_report trigger on transaction 3583368.; Customer C11923 denies the transaction.; 6 graph-derived signal(s) support the alert (pattern card_testing).; Transaction matches a repeating amount/channel/product on this card (policy R7)."
+    },
+    {
+      "step": 6,
+      "name": "DECISION",
+      "detail": "verdict=fraud, fraud_probability=0.8767, pattern=card_testing, status=closed_fraud"
+    },
+    {
+      "step": 7,
+      "name": "ACTION",
+      "detail": "DECLINE_TRANSACTION, STEP_UP_AUTH, BLOCK_CARD, CREATE_CASE, FILE_REPORT, MONITOR_CONNECTED_CARDS, MONITOR_CARD"
+    },
+    {
+      "step": 8,
+      "name": "NEXT_BEST_ACTION",
+      "detail": "DECLINE_TRANSACTION (L1) - R5: testing sequence observed - decline the flagged authorization; team-lead approval required"
+    },
+    {
+      "step": 9,
+      "name": "APPROVAL_ROUTE",
+      "detail": "L1, L2, auto"
+    }
+  ],
+  "findings": [
+    {
+      "finding_id": "F-01",
+      "title": "Trigger",
+      "statement": "Case HHG-011 opened from a customer_report trigger on transaction 3583368.",
+      "evidence_ids": [
+        "EV-01"
+      ],
+      "type": "direct"
+    },
+    {
+      "finding_id": "F-02",
+      "title": "Cardholder position",
+      "statement": "Customer C11923 denies the transaction.",
+      "evidence_ids": [
+        "EV-02"
+      ],
+      "type": "direct"
+    },
+    {
+      "finding_id": "F-03",
+      "title": "Graph corroboration",
+      "statement": "6 graph-derived signal(s) support the alert (pattern card_testing).",
+      "evidence_ids": [
+        "EV-03",
+        "EV-04",
+        "EV-05",
+        "EV-06",
+        "EV-07",
+        "EV-08",
+        "EV-09",
+        "EV-10"
+      ],
+      "type": "derived_graph"
+    },
+    {
+      "finding_id": "F-04",
+      "title": "Recurring charge",
+      "statement": "Transaction matches a repeating amount/channel/product on this card (policy R7).",
+      "evidence_ids": [],
+      "type": "derived_graph"
+    },
+    {
+      "finding_id": "F-05",
+      "title": "Connected cards",
+      "statement": "Card(s) C03938-K1, C05595-K1, C05678-K1 share the device profile with the flagged transaction.",
+      "evidence_ids": [
+        "EV-04"
+      ],
+      "type": "derived_graph"
+    },
+    {
+      "finding_id": "F-06",
+      "title": "Prior case memory",
+      "statement": "Retrieved closed case(s) CC-0031, CC-0290, CC-0592, CC-1056, CC-2247 as similar prior activity.",
+      "evidence_ids": [
+        "EV-10"
+      ],
+      "type": "derived_graph"
+    },
+    {
+      "finding_id": "F-07",
+      "title": "Model evidence",
+      "statement": "Model probability 0.7302; largest SHAP contributions card_historical_cases, dt_seconds, card_on_card_cases.",
+      "evidence_ids": [
+        "EV-11",
+        "EV-12"
+      ],
+      "type": "model_analytical"
+    }
+  ],
+  "decision": {
+    "decision": "fraud",
+    "status": "closed_fraud",
+    "rationale": "Section 6: fraud probability 0.88 with 8 independent graph evidence item(s); further steps are unlikely to change the decision. Pattern card_testing. Fraud probability 0.8767 (before) -> 0.8767 (after additional evidence). Evidence used: EV-01, EV-02, EV-03, EV-04, EV-05, EV-06, EV-07, EV-08, EV-09, EV-10, EV-11, EV-12.",
+    "supporting_evidence_ids": [
+      "EV-01",
+      "EV-02",
+      "EV-03",
+      "EV-04",
+      "EV-05",
+      "EV-06",
+      "EV-07",
+      "EV-08",
+      "EV-09",
+      "EV-10",
+      "EV-11",
+      "EV-12"
+    ],
+    "policy_rules": [
+      "R2 and R5",
+      "R5",
+      "R6",
+      "Section 3a"
+    ]
+  },
+  "actions_taken": [
+    {
+      "action": "STEP_UP_AUTH",
+      "route": "auto",
+      "reason": "R5: require a one-time passcode before further activity on the card"
+    },
+    {
+      "action": "CREATE_CASE",
+      "route": "auto",
+      "reason": "Section 3a: fraud probability >= 0.30, open an internal case with evidence"
+    },
+    {
+      "action": "MONITOR_CONNECTED_CARDS",
+      "route": "auto",
+      "reason": "R6: card(s) C03938-K1, C05595-K1, C05678-K1 share the device profile with the flagged transaction"
+    },
+    {
+      "action": "MONITOR_CARD",
+      "route": "auto",
+      "reason": "R4: the blocked card is reissued, so it stays under 72h of raised monitoring while the report is prepared"
+    }
+  ],
+  "actions_recommended_awaiting_approval": [
+    {
+      "action": "DECLINE_TRANSACTION",
+      "route": "L1",
+      "reason": "R5: testing sequence observed - decline the flagged authorization; team-lead approval required"
+    },
+    {
+      "action": "BLOCK_CARD",
+      "route": "L1",
+      "reason": "R2 and R5: the customer denied the testing sequence and $50.14 has already cleared, which is under $2,500"
+    },
+    {
+      "action": "FILE_REPORT",
+      "route": "L2",
+      "reason": "Section 3a: confirmed fraud with exposure $50.14 and a shared device/region link to other fraud; report requires L2 fraud manager approval"
+    }
+  ],
+  "graph_evidence": {
+    "single_source_of_truth": "TigerGraph hhg_fraud_graph (Community Edition 4.2.5)",
+    "phase_2_baseline": "8 vertex types / 11 edge types / 2,505,266 edges (unchanged)",
+    "queries": [
+      {
+        "name": "benchmark_case_context",
+        "params": {
+          "case_id": "HHG-011"
+        },
+        "http_status": 200,
+        "latency_ms": 488.0
+      },
+      {
+        "name": "get_transaction",
+        "params": {
+          "txn_id": "3583368"
+        },
+        "http_status": 200,
+        "latency_ms": 99.3
+      },
+      {
+        "name": "find_related_cases",
+        "params": {
+          "card_id": "C11923-K2"
+        },
+        "http_status": 200,
+        "latency_ms": 29.7
+      },
+      {
+        "name": "find_device_connections",
+        "params": {
+          "txn_id": "3583368"
+        },
+        "http_status": 200,
+        "latency_ms": 77.1
+      }
+    ],
+    "entities": {
+      "BenchmarkCase": [
+        "HHG-011"
+      ],
+      "Transaction": [
+        "3583368"
+      ],
+      "Card": [
+        "C11923-K2"
+      ],
+      "Customer": [
+        "C11923"
+      ],
+      "DeviceProfile": [
+        "DP-953c249d8833aa69"
+      ],
+      "BillingRegion": [],
+      "EmailDomain": [
+        "gmail.com",
+        "gmail.com"
+      ],
+      "ClosedCase": [
+        "CC-2799",
+        "CC-2673",
+        "CC-0290",
+        "CC-4501",
+        "CC-3206",
+        "CC-4743",
+        "CC-3039",
+        "CC-0031",
+        "CC-1056",
+        "CC-3905"
+      ],
+      "connected_card_ids": [
+        "C03938-K1",
+        "C05595-K1",
+        "C05678-K1"
+      ]
+    },
+    "edges": [
+      {
+        "edge": "TRIGGERS",
+        "from": "HHG-011",
+        "to": "3583368",
+        "from_type": "BenchmarkCase",
+        "to_type": "Transaction"
+      },
+      {
+        "edge": "MADE",
+        "from": "C11923-K2",
+        "to": "3583368",
+        "from_type": "Card",
+        "to_type": "Transaction"
+      },
+      {
+        "edge": "OWNS",
+        "from": "C11923",
+        "to": "C11923-K2",
+        "from_type": "Customer",
+        "to_type": "Card"
+      },
+      {
+        "edge": "FROM_DEVICE",
+        "from": "3583368",
+        "to": "DP-953c249d8833aa69",
+        "from_type": "Transaction",
+        "to_type": "DeviceProfile"
+      },
+      {
+        "edge": "NEXT",
+        "from": "3583368",
+        "to": "3583406",
+        "from_type": "Transaction",
+        "to_type": "Transaction"
+      },
+      {
+        "edge": "NEXT",
+        "from": "3583348",
+        "to": "3583368",
+        "from_type": "Transaction",
+        "to_type": "Transaction"
+      },
+      {
+        "edge": "ON_CARD",
+        "from": "CC-2799",
+        "to": "C11923-K2",
+        "from_type": "ClosedCase",
+        "to_type": "Card"
+      },
+      {
+        "edge": "ON_CARD",
+        "from": "CC-2673",
+        "to": "C11923-K2",
+        "from_type": "ClosedCase",
+        "to_type": "Card"
+      },
+      {
+        "edge": "ON_CARD",
+        "from": "CC-0290",
+        "to": "C11923-K2",
+        "from_type": "ClosedCase",
+        "to_type": "Card"
+      },
+      {
+        "edge": "ON_CARD",
+        "from": "CC-4501",
+        "to": "C11923-K2",
+        "from_type": "ClosedCase",
+        "to_type": "Card"
+      },
+      {
+        "edge": "ON_CARD",
+        "from": "CC-3206",
+        "to": "C11923-K2",
+        "from_type": "ClosedCase",
+        "to_type": "Card"
+      },
+      {
+        "edge": "ON_CARD",
+        "from": "CC-4743",
+        "to": "C11923-K2",
+        "from_type": "ClosedCase",
+        "to_type": "Card"
+      }
+    ],
+    "graph_facts": [
+      "Transaction 3583368 of $131.30 on card C11923-K2 is a online transaction in billing region n/a (region NOT the cardholder's home country).",
+      "Transaction 3583368 came from device profile DP-953c249d8833aa69 marked New, linked to 4 card(s) across 4 customer(s).",
+      "Three or more online authorisations under $5 (4.84, 3.24, 4.23, 4.56, 2.30, 4.36, 3.64, 4.98, 4.59, 4.52, 4.66, 4.22, 4.10, 4.11, 3.97, 0.75, 0.82, 1.03, 1.03, 2.59, 2.69, 4.33, 2.68, 3.86, 2.60, 2.62, 2.63, 1.27, 1.29, 1.24, 1.23, 1.37, 4.12, 2.45, 2.62, 2.60, 1.01, 0.94, 2.46, 3.26, 4.23, 3.89, 2.24, 2.22, 2.30, 2.29, 4.13, 3.18, 4.96, 4.46, 4.69, 4.64, 2.62, 4.53, 3.99, 4.70, 4.63, 2.15, 4.96, 4.88, 4.15, 4.01, 0.93) landed on card C11923-K2 within the hour before the $131.30 transaction 3583368.",
+      "Transaction 3583368 deviates from card C11923-K2 history: $131.30 is more than 3x the card median of $28.58.",
+      "Card C11923-K2 already appears in confirmed-fraud closed case(s) CC-0031, CC-0290, CC-1056, CC-2247, CC-2673.",
+      "Device profile DP-953c249d8833aa69 is also recorded on confirmed-fraud closed case(s) CC-0031, CC-0290, CC-0592, CC-1056, CC-1497 on other cards.",
+      "Card C11923-K2 has 38 earlier transaction(s) with the same amount ($131.30), channel and product code - a repeating charge rather than an anomalous purchase.",
+      "Retrieved prior case memory CC-0031, CC-0290, CC-0592, CC-1056, CC-2247 for pattern similarity."
+    ],
+    "investigation_interpretation": [
+      "pattern=card_testing",
+      "verdict=fraud",
+      "fraud_probability=0.8767 (before) -> 0.8767 (after additional evidence)",
+      "anomaly_signals=6"
+    ],
+    "graph_fact_vs_interpretation": "Every entry under graph_facts is returned by a live GSQL query or computed from the loaded edge set; entries under investigation_interpretation are the agent's reading of those facts under the published policy."
+  },
+  "sar_status": {
+    "file": true,
+    "reason": "Confirmed fraud: Section 3a and R6: shared device profile with card(s) C03938-K1, C05595-K1, C05678-K1",
+    "required_approval_route": "L2"
+  },
+  "required_approval_route": [
+    "L1",
+    "L2",
+    "auto"
+  ],
+  "pre_additional_evidence_state": {
+    "stage": "before_additional_evidence",
+    "current_evidence": [
+      "EV-01",
+      "EV-02",
+      "EV-03",
+      "EV-04",
+      "EV-05",
+      "EV-06",
+      "EV-07",
+      "EV-08",
+      "EV-09",
+      "EV-10",
+      "EV-11",
+      "EV-12"
+    ],
+    "current_findings": [
+      "F-01",
+      "F-02",
+      "F-03",
+      "F-04",
+      "F-05",
+      "F-06",
+      "F-07"
+    ],
+    "preliminary_decision": {
+      "verdict": "fraud",
+      "fraud_probability": 0.8767,
+      "pattern": "card_testing",
+      "status": "open"
+    },
+    "preliminary_next_best_action": [
+      {
+        "action": "DECLINE_TRANSACTION",
+        "route": "L1",
+        "reason": "R5: testing sequence observed - decline the flagged authorization; team-lead approval required"
+      },
+      {
+        "action": "STEP_UP_AUTH",
+        "route": "auto",
+        "reason": "R5: require a one-time passcode before further activity on the card"
+      },
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "R2 and R5: the customer denied the testing sequence and $50.14 has already cleared, which is under $2,500"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "Section 3a: fraud probability >= 0.30, open an internal case with evidence"
+      },
+      {
+        "action": "FILE_REPORT",
+        "route": "L2",
+        "reason": "Section 3a: confirmed fraud with exposure $50.14 and a shared device/region link to other fraud; report requires L2 fraud manager approval"
+      },
+      {
+        "action": "MONITOR_CONNECTED_CARDS",
+        "route": "auto",
+        "reason": "R6: card(s) C03938-K1, C05595-K1, C05678-K1 share the device profile with the flagged transaction"
+      },
+      {
+        "action": "MONITOR_CARD",
+        "route": "auto",
+        "reason": "R4: the blocked card is reissued, so it stays under 72h of raised monitoring while the report is prepared"
+      }
+    ],
+    "required_approval_route": [
+      "L1",
+      "L2",
+      "auto"
+    ],
+    "additional_evidence_requested": false,
+    "evidence_requested": []
+  },
+  "post_additional_evidence_state": {
+    "stage": "after_additional_evidence",
+    "additional_evidence_received": false,
+    "additional_evidence": [],
+    "updated_evidence": [
+      "EV-01",
+      "EV-02",
+      "EV-03",
+      "EV-04",
+      "EV-05",
+      "EV-06",
+      "EV-07",
+      "EV-08",
+      "EV-09",
+      "EV-10",
+      "EV-11",
+      "EV-12"
+    ],
+    "updated_findings": [
+      "F-01",
+      "F-02",
+      "F-03",
+      "F-04",
+      "F-05",
+      "F-06",
+      "F-07"
+    ],
+    "updated_decision": {
+      "verdict": "fraud",
+      "fraud_probability": 0.8767,
+      "pattern": "card_testing",
+      "status": "closed_fraud"
+    },
+    "updated_next_best_action": [
+      {
+        "action": "DECLINE_TRANSACTION",
+        "route": "L1",
+        "reason": "R5: testing sequence observed - decline the flagged authorization; team-lead approval required"
+      },
+      {
+        "action": "STEP_UP_AUTH",
+        "route": "auto",
+        "reason": "R5: require a one-time passcode before further activity on the card"
+      },
+      {
+        "action": "BLOCK_CARD",
+        "route": "L1",
+        "reason": "R2 and R5: the customer denied the testing sequence and $50.14 has already cleared, which is under $2,500"
+      },
+      {
+        "action": "CREATE_CASE",
+        "route": "auto",
+        "reason": "Section 3a: fraud probability >= 0.30, open an internal case with evidence"
+      },
+      {
+        "action": "FILE_REPORT",
+        "route": "L2",
+        "reason": "Section 3a: confirmed fraud with exposure $50.14 and a shared device/region link to other fraud; report requires L2 fraud manager approval"
+      },
+      {
+        "action": "MONITOR_CONNECTED_CARDS",
+        "route": "auto",
+        "reason": "R6: card(s) C03938-K1, C05595-K1, C05678-K1 share the device profile with the flagged transaction"
+      },
+      {
+        "action": "MONITOR_CARD",
+        "route": "auto",
+        "reason": "R4: the blocked card is reissued, so it stays under 72h of raised monitoring while the report is prepared"
+      }
+    ],
+    "updated_approval_route": [
+      "L1",
+      "L2",
+      "auto"
+    ],
+    "what_changed": "No additional evidence was requested: 12 independent graph evidence item(s) put the probability at 0.88, which under Section 6 already settles the verdict, so the next best actions are unchanged.",
+    "note": "No additional evidence was requested by this case; the post-evidence state is therefore unchanged from the pre-evidence state."
+  },
+  "graph_write": {
+    "status": "BLOCKED",
+    "written_to_graph": false,
+    "graph_case_id": "",
+    "reason": "Phase 2 graph is locked at its validated 8-vertex/11-edge/2,505,266-edge state; inserting a case vertex would mutate validated counts. Recorded in docs/GRAPH_WRITE_BLOCKER.md with the ready-to-run GSQL.",
+    "reference": "graph reference for this answer is the entity/edge block in graph_evidence above"
+  }
+}

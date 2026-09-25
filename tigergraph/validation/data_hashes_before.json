@@ -1,0 +1,22 @@
+{
+  "edges/billed_in.csv": "08aea7325d295658ef419ee8153ab3873ced186a1c7f4c580859f8df51463422",
+  "edges/connected_to.csv": "b603070758b73a75418e1fb011514417a8c58d30d0f534d4db43601a886ad75e",
+  "edges/from_device.csv": "3817821201851d7dbfb6a30954e5f29482502ed12b874ceb8247c6ac32f13447",
+  "edges/involves.csv": "42079a552674386124cac2a2eaef6de0549ca0f15341fccccab6cdb34ccb5193",
+  "edges/made.csv": "a8a8256633944737a916345c9edd0459c8680d02b9133a9312b54aa6bd0f2fb2",
+  "edges/next.csv": "e68ca027027f91e13b29d804bf1d726d416ae007d8ef27c6a6cfbb44a287b7e7",
+  "edges/on_card.csv": "a2a40520aa3033115170fc20a3876c09876c9dc6ee290969d4df079479b91c2a",
+  "edges/owns.csv": "9e787d33fe211b310616f79111080a1c12d1c38265fc63d451e84659104b0ec1",
+  "edges/purchaser_email.csv": "24a846e48088c8fb480e9010fd871cff6dcb9478ab137b92ec4824688e8fd543",
+  "edges/recipient_email.csv": "bc8955424135c112288f2c7610836509b16f2b54d1a260edf6d5f091f22246b2",
+  "edges/triggers.csv": "9b68faf6afe1ab1f15a2d9dda4c44399b42ce25e7e80ada495b73f14d3012fe6",
+  "vertices/benchmark_case.csv": "64b7addc580fe8bf520131f365cb6024034a52f35b50315531875d98e38f32e3",
+  "vertices/billing_region.csv": "760c4fd42eb47691348bddb69b9183578340cc850ec4003554c75f9fd085c9ad",
+  "vertices/card.csv": "f592d8863a9d4037af612f77f67ba07e68cb82b559d1043a7aed81692eb7c884",
+  "vertices/card_mapping.csv": "5c5bddb135f1f568f833c5312778045418ad182b87d80f09b78884dc197fcc49",
+  "vertices/closed_case.csv": "39cf7be783308d6b89a0b4e13f5daf55c407fc89115324dd53465e3b1f213cd4",
+  "vertices/customer.csv": "95f562fd692be0358f0c2784a5ed705e5fca76eb9964a7dc46bb5702017d2cb8",
+  "vertices/device_profile.csv": "7ea81930f5220341b48698e73b79b6c77379aaef5ff43f9b9a205565eef35ec4",
+  "vertices/email_domain.csv": "bc3f11953a237047642dfa6e3181630f0d2d88cf6d901d429efe0d4665bd2df9",
+  "vertices/transaction.csv": "e61b35ff7d10d4610dd2e74c1fbce0ea05d77d54d4f49e5a2f5b5cfa2098c8fa"
+}

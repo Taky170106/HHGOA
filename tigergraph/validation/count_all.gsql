@@ -1,0 +1,33 @@
+# Validation query - exact vertex/edge counts per type (not one of the 9 investigation queries).
+# Used by tigergraph/scripts/07_verify_counts.sh to prove loaded counts == source CSV rows.
+USE GRAPH hhg_fraud_graph
+CREATE QUERY count_all() FOR GRAPH hhg_fraud_graph {
+  SumAccum<INT> @@c_customer, @@c_card, @@c_txn, @@c_device, @@c_email, @@c_region, @@c_closed, @@c_bench;
+  SumAccum<INT> @@e_owns, @@e_made, @@e_next, @@e_billed, @@e_purch, @@e_recip, @@e_dev, @@e_inv, @@e_oncard, @@e_conn, @@e_trig;
+
+  # vertex counts (ACCUM runs once per source vertex)
+  V = SELECT s FROM Customer:s     ACCUM @@c_customer += 1;
+  V = SELECT s FROM Card:s         ACCUM @@c_card     += 1;
+  V = SELECT s FROM Transaction:s  ACCUM @@c_txn      += 1;
+  V = SELECT s FROM DeviceProfile:s ACCUM @@c_device  += 1;
+  V = SELECT s FROM EmailDomain:s  ACCUM @@c_email    += 1;
+  V = SELECT s FROM BillingRegion:s ACCUM @@c_region  += 1;
+  V = SELECT s FROM ClosedCase:s   ACCUM @@c_closed   += 1;
+  V = SELECT s FROM BenchmarkCase:s ACCUM @@c_bench   += 1;
+
+  # edge counts (ACCUM runs once per traversed edge instance)
+  V = SELECT t FROM Customer:s    -(OWNS:e)-           Card:t          ACCUM @@e_owns   += 1;
+  V = SELECT t FROM Card:s        -(MADE:e)-           Transaction:t   ACCUM @@e_made   += 1;
+  V = SELECT t FROM Transaction:s -(NEXT:e)-           Transaction:t   ACCUM @@e_next   += 1;
+  V = SELECT t FROM Transaction:s -(BILLED_IN:e)-      BillingRegion:t ACCUM @@e_billed += 1;
+  V = SELECT t FROM Transaction:s -(PURCHASER_EMAIL:e)- EmailDomain:t  ACCUM @@e_purch  += 1;
+  V = SELECT t FROM Transaction:s -(RECIPIENT_EMAIL:e)- EmailDomain:t  ACCUM @@e_recip  += 1;
+  V = SELECT t FROM Transaction:s -(FROM_DEVICE:e)-    DeviceProfile:t ACCUM @@e_dev    += 1;
+  V = SELECT t FROM ClosedCase:s  -(INVOLVES:e)-       Transaction:t   ACCUM @@e_inv    += 1;
+  V = SELECT t FROM ClosedCase:s  -(ON_CARD:e)-        Card:t          ACCUM @@e_oncard += 1;
+  V = SELECT t FROM ClosedCase:s  -(CONNECTED_TO:e)-   Card:t          ACCUM @@e_conn   += 1;
+  V = SELECT t FROM BenchmarkCase:s -(TRIGGERS:e)-     Transaction:t   ACCUM @@e_trig   += 1;
+
+  PRINT @@c_customer, @@c_card, @@c_txn, @@c_device, @@c_email, @@c_region, @@c_closed, @@c_bench;
+  PRINT @@e_owns, @@e_made, @@e_next, @@e_billed, @@e_purch, @@e_recip, @@e_dev, @@e_inv, @@e_oncard, @@e_conn, @@e_trig;
+}

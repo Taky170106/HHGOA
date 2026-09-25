@@ -1,0 +1,2 @@
+USE GRAPH hhg_fraud_graph
+RUN QUERY count_all()

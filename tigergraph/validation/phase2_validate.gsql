@@ -1,0 +1,122 @@
+# Phase 2 validation query - independent live checks against the loaded graph.
+# Complements count_all() (exact per-type counts) by proving connectivity,
+# referential integrity and attribute/edge agreement.
+#
+# Install:  gsql -g hhg_fraud_graph phase2_validate.gsql
+#           gsql -g hhg_fraud_graph 'INSTALL QUERY phase2_validate'
+# Run:      gsql -g hhg_fraud_graph 'RUN QUERY phase2_validate()'
+#
+# Interpretation: an edge traversal only succeeds when BOTH endpoints exist as
+# vertices, so "distinct source/target" values are the orphan check - any dangling
+# endpoint would make the traversal count fall short of the CSV row count.
+USE GRAPH hhg_fraud_graph
+CREATE QUERY phase2_validate() FOR GRAPH hhg_fraud_graph {
+  # --- counts (from count_all) are cross-checked here against file row counts
+  SumAccum<INT> @@e_owns, @@e_made, @@e_next, @@e_billed, @@e_purch, @@e_recip;
+  SumAccum<INT> @@e_dev, @@e_inv, @@e_oncard, @@e_conn, @@e_trig;
+
+  # --- distinct endpoint coverage per edge type (orphan check)
+  SumAccum<INT> @@owns_src_cust, @@owns_tgt_card;
+  SumAccum<INT> @@made_src_card, @@made_tgt_txn;
+  SumAccum<INT> @@next_src_txn, @@next_tgt_txn;
+  SumAccum<INT> @@billed_src_txn, @@billed_tgt_region;
+  SumAccum<INT> @@purch_tgt_email, @@recip_tgt_email;
+  SumAccum<INT> @@dev_src_txn, @@dev_tgt_profile;
+  SumAccum<INT> @@inv_src_case, @@inv_tgt_txn;
+  SumAccum<INT> @@oncard_src_case, @@oncard_tgt_card;
+  SumAccum<INT> @@conn_src_case, @@conn_tgt_card;
+  SumAccum<INT> @@trig_src_case, @@trig_tgt_txn;
+
+  # --- benchmark case connectivity (Section 10)
+  SumAccum<INT> @@bench_total, @@bench_matched, @@bench_unmatched;
+
+  # --- attribute/edge agreement (Section 11)
+  SumAccum<INT> @@cc_total, @@cc_has_oncard, @@cc_card_attr_match, @@cc_has_involves;
+
+  # 1. OWNS Customer -> Card
+  OWNS_S = SELECT s FROM Customer:s -(OWNS:e)- Card:c ACCUM @@e_owns += 1;
+  @@owns_src_cust = OWNS_S.size();
+  OWNS_T = SELECT c FROM Customer:s -(OWNS)- Card:c;
+  @@owns_tgt_card = OWNS_T.size();
+
+  # 2. MADE Card -> Transaction
+  MADE_S = SELECT c FROM Card:c -(MADE:e)- Transaction:t ACCUM @@e_made += 1;
+  @@made_src_card = MADE_S.size();
+  MADE_T = SELECT t FROM Card:c -(MADE)- Transaction:t;
+  @@made_tgt_txn = MADE_T.size();
+
+  # 3. NEXT Transaction -> Transaction
+  NEXT_S = SELECT s FROM Transaction:s -(NEXT:e)- Transaction:t ACCUM @@e_next += 1;
+  @@next_src_txn = NEXT_S.size();
+  NEXT_T = SELECT t FROM Transaction:s -(NEXT)- Transaction:t;
+  @@next_tgt_txn = NEXT_T.size();
+
+  # 4. BILLED_IN Transaction -> BillingRegion
+  BILL_S = SELECT s FROM Transaction:s -(BILLED_IN:e)- BillingRegion:r ACCUM @@e_billed += 1;
+  @@billed_src_txn = BILL_S.size();
+  BILL_T = SELECT r FROM Transaction:s -(BILLED_IN)- BillingRegion:r;
+  @@billed_tgt_region = BILL_T.size();
+
+  # 5/6. PURCHASER_EMAIL / RECIPIENT_EMAIL Transaction -> EmailDomain
+  PUR_T = SELECT d FROM Transaction:s -(PURCHASER_EMAIL:e)- EmailDomain:d ACCUM @@e_purch += 1;
+  @@purch_tgt_email = PUR_T.size();
+  REC_T = SELECT d FROM Transaction:s -(RECIPIENT_EMAIL:e)- EmailDomain:d ACCUM @@e_recip += 1;
+  @@recip_tgt_email = REC_T.size();
+
+  # 7. FROM_DEVICE Transaction -> DeviceProfile
+  DEV_S = SELECT s FROM Transaction:s -(FROM_DEVICE:e)- DeviceProfile:d ACCUM @@e_dev += 1;
+  @@dev_src_txn = DEV_S.size();
+  DEV_T = SELECT d FROM Transaction:s -(FROM_DEVICE)- DeviceProfile:d;
+  @@dev_tgt_profile = DEV_T.size();
+
+  # 8. INVOLVES ClosedCase -> Transaction
+  INV_S = SELECT s FROM ClosedCase:s -(INVOLVES:e)- Transaction:t ACCUM @@e_inv += 1;
+  @@inv_src_case = INV_S.size();
+  INV_T = SELECT t FROM ClosedCase:s -(INVOLVES)- Transaction:t;
+  @@inv_tgt_txn = INV_T.size();
+
+  # 9. ON_CARD ClosedCase -> Card
+  ON_S = SELECT s FROM ClosedCase:s -(ON_CARD:e)- Card:c ACCUM @@e_oncard += 1;
+  @@oncard_src_case = ON_S.size();
+  ON_T = SELECT c FROM ClosedCase:s -(ON_CARD)- Card:c;
+  @@oncard_tgt_card = ON_T.size();
+
+  # 10. CONNECTED_TO ClosedCase -> Card
+  CON_S = SELECT s FROM ClosedCase:s -(CONNECTED_TO:e)- Card:c ACCUM @@e_conn += 1;
+  @@conn_src_case = CON_S.size();
+  CON_T = SELECT c FROM ClosedCase:s -(CONNECTED_TO)- Card:c;
+  @@conn_tgt_card = CON_T.size();
+
+  # 11. TRIGGERS BenchmarkCase -> Transaction
+  TRI_S = SELECT s FROM BenchmarkCase:s -(TRIGGERS:e)- Transaction:t ACCUM @@e_trig += 1;
+  @@trig_src_case = TRI_S.size();
+  TRI_T = SELECT t FROM BenchmarkCase:s -(TRIGGERS)- Transaction:t;
+  @@trig_tgt_txn = TRI_T.size();
+
+  # --- Section 10: every benchmark case resolves to its own flagged transaction
+  BT = SELECT s FROM BenchmarkCase:s ACCUM @@bench_total += 1;
+  BM = SELECT s FROM BenchmarkCase:s -(TRIGGERS)- Transaction:t
+       WHERE t.txn_id == s.flagged_txn_id;
+  @@bench_matched = BM.size();
+  @@bench_unmatched = @@bench_total - @@bench_matched;
+
+  # --- Section 11: ClosedCase integrity
+  CC = SELECT s FROM ClosedCase:s ACCUM @@cc_total += 1;
+  CO = SELECT s FROM ClosedCase:s -(ON_CARD)- Card:c;
+  @@cc_has_oncard = CO.size();
+  CA = SELECT s FROM ClosedCase:s -(ON_CARD)- Card:c WHERE c.card_id == s.card_id;
+  @@cc_card_attr_match = CA.size();
+  CI = SELECT s FROM ClosedCase:s -(INVOLVES)- Transaction:t;
+  @@cc_has_involves = CI.size();
+
+  PRINT @@e_owns, @@e_made, @@e_next, @@e_billed, @@e_purch, @@e_recip,
+        @@e_dev, @@e_inv, @@e_oncard, @@e_conn, @@e_trig;
+  PRINT @@owns_src_cust, @@owns_tgt_card, @@made_src_card, @@made_tgt_txn,
+        @@next_src_txn, @@next_tgt_txn;
+  PRINT @@billed_src_txn, @@billed_tgt_region, @@purch_tgt_email, @@recip_tgt_email,
+        @@dev_src_txn, @@dev_tgt_profile;
+  PRINT @@inv_src_case, @@inv_tgt_txn, @@oncard_src_case, @@oncard_tgt_card,
+        @@conn_src_case, @@conn_tgt_card, @@trig_src_case, @@trig_tgt_txn;
+  PRINT @@bench_total, @@bench_matched, @@bench_unmatched;
+  PRINT @@cc_total, @@cc_has_oncard, @@cc_card_attr_match, @@cc_has_involves;
+}

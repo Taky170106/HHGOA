@@ -1,0 +1,17 @@
+USE GRAPH hhg_fraud_graph
+
+/* l1: LIMIT with a local UINT variable */
+CREATE QUERY p3n_l1(UINT cap) FOR GRAPH hhg_fraud_graph {
+  C0 = {Card.*};
+  K = SELECT c FROM C0:c WHERE c.card_id == "C12382-K1";
+  T = SELECT t FROM K:c -(MADE)- Transaction:t ORDER BY t.ts ASC LIMIT cap;
+  PRINT T;
+}
+
+/* l2: LIMIT with a literal */
+CREATE QUERY p3n_l2() FOR GRAPH hhg_fraud_graph {
+  C0 = {Card.*};
+  K = SELECT c FROM C0:c WHERE c.card_id == "C12382-K1";
+  T = SELECT t FROM K:c -(MADE)- Transaction:t LIMIT 5;
+  PRINT T;
+}

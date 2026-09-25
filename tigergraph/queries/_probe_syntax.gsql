@@ -1,0 +1,75 @@
+USE GRAPH hhg_fraud_graph
+
+/* ---- Group 1: reverse traversal syntax (MADE is Card -> Transaction,
+        source is a Transaction set, target is Card) ---- */
+
+CREATE QUERY p3a_r1() FOR GRAPH hhg_fraud_graph {
+  S = {Transaction.*};
+  R = SELECT c FROM S:t -(MADE)- Card:c;
+  PRINT R;
+}
+
+CREATE QUERY p3a_r2() FOR GRAPH hhg_fraud_graph {
+  S = {Transaction.*};
+  R = SELECT c FROM S:t -<(MADE)- Card:c;
+  PRINT R;
+}
+
+CREATE QUERY p3a_r3() FOR GRAPH hhg_fraud_graph {
+  S = {Transaction.*};
+  R = SELECT c FROM S:t -(MADE)<- Card:c;
+  PRINT R;
+}
+
+CREATE QUERY p3a_r4() FOR GRAPH hhg_fraud_graph {
+  S = {Transaction.*};
+  R = SELECT c FROM S:t <-(MADE)- Card:c;
+  PRINT R;
+}
+
+/* ---- Group 2: local variable shadowing a vertex type name ---- */
+
+CREATE QUERY p3a_s1() FOR GRAPH hhg_fraud_graph {
+  BSet = {BenchmarkCase.*};
+  B = SELECT b FROM BSet:b WHERE b.case_id == "HHG-001";
+  Flagged = SELECT t FROM B:b -(TRIGGERS)- Transaction:t;
+  Card = SELECT c FROM Flagged:t -(MADE)- Card:c;
+  PRINT Card;
+}
+
+CREATE QUERY p3a_s2() FOR GRAPH hhg_fraud_graph {
+  BSet = {BenchmarkCase.*};
+  B = SELECT b FROM BSet:b WHERE b.case_id == "HHG-001";
+  Flagged = SELECT t FROM B:b -(TRIGGERS)- Transaction:t;
+  CardX = SELECT c FROM Flagged:t -(MADE)- Card:c;
+  PRINT CardX;
+}
+
+/* ---- Group 3: global accumulator as a FROM source ---- */
+
+CREATE QUERY p3a_g1() FOR GRAPH hhg_fraud_graph {
+  SetAccum<VERTEX> @@g;
+  T0 = {Transaction.*};
+  M = SELECT t FROM T0:t WHERE t.txn_num > 0;
+  @@g += M;
+  R = SELECT c FROM @@g:t -(MADE)- Card:c;
+  PRINT R;
+}
+
+CREATE QUERY p3a_g2() FOR GRAPH hhg_fraud_graph {
+  SetAccum<VERTEX> @@g;
+  T0 = {Transaction.*};
+  M = SELECT t FROM T0:t WHERE t.txn_num > 0;
+  @@g += M;
+  S2 = @@g;
+  R = SELECT c FROM S2:t -(MADE)- Card:c;
+  PRINT R;
+}
+
+/* ---- Group 4: multi-hop control, all forward (should compile) ---- */
+
+CREATE QUERY p3a_m1() FOR GRAPH hhg_fraud_graph {
+  S = {Transaction.*};
+  R = SELECT t2 FROM S:t -(MADE)- Card:c -(MADE)- Transaction:t2;
+  PRINT R;
+}

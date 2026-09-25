@@ -1,0 +1,52 @@
+USE GRAPH hhg_fraud_graph
+
+/* m1: forward with the documented arrow form  -(e)->
+   (gsql help query: FROM vSetVar:sAlias -(eType:eAlias)-> vType:tAlias) */
+CREATE QUERY p3f_m1() FOR GRAPH hhg_fraud_graph {
+  C0 = {Card.*};
+  R = SELECT t FROM C0:c -(MADE)-> Transaction:t;
+  PRINT R;
+}
+
+/* m2: reverse with arrow form  -(<-e)->  */
+CREATE QUERY p3f_m2() FOR GRAPH hhg_fraud_graph {
+  S = {Transaction.*};
+  R = SELECT c FROM S:t -(<-MADE)-> Card:c;
+  PRINT R;
+}
+
+/* m3: reverse arrow + forward arrow (both arrow form) */
+CREATE QUERY p3f_m3() FOR GRAPH hhg_fraud_graph {
+  S = {Transaction.*};
+  R1 = SELECT c FROM S:t -(<-MADE)-> Card:c;
+  R2 = SELECT d FROM S:t -(FROM_DEVICE)-> DeviceProfile:d;
+  PRINT R1;
+  PRINT R2;
+}
+
+/* m4: reverse dash form + forward arrow form */
+CREATE QUERY p3f_m4() FOR GRAPH hhg_fraud_graph {
+  S = {Transaction.*};
+  R1 = SELECT c FROM S:t -(<-MADE)- Card:c;
+  R2 = SELECT d FROM S:t -(FROM_DEVICE)-> DeviceProfile:d;
+  PRINT R1;
+  PRINT R2;
+}
+
+/* m5: reverse dash + forward dash (known failure control) */
+CREATE QUERY p3f_m5() FOR GRAPH hhg_fraud_graph {
+  S = {Transaction.*};
+  R1 = SELECT c FROM S:t -(<-MADE)- Card:c;
+  R2 = SELECT d FROM S:t -(FROM_DEVICE)- DeviceProfile:d;
+  PRINT R1;
+  PRINT R2;
+}
+
+/* m6: BOTH forward, one dash form and one arrow form - the discriminator */
+CREATE QUERY p3f_m6() FOR GRAPH hhg_fraud_graph {
+  S = {Transaction.*};
+  R1 = SELECT d FROM S:t -(FROM_DEVICE)- DeviceProfile:d;
+  R2 = SELECT r FROM S:t -(BILLED_IN)-> BillingRegion:r;
+  PRINT R1;
+  PRINT R2;
+}

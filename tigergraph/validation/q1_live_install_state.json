@@ -1,0 +1,32 @@
+{
+  "installed": [
+    "count_all",
+    "phase2_validate",
+    "calculate_exposure",
+    "calculate_exposure_list",
+    "get_card_history",
+    "get_customer_history",
+    "temporal_chain"
+  ],
+  "not_installed": [
+    "benchmark_case_context",
+    "find_device_connections",
+    "find_related_cases",
+    "find_related_transactions",
+    "get_transaction"
+  ],
+  "investigation_installed": [
+    "calculate_exposure",
+    "calculate_exposure_list",
+    "get_card_history",
+    "get_customer_history",
+    "temporal_chain"
+  ],
+  "investigation_not_installed": [
+    "benchmark_case_context",
+    "find_device_connections",
+    "find_related_cases",
+    "find_related_transactions",
+    "get_transaction"
+  ]
+}

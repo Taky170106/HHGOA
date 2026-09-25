@@ -1,0 +1,35 @@
+# Graph-algorithm wrappers for hhg_fraud_graph
+# Require TigerGraph Graph Data Science Library installed (gsql-graph-algorithms).
+# These are thin wrappers that call built-ins with correct vertex/edge filters.
+# None claims fraud detection; all are relationship-analysis aids (see ALGORITHMS.md).
+USE GRAPH hhg_fraud_graph
+
+# WCC over specific device sharing (specificity >= 0.01)
+CREATE QUERY wcc_device_sharing(DOUBLE min_specificity) FOR GRAPH hhg_fraud_graph {
+  # min_specificity e.g. 0.01 (= <=100 cards). Uses TG_WCC on projected graph.
+  # Projection built as Card-[MADE]-Transaction-[FROM_DEVICE]-DeviceProfile-[FROM_DEVICE]-Transaction-[MADE]-Card
+  # For file-based testing, validate via python connected-components on data/edges/*.csv
+  PRINT "Run TG_WCC on projection hhg_fraud_graph with edge types MADE, FROM_DEVICE filtered by DeviceProfile.specificity >= min_specificity";
+}
+
+CREATE QUERY louvain_device_communities(STRING start_ts, STRING end_ts) FOR GRAPH hhg_fraud_graph {
+  PRINT "Run TG_Louvain on Transaction co-occurrence via FROM_DEVICE where Transaction.ts in [start_ts, end_ts]";
+}
+
+CREATE QUERY shortest_path_to_prior_case(STRING benchmark_case_id, STRING closed_case_id) FOR GRAPH hhg_fraud_graph {
+  # BFS/shortest path: BenchmarkCase -> flagged Transaction -> ... -> ClosedCase
+  BSet = {BenchmarkCase.*};
+  B = SELECT b FROM BSet:b WHERE b.case_id == benchmark_case_id;
+  Flagged = SELECT t FROM B:b -(TRIGGERS)- Transaction:t;
+  PRINT Flagged;
+  PRINT "Run TG_ShortestPath from Flagged to ClosedCase " + closed_case_id;
+}
+
+CREATE QUERY device_centrality(INT top_k) FOR GRAPH hhg_fraud_graph {
+  PRINT "Run TG_PageRank / TG_DegreeCentrality on DeviceProfile; return top_k";
+}
+
+CREATE QUERY card_jaccard(STRING card_id_a, STRING card_id_b) FOR GRAPH hhg_fraud_graph {
+  # Jaccard over transaction neighbors via shared device/region/email
+  PRINT "Run TG_Jaccard between " + card_id_a + " and " + card_id_b;
+}
